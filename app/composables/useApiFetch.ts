@@ -1,15 +1,10 @@
-import type { UseFetchOptions } from '#app'
-
-export function useApiFetch<T>(
-  request: string | (() => string),
-  options: UseFetchOptions<T> = {},
-) {
+export const useApiFetch = createUseFetch((options) => {
   const config = useRuntimeConfig()
   const baseURL = import.meta.server ? config.apiBase : config.public.apiBase
 
-  return useFetch<T>(request, {
+  return {
+    ...options,
     baseURL,
     credentials: 'include',
-    ...options,
-  })
-}
+  }
+})
