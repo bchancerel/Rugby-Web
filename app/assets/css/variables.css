@@ -1,0 +1,53 @@
+:root {
+  /* Brand colors */
+  --rj-color-red: #e63946;
+  --rj-color-red-accent: #ff4655;
+  --rj-color-white: #ffffff;
+  --rj-color-night: #111827;
+  --rj-color-night-deep: #07111d;
+
+  /* Secondary colors */
+  --rj-color-slate: #1f2937;
+  --rj-color-gray-light: #c9d1dc;
+  --rj-color-gray-cool: #9ca3af;
+  --rj-color-black-blue: #020617;
+
+  /* Semantic surfaces */
+  --rj-color-app-bg: var(--rj-color-night-deep);
+  --rj-color-app-bg-alt: var(--rj-color-night);
+  --rj-color-surface: var(--rj-color-night);
+  --rj-color-surface-muted: var(--rj-color-slate);
+  --rj-color-border: rgba(201, 209, 220, 0.18);
+
+  /* Semantic text */
+  --rj-color-text-primary: var(--rj-color-white);
+  --rj-color-text-secondary: var(--rj-color-gray-light);
+  --rj-color-text-muted: var(--rj-color-gray-cool);
+
+  /* Actions and states */
+  --rj-color-primary: var(--rj-color-red);
+  --rj-color-primary-hover: var(--rj-color-red-accent);
+  --rj-color-live: var(--rj-color-red-accent);
+
+  /* Gradients */
+  --rj-gradient-red: linear-gradient(135deg, #ff4655 0%, #e63946 100%);
+  --rj-gradient-app: linear-gradient(135deg, #07111d 0%, #111827 100%);
+
+  /* Shared UI values */
+  --rj-radius-sm: 0.375rem;
+  --rj-radius-md: 0.5rem;
+  --rj-radius-lg: 0.75rem;
+  --rj-shadow-card: 0 18px 50px rgba(2, 6, 23, 0.32);
+}
+
+@theme {
+  --color-rugby-red: #e63946;
+  --color-rugby-red-accent: #ff4655;
+  --color-rugby-white: #ffffff;
+  --color-rugby-night: #111827;
+  --color-rugby-night-deep: #07111d;
+  --color-rugby-slate: #1f2937;
+  --color-rugby-gray-light: #c9d1dc;
+  --color-rugby-gray-cool: #9ca3af;
+  --color-rugby-black-blue: #020617;
+}

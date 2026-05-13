@@ -8,6 +8,12 @@ type RugbyApiResponse = {
 }
 
 const { data, error, pending, refresh } = await useApiFetch<RugbyApiResponse>('/rugby/leagues')
+const { logout, isAuthenticated } = useAuth()
+
+const handleLogout = async () => {
+  await logout()
+  await navigateTo('/login')
+}
 </script>
 
 <template>
@@ -21,6 +27,10 @@ const { data, error, pending, refresh } = await useApiFetch<RugbyApiResponse>('/
 
         <button type="button" :disabled="pending" @click="refresh()">
           {{ pending ? 'Chargement...' : 'Relancer' }}
+        </button>
+
+        <button v-if="isAuthenticated" type="button" class="logout-button" @click="handleLogout">
+          Deconnexion
         </button>
       </div>
 
