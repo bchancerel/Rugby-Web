@@ -27,7 +27,7 @@
 
     watch(isAuthenticated, async (authenticated) => {
         if (authenticated && !isRegister.value) {
-            await navigateTo('/rugby/leagues')
+            await navigateTo('/leagues')
         }
     }, { immediate: true })
 
@@ -51,7 +51,7 @@
                 })
             }
 
-            await navigateTo('/rugby/leagues')
+            await navigateTo('/leagues')
         } catch (error) {
             errorMessage.value = error instanceof Error ? error.message : 'Une erreur est survenue.'
         }

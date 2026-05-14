@@ -12,6 +12,6 @@ export default defineNuxtRouteMiddleware(async () => {
     }
 
     if (user.value?.role !== 'ADMIN') {
-        return navigateTo('/rugby/leagues')
+        return navigateTo('/leagues')
     }
 })

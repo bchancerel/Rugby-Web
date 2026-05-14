@@ -10,6 +10,11 @@ import type {
 } from '~/types/auth'
 
 type ApiError = {
+    status?: number
+    statusCode?: number
+    response?: {
+        status?: number
+    }
     data?: {
         message?: string;
         errors?: Array<{message?: string}>
@@ -26,6 +31,12 @@ const getErrorMessage = (error: unknown) => {
         apiError.message ||
         'Une erreur est survenue.'
     )
+}
+
+const getErrorStatus = (error: unknown) => {
+    const apiError = error as ApiError
+
+    return apiError.statusCode || apiError.status || apiError.response?.status
 }
 
 export const useAuth = () => {
@@ -77,7 +88,20 @@ export const useAuth = () => {
         }
     }
 
-    const fetchMe = async () => {
+    const refreshAccessToken = async () => {
+        try {
+            await $fetch<ApiMessageResponse>('/api/auth/refresh', {
+                method: 'POST',
+                credentials: 'include',
+            })
+
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    const fetchMe = async (tryRefresh = true) => {
         pending.value = true
         
         try {
@@ -87,7 +111,11 @@ export const useAuth = () => {
 
             setUser(data)
             return data
-        } catch {
+        } catch (error) {
+            if (tryRefresh && getErrorStatus(error) === 401 && await refreshAccessToken()) {
+                return await fetchMe(false)
+            }
+
             setUser(null)
             return null
         } finally {
@@ -97,17 +125,12 @@ export const useAuth = () => {
     }
 
     const refreshSession = async () => {
-        try {
-            await $fetch<ApiMessageResponse>('/api/auth/refresh', {
-                method: 'POST',
-                credentials: 'include',
-            })
-
+        if (await refreshAccessToken()) {
             return await fetchMe()
-        } catch {
-            setUser(null)
-            return null
         }   
+
+        setUser(null)
+        return null
     }
 
     const forgotPassword = async (payload: ForgotPasswordPayload) => {

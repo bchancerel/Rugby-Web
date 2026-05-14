@@ -11,7 +11,7 @@
             return '/auth/login'
         }
 
-        return user.value?.emailVerified ? '/rugby/leagues' : '/auth/login'
+        return user.value?.emailVerified ? '/leagues' : '/auth/login'
     })
 
     const primaryLabel = computed(() => {

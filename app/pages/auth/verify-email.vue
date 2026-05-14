@@ -13,7 +13,7 @@
     })
 
     const primaryLink = computed(() => {
-        return isAuthenticated.value ? '/rugby/leagues' : '/auth/login'
+        return isAuthenticated.value ? '/leagues' : '/auth/login'
     })
 
     const primaryLabel = computed(() => {
