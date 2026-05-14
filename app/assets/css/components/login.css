@@ -67,10 +67,17 @@
 }
 
 .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    padding: 3px 8px;
     margin: 0 0 4px;
-    color: var(--rj-color-red-accent);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(2, 6, 23, 0.48);
+    color: var(--rj-color-white);
     font-size: 0.78rem;
     font-weight: 800;
+    line-height: 1.2;
     text-transform: uppercase;
 }
 

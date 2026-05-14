@@ -26,7 +26,7 @@
     })
 
     watch(isAuthenticated, async (authenticated) => {
-        if (authenticated) {
+        if (authenticated && !isRegister.value) {
             await navigateTo('/rugby/leagues')
         }
     }, { immediate: true })
@@ -41,6 +41,9 @@
                     password: password.value,
                     username: username.value || undefined,
                 })
+
+                await navigateTo('/auth/check-email')
+                return
             } else {
                 await login({
                     email: email.value,
