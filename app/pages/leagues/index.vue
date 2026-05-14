@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import '~/assets/css/components/leagues.css'
 import type { RugbyLeague } from '~/types/rugby'
+import {
+    RUGBY_PLACEHOLDER_LOGO,
+    getRugbyLeagueKey,
+    getRugbyLeaguePath,
+    getRugbyLeagueSeasonLabel,
+    setRugbyPlaceholderLogo,
+    useRugbyLeagueCatalog,
+} from '~/composables/useRugbyLeagues'
 
 definePageMeta({
     middleware: 'auth',
@@ -9,15 +17,6 @@ definePageMeta({
 useHead({
     title: 'RugbyJam | Competitions',
 })
-
-type CountryLeagueGroup = {
-    countryName: string
-    countryCode: string | null
-    flag: string | null
-    leagues: RugbyLeague[]
-}
-
-const placeholderLogo = '/images/competitions/placeholder.svg'
 
 const { data: leagues, error, pending, refresh } = await useApiFetch<RugbyLeague[]>('/rugby/leagues', {
     default: () => [],
@@ -28,119 +27,32 @@ const selectedCountry = ref('')
 const selectedType = ref('')
 const currentSeasonOnly = ref(false)
 
-const majorLeagueIds = [16, 17, 52, 54, 13, 76, 71, 69, 85, 51]
-
-const hasCurrentSeason = (league: RugbyLeague) =>
-    league.seasons.some((season) => season.current)
-
-const getLeaguePath = (league: RugbyLeague | null) =>
-    league?.id ? `/leagues/${league.id}` : '/leagues'
-
-const getLeagueKey = (league: RugbyLeague, fallback: string) =>
-    String(league.id ?? league.name ?? fallback)
-
-const getSeasonLabel = (league: RugbyLeague) => {
-    const currentSeason = league.seasons.find((season) => season.current)
-    const latestSeason = [...league.seasons]
-        .filter((season) => season.year)
-        .sort((a, b) => (b.year ?? 0) - (a.year ?? 0))[0]
-
-    return currentSeason?.year ?? latestSeason?.year ?? null
-}
-
-const setPlaceholderLogo = (event: Event) => {
-    const image = event.target as HTMLImageElement
-    if (!image.src.endsWith(placeholderLogo)) {
-        image.src = placeholderLogo
-    }
-}
-
-const totalLeagues = computed(() => leagues.value.length)
-const totalCountries = computed(() => {
-    const countries = new Set(
-        leagues.value
-            .map((league) => league.country.name)
-            .filter((country): country is string => Boolean(country))
-    )
-
-    return countries.size
+const {
+    totalLeagues,
+    totalCountries,
+    countryOptions,
+    typeOptions,
+    filteredLeagues,
+    groupedLeaguesByCountry,
+    majorLeagues,
+    resetFilters,
+} = useRugbyLeagueCatalog(leagues, {
+    searchQuery,
+    selectedCountry,
+    selectedType,
+    currentSeasonOnly,
 })
 
-const countryOptions = computed(() =>
-    Array.from(
-        new Set(
-            leagues.value
-                .map((league) => league.country.name)
-                .filter((country): country is string => Boolean(country))
-        )
-    ).sort((a, b) => a.localeCompare(b))
-)
+const isInitialLoading = computed(() => pending.value && leagues.value.length === 0)
+const isRefreshing = computed(() => pending.value && leagues.value.length > 0)
+const hasNoLeagues = computed(() => !pending.value && leagues.value.length === 0)
 
-const typeOptions = computed(() =>
-    Array.from(
-        new Set(
-            leagues.value
-                .map((league) => league.type)
-                .filter((type): type is string => Boolean(type))
-        )
-    ).sort((a, b) => a.localeCompare(b))
-)
-
-const filteredLeagues = computed(() => {
-    const query = searchQuery.value.trim().toLowerCase()
-
-    return leagues.value
-        .filter((league) => {
-            const matchesQuery = !query
-                || league.name?.toLowerCase().includes(query)
-                || league.country.name?.toLowerCase().includes(query)
-            const matchesCountry = !selectedCountry.value || league.country.name === selectedCountry.value
-            const matchesType = !selectedType.value || league.type === selectedType.value
-            const matchesCurrentSeason = !currentSeasonOnly.value || hasCurrentSeason(league)
-
-            return matchesQuery && matchesCountry && matchesType && matchesCurrentSeason
-        })
-        .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
-})
-
-const groupedLeaguesByCountry = computed<CountryLeagueGroup[]>(() => {
-    const groups = new Map<string, CountryLeagueGroup>()
-
-    for (const league of filteredLeagues.value) {
-        const countryName = league.country.name ?? 'Pays inconnu'
-        const existingGroup = groups.get(countryName)
-
-        if (existingGroup) {
-            existingGroup.leagues.push(league)
-            continue
-        }
-
-        groups.set(countryName, {
-            countryName,
-            countryCode: league.country.code,
-            flag: league.country.flag,
-            leagues: [league],
-        })
-    }
-
-    return Array.from(groups.values()).sort((a, b) => a.countryName.localeCompare(b.countryName))
-})
-
-const majorLeagues = computed(() =>
-    majorLeagueIds
-        .map((id) => leagues.value.find((league) => league.id === id) ?? null)
-        .filter((league): league is RugbyLeague => Boolean(league))
-)
-
-const resetFilters = () => {
-    searchQuery.value = ''
-    selectedCountry.value = ''
-    selectedType.value = ''
-    currentSeasonOnly.value = false
+const refreshLeagues = () => {
+    void refresh()
 }
 
 onMounted(() => {
-    void refresh()
+    refreshLeagues()
 })
 </script>
 
@@ -153,32 +65,59 @@ onMounted(() => {
                     <h1>Competitions</h1>
                 </div>
 
-                <button type="button" :disabled="pending" @click="refresh()">
-                    {{ pending ? 'Chargement...' : 'Actualiser' }}
+                <button type="button" :disabled="pending" @click="refreshLeagues">
+                    {{ pending ? 'Actualisation...' : 'Actualiser' }}
                 </button>
             </div>
 
-            <div v-if="pending" class="content" aria-label="Chargement des competitions">
+            <div v-if="isInitialLoading" class="content loading-content" aria-label="Chargement des competitions">
                 <div class="summary-grid">
                     <div v-for="item in 3" :key="item" class="skeleton-block" />
                 </div>
                 <div class="skeleton-filter" />
                 <div class="featured-grid">
-                    <div v-for="item in 8" :key="item" class="featured-card skeleton-card" />
+                    <div v-for="item in 10" :key="item" class="featured-card skeleton-card" />
+                </div>
+                <div class="country-list">
+                    <div v-for="item in 3" :key="`country-${item}`" class="country-group skeleton-country" />
                 </div>
             </div>
 
-            <div v-else-if="error" class="state error">
+            <div v-else-if="error && !leagues.length" class="state error">
                 <p>
                     Impossible de recuperer les competitions.
                     <span>{{ error.message }}</span>
                 </p>
-                <button type="button" @click="refresh()">
+                <button type="button" @click="refreshLeagues">
                     Reessayer
                 </button>
             </div>
 
+            <div v-else-if="hasNoLeagues" class="state empty-api-state">
+                <p>
+                    Aucune competition n'est disponible pour le moment.
+                    <span>Tu peux relancer une actualisation si l'API vient d'etre mise a jour.</span>
+                </p>
+                <button type="button" @click="refreshLeagues">
+                    Actualiser
+                </button>
+            </div>
+
             <div v-else class="content">
+                <div v-if="error" class="state warning-state">
+                    <p>
+                        Les dernieres competitions chargees restent affichees.
+                        <span>{{ error.message }}</span>
+                    </p>
+                    <button type="button" @click="refreshLeagues">
+                        Reessayer
+                    </button>
+                </div>
+
+                <p v-if="isRefreshing" class="refresh-state" aria-live="polite">
+                    Actualisation des competitions...
+                </p>
+
                 <div class="summary-grid" aria-label="Resume des competitions">
                     <div>
                         <span class="summary-label">Competitions</span>
@@ -203,15 +142,15 @@ onMounted(() => {
                     <div class="featured-grid">
                         <NuxtLink
                             v-for="league in majorLeagues"
-                            :key="getLeagueKey(league, 'major-league')"
-                            :to="getLeaguePath(league)"
+                            :key="getRugbyLeagueKey(league, 'major-league')"
+                            :to="getRugbyLeaguePath(league)"
                             class="featured-card"
                         >
                             <img
-                                :src="league.logo || placeholderLogo"
+                                :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
                                 :alt="league.name ?? 'Competition'"
                                 class="featured-logo"
-                                @error="setPlaceholderLogo"
+                                @error="setRugbyPlaceholderLogo"
                             >
                             <span class="featured-name">{{ league.name ?? 'Competition sans nom' }}</span>
                             <span class="featured-meta">
@@ -272,7 +211,10 @@ onMounted(() => {
                     </div>
 
                     <div v-if="filteredLeagues.length === 0" class="empty-state">
-                        <p>Aucune competition ne correspond a ces filtres.</p>
+                        <p>
+                            Aucune competition ne correspond a ces filtres.
+                            <span>Essaie un autre pays, type ou terme de recherche.</span>
+                        </p>
                         <button type="button" class="secondary-button" @click="resetFilters">
                             Effacer les filtres
                         </button>
@@ -291,7 +233,7 @@ onMounted(() => {
                                         :src="group.flag"
                                         :alt="group.countryName"
                                         class="country-flag"
-                                        @error="setPlaceholderLogo"
+                                        @error="setRugbyPlaceholderLogo"
                                     >
                                     <span v-else class="country-placeholder">{{ group.countryCode ?? '--' }}</span>
                                     <h3>{{ group.countryName }}</h3>
@@ -302,19 +244,19 @@ onMounted(() => {
                             <div class="league-grid">
                                 <NuxtLink
                                     v-for="league in group.leagues"
-                                    :key="getLeagueKey(league, `${group.countryName}-league`)"
-                                    :to="getLeaguePath(league)"
+                                    :key="getRugbyLeagueKey(league, `${group.countryName}-league`)"
+                                    :to="getRugbyLeaguePath(league)"
                                     class="league-card"
                                 >
                                     <img
-                                        :src="league.logo || placeholderLogo"
+                                        :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
                                         :alt="league.name ?? 'Competition'"
                                         class="league-logo"
-                                        @error="setPlaceholderLogo"
+                                        @error="setRugbyPlaceholderLogo"
                                     >
                                     <span class="league-name">{{ league.name ?? 'Competition sans nom' }}</span>
                                     <span class="league-meta">
-                                        {{ [league.type, getSeasonLabel(league) ? `Saison ${getSeasonLabel(league)}` : null].filter(Boolean).join(' / ') || 'Competition' }}
+                                        {{ [league.type, getRugbyLeagueSeasonLabel(league) ? `Saison ${getRugbyLeagueSeasonLabel(league)}` : null].filter(Boolean).join(' / ') || 'Competition' }}
                                     </span>
                                 </NuxtLink>
                             </div>

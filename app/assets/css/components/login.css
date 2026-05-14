@@ -283,11 +283,34 @@ h1 {
 }
 
 @media (max-width: 480px) {
+    .auth-page {
+        padding: 24px 14px;
+    }
+
     .auth-panel {
         padding: 22px;
     }
 
     .brand {
         align-items: flex-start;
+    }
+}
+
+@media (max-width: 360px) {
+    .auth-panel {
+        padding: 18px;
+    }
+
+    .brand {
+        gap: 10px;
+    }
+
+    .brand-logo {
+        width: 46px;
+        height: 46px;
+    }
+
+    h1 {
+        font-size: 1.55rem;
     }
 }

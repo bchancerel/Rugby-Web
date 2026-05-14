@@ -1,6 +1,6 @@
 <script setup lang="ts">
     useHead({
-        title: 'RugbyJam | Mentions légales',
+        title: 'RugbyJam | Mentions legales',
     })
 </script>
 
@@ -8,13 +8,13 @@
     <main class="legal-page">
         <section class="legal-panel">
             <NuxtLink to="/" class="legal-back-link">
-                Retour à l'accueil
+                Retour a l'accueil
             </NuxtLink>
 
-            <h1>Mentions légales</h1>
+            <h1>Mentions legales</h1>
 
             <p>
-                RugbyJam est un projet édité par Benjamin Chancerel.
+                RugbyJam est un projet edite par Benjamin Chancerel.
             </p>
 
             <p>
@@ -62,5 +62,15 @@ p {
     color: #d7dee8;
     font-size: 1.05rem;
     line-height: 1.7;
+}
+
+@media (max-width: 420px) {
+    .legal-page {
+        padding: 32px 14px;
+    }
+
+    h1 {
+        font-size: 2.3rem;
+    }
 }
 </style>

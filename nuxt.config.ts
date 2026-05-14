@@ -18,6 +18,10 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
     },
   },
+  routeRules: {
+    '/mentions-légales': { redirect: '/mentions-legales' },
+    '/mentions-l%C3%A9gales': { redirect: '/mentions-legales' },
+  },
   nitro: {
     devProxy: {
       '/api': {

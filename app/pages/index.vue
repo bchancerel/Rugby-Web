@@ -78,7 +78,7 @@
         </section>
 
         <footer class="site-footer">
-            <NuxtLink to="/mentions-légales">
+            <NuxtLink to="/mentions-legales">
                 Mentions légales
             </NuxtLink>
             <a href="https://www.benjaminchancerel.com" target="_blank" rel="noopener noreferrer">

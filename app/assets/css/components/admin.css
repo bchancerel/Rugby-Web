@@ -295,3 +295,13 @@
         width: 100%;
     }
 }
+
+@media (max-width: 420px) {
+    .admin-heading h1 {
+        font-size: 2rem;
+    }
+
+    .admin-table {
+        min-width: 720px;
+    }
+}
