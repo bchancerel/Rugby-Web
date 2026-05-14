@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth',
+})
+
 type RugbyApiResponse = {
   get?: string
   parameters?: Record<string, unknown>
@@ -12,7 +16,7 @@ const { logout, isAuthenticated } = useAuth()
 
 const handleLogout = async () => {
   await logout()
-  await navigateTo('/login')
+  await navigateTo('/auth/login')
 }
 </script>
 

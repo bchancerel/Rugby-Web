@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Competition image placeholder">
+    <rect width="320" height="200" rx="14" fill="#111827"/>
+    <rect x="1" y="1" width="318" height="198" rx="13" fill="none" stroke="#334155" stroke-width="2"/>
+    <path d="M100 100c0-22 27-40 60-40s60 18 60 40-27 40-60 40-60-18-60-40Z" fill="#1f2937"/>
+    <path d="M122 100h76M160 66v68M132 78c18 12 38 12 56 0M132 122c18-12 38-12 56 0" fill="none" stroke="#e63946" stroke-width="8" stroke-linecap="round"/>
+    <text x="160" y="174" fill="#c9d1dc" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">RugbyJam</text>
+</svg>

@@ -67,7 +67,7 @@
                     {{ pending ? 'Envoi...' : 'Envoyer le lien' }}
                 </button>
 
-                <NuxtLink to="/login" class="secondary-auth-link">
+                <NuxtLink to="/auth/login" class="secondary-auth-link">
                     Retour a la connexion
                 </NuxtLink>
             </form>

@@ -99,7 +99,7 @@
                     {{ pending ? 'Enregistrement...' : 'Changer le mot de passe' }}
                 </button>
 
-                <NuxtLink to="/login" class="secondary-auth-link">
+                <NuxtLink to="/auth/login" class="secondary-auth-link">
                     Retour a la connexion
                 </NuxtLink>
             </form>
