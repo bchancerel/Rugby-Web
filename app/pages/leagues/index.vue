@@ -195,8 +195,16 @@ onMounted(() => {
                     </label>
 
                     <label class="toggle-field">
-                        <input v-model="currentSeasonOnly" type="checkbox">
-                        <span>Saison actuelle</span>
+                        <input
+                            v-model="currentSeasonOnly"
+                            type="checkbox"
+                            class="toggle-input"
+                            role="switch"
+                        >
+                        <span class="toggle-switch" aria-hidden="true">
+                            <span class="toggle-knob" />
+                        </span>
+                        <span class="toggle-label">Saison actuelle</span>
                     </label>
 
                     <button type="button" class="secondary-button" @click="resetFilters">
