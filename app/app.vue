@@ -8,6 +8,7 @@ let bodyResizeObserver: ResizeObserver | null = null
 const useAppBackground = computed(() =>
   route.path !== '/' && !route.path.startsWith('/auth/')
 )
+const showAppNavbar = computed(() => !route.path.startsWith('/auth/'))
 
 const updateScrollProgress = () => {
   const documentElement = document.documentElement
@@ -50,13 +51,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :class="{ 'app-theme-shell': useAppBackground }">
+  <div :class="{ 'app-theme-shell': useAppBackground, 'has-app-navbar': showAppNavbar }">
     <NuxtRouteAnnouncer />
     <div
       class="app-scroll-progress"
       :style="{ transform: `scaleX(${scrollProgress})` }"
       aria-hidden="true"
     />
+    <AppNavbar v-if="showAppNavbar" />
     <NuxtPage />
   </div>
 </template>

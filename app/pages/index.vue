@@ -11,10 +11,6 @@
     <main class="home-page">
         <section class="hero" aria-labelledby="home-title">
             <div class="hero-overlay">
-                <header class="topbar">
-                    <img src="/images/logo_app.svg" alt="RugbyJam" class="brand-logo">
-                </header>
-
                 <div class="hero-content">
                     <p class="eyebrow">RugbyJam</p>
                     <h1 id="home-title">Le rugby, partout, facilement</h1>

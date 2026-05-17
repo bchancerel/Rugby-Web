@@ -1,5 +1,6 @@
 @import "./variables.css";
 @import "tailwindcss";
+@import "./components/navbar.css";
 
 @layer base {
   html {
@@ -92,4 +93,5 @@
     transform-origin: left center;
     transition: transform 80ms linear;
   }
+
 }
