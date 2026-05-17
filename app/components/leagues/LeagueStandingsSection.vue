@@ -1,0 +1,82 @@
+<script setup lang="ts">
+import type { RugbyStandingGroup } from '~/types/rugby'
+import {
+    RUGBY_PLACEHOLDER_LOGO,
+    setRugbyPlaceholderLogo,
+} from '~/composables/useRugbyLeagues'
+
+defineProps<{
+    groups: RugbyStandingGroup[]
+    isTournament: boolean
+    heading: string
+}>()
+
+const formatStandingValue = (value: number | null) => value ?? '-'
+</script>
+
+<template>
+    <section
+        class="standings-section"
+        aria-labelledby="standings-title"
+    >
+        <div class="section-heading">
+            <p id="standings-title" class="eyebrow">{{ heading }}</p>
+        </div>
+
+        <div class="pool-standings-grid">
+            <article
+                v-for="group in groups"
+                :key="group.name ?? 'Classement'"
+                class="pool-standings"
+            >
+                <h3 v-if="isTournament">{{ group.name ?? 'Poule' }}</h3>
+
+                <div class="standings-table-wrapper">
+                    <table class="standings-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Equipe</th>
+                                <th scope="col">J</th>
+                                <th scope="col">G</th>
+                                <th scope="col">N</th>
+                                <th scope="col">P</th>
+                                <th scope="col">+</th>
+                                <th scope="col">-</th>
+                                <th scope="col">Diff +/-</th>
+                                <th scope="col">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="row in group.rows"
+                                :key="`${group.name}-${row.rank}-${row.team.id ?? row.team.name}`"
+                            >
+                                <td class="rank-cell">{{ formatStandingValue(row.rank) }}</td>
+                                <td>
+                                    <div class="standing-team">
+                                        <img
+                                            :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
+                                            :alt="row.team.name ?? 'Equipe'"
+                                            class="standing-team-logo"
+                                            @error="setRugbyPlaceholderLogo"
+                                        >
+                                        <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ formatStandingValue(row.all.played) }}</td>
+                                <td>{{ formatStandingValue(row.all.win) }}</td>
+                                <td>{{ formatStandingValue(row.all.draw) }}</td>
+                                <td>{{ formatStandingValue(row.all.loss) }}</td>
+                                <td>{{ formatStandingValue(row.all.pointsFor) }}</td>
+                                <td>{{ formatStandingValue(row.all.pointsAgainst) }}</td>
+                                <td>{{ formatStandingValue(row.pointsDiff) }}</td>
+                                <td class="points-cell">{{ formatStandingValue(row.points) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </div>
+    </section>
+</template>

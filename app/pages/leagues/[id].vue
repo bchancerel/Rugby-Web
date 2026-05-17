@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import '~/assets/css/components/leagues.css'
+import LeagueDetailHero from '~/components/leagues/LeagueDetailHero.vue'
+import LeagueKnockoutSection from '~/components/leagues/LeagueKnockoutSection.vue'
+import LeagueMatchesSection from '~/components/leagues/LeagueMatchesSection.vue'
+import LeagueModeSwitch from '~/components/leagues/LeagueModeSwitch.vue'
+import LeagueSeasonSelect from '~/components/leagues/LeagueSeasonSelect.vue'
+import LeagueStandingsSection from '~/components/leagues/LeagueStandingsSection.vue'
 import type { RugbyFixture, RugbyLeagueOverview, RugbyStandingGroup } from '~/types/rugby'
-import {
-    RUGBY_PLACEHOLDER_LOGO,
-    setRugbyPlaceholderLogo,
-} from '~/composables/useRugbyLeagues'
 
 definePageMeta({
     middleware: 'auth',
@@ -14,6 +16,8 @@ const route = useRoute()
 const router = useRouter()
 const leagueId = computed(() => String(route.params.id))
 const competitionView = ref<'pools' | 'bracket'>('pools')
+const selectedMatchRoundIndex = ref(0)
+const shouldAutoSelectMatchRound = ref(true)
 const requestedSeason = ref<number | null>(
     typeof route.query.season === 'string' && !Number.isNaN(Number(route.query.season))
         ? Number(route.query.season)
@@ -24,6 +28,12 @@ type BracketRound = {
     name: string
     fixtures: RugbyFixture[]
 }
+
+type MatchRound = BracketRound & {
+    label: string
+}
+
+const UPCOMING_ROUND_THRESHOLD_MS = 48 * 60 * 60 * 1000
 
 const { data: overview, error, pending, refresh } = await useApiFetch<RugbyLeagueOverview | null>(
     () => {
@@ -78,6 +88,94 @@ const bracketRounds = computed<BracketRound[]>(() => {
         }))
         .filter((round) => round.fixtures.length > 0)
 })
+const formatRoundLabel = (round: string) => {
+    const value = round.toLowerCase()
+    const regularSeasonMatch = round.match(/regular season\s*-\s*(\d+)/i)
+        ?? round.match(/(?:round|journee|matchday)\s*[- ]\s*(\d+)/i)
+
+    if (regularSeasonMatch?.[1]) return `Journee ${regularSeasonMatch[1]}`
+    if (value.includes('round of 16')) return 'Huitiemes de finale'
+    if (value.includes('round of 8') || value.includes('quarter')) return 'Quarts de finale'
+    if (value.includes('semi')) return 'Demi-finales'
+    if (value.includes('final')) return 'Finale'
+    if (value.includes('playoff') || value.includes('play-off') || value.includes('barrage')) return 'Barrages'
+
+    return round
+}
+const matchRounds = computed<MatchRound[]>(() => {
+    const fixtures = overview.value?.fixtures ?? []
+    const roundNames = overview.value?.rounds ?? []
+    const groupedFixtures = new Map<string, RugbyFixture[]>()
+
+    for (const fixture of fixtures) {
+        const roundName = fixture.league.round ?? 'Matchs'
+        groupedFixtures.set(roundName, [...(groupedFixtures.get(roundName) ?? []), fixture])
+    }
+
+    const orderedRoundNames = [
+        ...roundNames.filter((roundName) => groupedFixtures.has(roundName)),
+        ...Array.from(groupedFixtures.keys()).filter((roundName) => !roundNames.includes(roundName)),
+    ]
+
+    return orderedRoundNames.map((roundName) => ({
+        name: roundName,
+        label: formatRoundLabel(roundName),
+        fixtures: [...(groupedFixtures.get(roundName) ?? [])].sort((a, b) => {
+            const firstKickoff = a.timestamp ?? (a.date ? new Date(a.date).getTime() / 1000 : 0)
+            const secondKickoff = b.timestamp ?? (b.date ? new Date(b.date).getTime() / 1000 : 0)
+
+            return firstKickoff - secondKickoff
+        }),
+    }))
+})
+const getFixtureKickoffTime = (fixture: RugbyFixture) => {
+    if (fixture.timestamp !== null) return fixture.timestamp * 1000
+    if (!fixture.date) return null
+
+    const kickoff = new Date(fixture.date).getTime()
+    return Number.isNaN(kickoff) ? null : kickoff
+}
+const getRoundKickoffTimes = (round: MatchRound) =>
+    round.fixtures
+        .map(getFixtureKickoffTime)
+        .filter((kickoff): kickoff is number => kickoff !== null)
+const findDefaultMatchRoundIndex = (rounds: MatchRound[]) => {
+    if (rounds.length === 0) return 0
+
+    const now = Date.now()
+    const nextRound = rounds
+        .map((round, index) => ({
+            index,
+            kickoff: getRoundKickoffTimes(round)
+                .filter((kickoff) => kickoff >= now)
+                .sort((a, b) => a - b)[0] ?? null,
+        }))
+        .filter((round): round is { index: number, kickoff: number } => round.kickoff !== null)
+        .sort((a, b) => a.kickoff - b.kickoff)[0] ?? null
+
+    if (nextRound && nextRound.kickoff - now <= UPCOMING_ROUND_THRESHOLD_MS) {
+        return nextRound.index
+    }
+
+    const lastPlayedRound = rounds
+        .map((round, index) => ({
+            index,
+            kickoff: getRoundKickoffTimes(round)
+                .filter((kickoff) => kickoff < now)
+                .sort((a, b) => b - a)[0] ?? null,
+        }))
+        .filter((round): round is { index: number, kickoff: number } => round.kickoff !== null)
+        .sort((a, b) => b.kickoff - a.kickoff)[0] ?? null
+
+    return lastPlayedRound?.index ?? nextRound?.index ?? 0
+}
+const selectedMatchRound = computed(() => matchRounds.value[selectedMatchRoundIndex.value] ?? null)
+const hasMatchRounds = computed(() => matchRounds.value.length > 0)
+const canGoToPreviousMatchRound = computed(() => selectedMatchRoundIndex.value > 0)
+const canGoToNextMatchRound = computed(() => selectedMatchRoundIndex.value < matchRounds.value.length - 1)
+const matchRoundControlLabel = computed(() =>
+    matchRounds.value.some((round) => isKnockoutRound(round.name)) ? 'Tour' : 'Journee'
+)
 const isCupCompetition = computed(() => {
     const type = league.value?.type?.toLowerCase() ?? ''
     return type.includes('cup') || type.includes('tour')
@@ -88,6 +186,7 @@ const isTournament = computed(() => {
 const displayedStandingGroups = computed<RugbyStandingGroup[]>(() =>
     isTournament.value ? standingsGroups.value : standingsGroup.value ? [standingsGroup.value] : []
 )
+const standingsHeading = computed(() => isTournament.value ? 'Poules' : standingsGroup.value?.name ?? 'Classement')
 const showPools = computed(() => !isTournament.value || competitionView.value === 'pools')
 const showBracket = computed(() => isTournament.value && competitionView.value === 'bracket')
 const showLeaguePlayoffMatches = computed(() => !isTournament.value && bracketRounds.value.length > 0)
@@ -95,35 +194,39 @@ const hasVisibleContent = computed(() =>
     (showPools.value && hasStandings.value)
     || (showBracket.value && bracketRounds.value.length > 0)
     || showLeaguePlayoffMatches.value
+    || hasMatchRounds.value
 )
-
-const formatStandingValue = (value: number | null) => value ?? '-'
-const formatFixtureScore = (fixture: RugbyFixture) => {
-    if (fixture.score.home === null || fixture.score.away === null) return '-'
-    return `${fixture.score.home} - ${fixture.score.away}`
-}
-const formatFixtureDate = (date: string | null) => {
-    if (!date) return 'Date a venir'
-
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-    }).format(new Date(date))
-}
 
 const refreshLeague = () => {
     void refresh()
 }
 
-const updateSeason = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const season = Number(target.value)
+const goToPreviousMatchRound = () => {
+    if (!canGoToPreviousMatchRound.value) return
+    shouldAutoSelectMatchRound.value = false
+    selectedMatchRoundIndex.value -= 1
+}
 
+const goToNextMatchRound = () => {
+    if (!canGoToNextMatchRound.value) return
+    shouldAutoSelectMatchRound.value = false
+    selectedMatchRoundIndex.value += 1
+}
+
+const updateMatchRound = (roundIndex: number) => {
+    if (!Number.isInteger(roundIndex) || roundIndex < 0 || roundIndex >= matchRounds.value.length) return
+
+    shouldAutoSelectMatchRound.value = false
+    selectedMatchRoundIndex.value = roundIndex
+}
+
+const updateSeason = (season: number) => {
     if (!Number.isInteger(season)) return
 
     requestedSeason.value = season
     competitionView.value = 'pools'
+    shouldAutoSelectMatchRound.value = true
+    selectedMatchRoundIndex.value = 0
     void router.replace({
         query: {
             ...route.query,
@@ -133,8 +236,24 @@ const updateSeason = (event: Event) => {
 }
 
 watch(requestedSeason, () => {
+    shouldAutoSelectMatchRound.value = true
+    selectedMatchRoundIndex.value = 0
     void refresh()
 })
+
+watch(matchRounds, (rounds) => {
+    if (rounds.length === 0) return
+
+    if (shouldAutoSelectMatchRound.value) {
+        selectedMatchRoundIndex.value = findDefaultMatchRoundIndex(rounds)
+        shouldAutoSelectMatchRound.value = false
+        return
+    }
+
+    if (selectedMatchRoundIndex.value >= rounds.length) {
+        selectedMatchRoundIndex.value = Math.max(rounds.length - 1, 0)
+    }
+}, { immediate: true })
 
 watch(
     () => route.query.season,
@@ -190,223 +309,55 @@ onMounted(() => {
             </div>
 
             <template v-else-if="league">
-                <div class="league-detail">
-                    <div class="detail-logo-frame">
-                        <img
-                            :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
-                            :alt="league.name ?? 'Competition'"
-                            class="detail-league-logo"
-                            @error="setRugbyPlaceholderLogo"
-                        >
-                    </div>
+                <LeagueDetailHero
+                    :league="league"
+                    :competition-meta="competitionMeta"
+                />
 
-                    <div class="detail-copy">
-                        <p class="eyebrow">{{ league.country.name ?? 'Competition' }}</p>
-                        <h1>{{ league.name }}</h1>
-                        <p class="detail-meta">
-                            {{ competitionMeta }}
-                        </p>
-                    </div>
-                </div>
+                <LeagueSeasonSelect
+                    :selected-season="selectedSeason"
+                    :season-options="seasonOptions"
+                    :can-select-season="canSelectSeason"
+                    :pending="pending"
+                    @change="updateSeason"
+                />
 
-                <div class="season-filter">
-                    <label for="league-season-select">
-                        <span>Saison</span>
-                        <select
-                            id="league-season-select"
-                            :value="selectedSeason ?? ''"
-                            :disabled="!canSelectSeason || pending"
-                            @change="updateSeason"
-                        >
-                            <option
-                                v-for="season in seasonOptions"
-                                :key="season"
-                                :value="season"
-                            >
-                                {{ season }}
-                            </option>
-                        </select>
-                    </label>
-                </div>
-
-                <div
+                <LeagueModeSwitch
                     v-if="isTournament"
-                    class="competition-mode-switch"
-                    role="tablist"
-                    aria-label="Vue de la competition"
-                >
-                    <button
-                        type="button"
-                        class="competition-mode-button"
-                        :class="{ active: competitionView === 'pools' }"
-                        role="tab"
-                        :aria-selected="competitionView === 'pools'"
-                        @click="competitionView = 'pools'"
-                    >
-                        Poules
-                    </button>
-                    <button
-                        type="button"
-                        class="competition-mode-button"
-                        :class="{ active: competitionView === 'bracket' }"
-                        role="tab"
-                        :aria-selected="competitionView === 'bracket'"
-                        @click="competitionView = 'bracket'"
-                    >
-                        Phase finale
-                    </button>
-                </div>
+                    v-model="competitionView"
+                />
 
-                <section
+                <LeagueStandingsSection
                     v-if="showPools && hasStandings"
-                    class="standings-section"
-                    aria-labelledby="standings-title"
-                >
-                    <div class="section-heading">
-                        <p class="eyebrow">{{ isTournament ? 'Poules' : standingsGroup?.name ?? 'Classement' }}</p>
-                    </div>
+                    :groups="displayedStandingGroups"
+                    :is-tournament="isTournament"
+                    :heading="standingsHeading"
+                />
 
-                    <div class="pool-standings-grid">
-                        <article
-                            v-for="group in displayedStandingGroups"
-                            :key="group.name ?? 'Classement'"
-                            class="pool-standings"
-                        >
-                            <h3 v-if="isTournament">{{ group.name ?? 'Poule' }}</h3>
-
-                            <div class="standings-table-wrapper">
-                                <table class="standings-table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Equipe</th>
-                                            <th scope="col">J</th>
-                                            <th scope="col">G</th>
-                                            <th scope="col">N</th>
-                                            <th scope="col">P</th>
-                                            <th scope="col">+</th>
-                                            <th scope="col">-</th>
-                                            <th scope="col">Diff +/-</th>
-                                            <th scope="col">Pts</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr
-                                            v-for="row in group.rows"
-                                            :key="`${group.name}-${row.rank}-${row.team.id ?? row.team.name}`"
-                                        >
-                                            <td class="rank-cell">{{ formatStandingValue(row.rank) }}</td>
-                                            <td>
-                                                <div class="standing-team">
-                                                    <img
-                                                        :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
-                                                        :alt="row.team.name ?? 'Equipe'"
-                                                        class="standing-team-logo"
-                                                        @error="setRugbyPlaceholderLogo"
-                                                    >
-                                                    <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
-                                                </div>
-                                            </td>
-                                            <td>{{ formatStandingValue(row.all.played) }}</td>
-                                            <td>{{ formatStandingValue(row.all.win) }}</td>
-                                            <td>{{ formatStandingValue(row.all.draw) }}</td>
-                                            <td>{{ formatStandingValue(row.all.loss) }}</td>
-                                            <td>{{ formatStandingValue(row.all.pointsFor) }}</td>
-                                            <td>{{ formatStandingValue(row.all.pointsAgainst) }}</td>
-                                            <td>{{ formatStandingValue(row.pointsDiff) }}</td>
-                                            <td class="points-cell">{{ formatStandingValue(row.points) }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </article>
-                    </div>
-                </section>
-
-                <section
+                <LeagueKnockoutSection
                     v-if="showBracket && bracketRounds.length"
-                    class="bracket-section"
-                    aria-labelledby="bracket-title"
-                >
-                    <div class="section-heading">
-                        <p class="eyebrow">Phase finale</p>
-                    </div>
+                    :rounds="bracketRounds"
+                    variant="bracket"
+                />
 
-                    <div class="bracket-rounds">
-                        <section
-                            v-for="(round, roundIndex) in bracketRounds"
-                            :key="round.name"
-                            class="bracket-round"
-                            :class="{
-                                'is-first-round': roundIndex === 0,
-                                'is-last-round': roundIndex === bracketRounds.length - 1,
-                            }"
-                        >
-                            <h3>{{ round.name }}</h3>
-
-                            <div class="bracket-match-list">
-                                <article
-                                    v-for="fixture in round.fixtures"
-                                    :key="fixture.id ?? `${fixture.teams.home.name}-${fixture.teams.away.name}`"
-                                    class="bracket-match"
-                                >
-                                    <p class="bracket-date">{{ formatFixtureDate(fixture.date) }}</p>
-                                    <div class="bracket-team-row">
-                                        <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
-                                        <strong>{{ formatStandingValue(fixture.score.home) }}</strong>
-                                    </div>
-                                    <div class="bracket-team-row">
-                                        <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
-                                        <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
-                                    </div>
-                                    <p class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
-                                </article>
-                            </div>
-                        </section>
-                    </div>
-                </section>
-
-                <section
+                <LeagueKnockoutSection
                     v-if="showLeaguePlayoffMatches"
-                    class="playoff-section"
-                    aria-labelledby="playoff-title"
-                >
-                    <div class="section-heading">
-                        <p id="playoff-title" class="eyebrow">Phase finale</p>
-                    </div>
+                    :rounds="bracketRounds"
+                    variant="playoff"
+                />
 
-                    <div class="playoff-round-list">
-                        <section
-                            v-for="round in bracketRounds"
-                            :key="round.name"
-                            class="playoff-round"
-                        >
-                            <h3>{{ round.name }}</h3>
-
-                            <div class="playoff-match-grid">
-                                <article
-                                    v-for="fixture in round.fixtures"
-                                    :key="fixture.id ?? `${fixture.teams.home.name}-${fixture.teams.away.name}`"
-                                    class="playoff-match"
-                                >
-                                    <div class="playoff-match-heading">
-                                        <p class="bracket-date">{{ formatFixtureDate(fixture.date) }}</p>
-                                        <p class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
-                                    </div>
-
-                                    <div class="bracket-team-row">
-                                        <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
-                                        <strong>{{ formatStandingValue(fixture.score.home) }}</strong>
-                                    </div>
-                                    <div class="bracket-team-row">
-                                        <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
-                                        <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
-                                    </div>
-                                </article>
-                            </div>
-                        </section>
-                    </div>
-                </section>
+                <LeagueMatchesSection
+                    v-if="selectedMatchRound"
+                    :selected-round="selectedMatchRound"
+                    :rounds="matchRounds"
+                    :selected-round-index="selectedMatchRoundIndex"
+                    :can-go-to-previous="canGoToPreviousMatchRound"
+                    :can-go-to-next="canGoToNextMatchRound"
+                    :control-label="matchRoundControlLabel"
+                    @previous="goToPreviousMatchRound"
+                    @next="goToNextMatchRound"
+                    @select-round="updateMatchRound"
+                />
 
                 <section v-if="!hasVisibleContent" class="empty-state">
                     <p>
