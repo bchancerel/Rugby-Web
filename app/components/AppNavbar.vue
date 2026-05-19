@@ -22,7 +22,7 @@ type NavItem =
 const links: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '#', icon: 'calendar' },
-    { label: 'Favoris', to: '#', icon: 'star' },
+    { label: 'Favoris', to: '/favoris', icon: 'star' },
     { label: 'Mon compte', to: '/user', icon: 'user' },
 ]
 

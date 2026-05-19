@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import '~/assets/css/components/leagues.css'
+import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import type { RugbyLeague } from '~/types/rugby'
 import {
     RUGBY_PLACEHOLDER_LOGO,
@@ -53,6 +54,7 @@ const refreshLeagues = () => {
 
 onMounted(() => {
     refreshLeagues()
+    void useFavorites().ensureFavorites()
 })
 </script>
 
@@ -140,23 +142,32 @@ onMounted(() => {
                     </div>
 
                     <div class="featured-grid">
-                        <NuxtLink
+                        <article
                             v-for="league in majorLeagues"
                             :key="getRugbyLeagueKey(league, 'major-league')"
-                            :to="getRugbyLeaguePath(league)"
                             class="featured-card"
                         >
-                            <img
-                                :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
-                                :alt="league.name ?? 'Competition'"
-                                class="featured-logo"
-                                @error="setRugbyPlaceholderLogo"
-                            >
-                            <span class="featured-name">{{ league.name ?? 'Competition sans nom' }}</span>
-                            <span class="featured-meta">
-                                {{ [league.country.name, league.type].filter(Boolean).join(' / ') || 'Competition majeure' }}
-                            </span>
-                        </NuxtLink>
+                            <NuxtLink :to="getRugbyLeaguePath(league)" class="league-card-link">
+                                <img
+                                    :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
+                                    :alt="league.name ?? 'Competition'"
+                                    class="featured-logo"
+                                    @error="setRugbyPlaceholderLogo"
+                                >
+                                <span class="featured-name">{{ league.name ?? 'Competition sans nom' }}</span>
+                                <span class="featured-meta">
+                                    {{ [league.country.name, league.type].filter(Boolean).join(' / ') || 'Competition majeure' }}
+                                </span>
+                            </NuxtLink>
+
+                            <FavoriteButton
+                                class="league-card-favorite"
+                                entity-type="competition"
+                                :entity-id="league.id"
+                                :entity-name="league.name"
+                                compact
+                            />
+                        </article>
                     </div>
                 </section>
 
@@ -250,23 +261,32 @@ onMounted(() => {
                             </header>
 
                             <div class="league-grid">
-                                <NuxtLink
+                                <article
                                     v-for="league in group.leagues"
                                     :key="getRugbyLeagueKey(league, `${group.countryName}-league`)"
-                                    :to="getRugbyLeaguePath(league)"
                                     class="league-card"
                                 >
-                                    <img
-                                        :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="league.name ?? 'Competition'"
-                                        class="league-logo"
-                                        @error="setRugbyPlaceholderLogo"
-                                    >
-                                    <span class="league-name">{{ league.name ?? 'Competition sans nom' }}</span>
-                                    <span class="league-meta">
-                                        {{ [league.type, getRugbyLeagueSeasonLabel(league) ? `Saison ${getRugbyLeagueSeasonLabel(league)}` : null].filter(Boolean).join(' / ') || 'Competition' }}
-                                    </span>
-                                </NuxtLink>
+                                    <NuxtLink :to="getRugbyLeaguePath(league)" class="league-card-link">
+                                        <img
+                                            :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
+                                            :alt="league.name ?? 'Competition'"
+                                            class="league-logo"
+                                            @error="setRugbyPlaceholderLogo"
+                                        >
+                                        <span class="league-name">{{ league.name ?? 'Competition sans nom' }}</span>
+                                        <span class="league-meta">
+                                            {{ [league.type, getRugbyLeagueSeasonLabel(league) ? `Saison ${getRugbyLeagueSeasonLabel(league)}` : null].filter(Boolean).join(' / ') || 'Competition' }}
+                                        </span>
+                                    </NuxtLink>
+
+                                    <FavoriteButton
+                                        class="league-card-favorite"
+                                        entity-type="competition"
+                                        :entity-id="league.id"
+                                        :entity-name="league.name"
+                                        compact
+                                    />
+                                </article>
                             </div>
                         </section>
                     </div>

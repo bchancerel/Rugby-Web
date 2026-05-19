@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import type { RugbyStandingGroup } from '~/types/rugby'
 import {
     RUGBY_PLACEHOLDER_LOGO,
@@ -62,6 +63,12 @@ const formatStandingValue = (value: number | null) => value ?? '-'
                                             @error="setRugbyPlaceholderLogo"
                                         >
                                         <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                        <FavoriteButton
+                                            entity-type="team"
+                                            :entity-id="row.team.id"
+                                            :entity-name="row.team.name"
+                                            compact
+                                        />
                                     </div>
                                 </td>
                                 <td>{{ formatStandingValue(row.all.played) }}</td>

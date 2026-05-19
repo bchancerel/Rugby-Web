@@ -20,6 +20,13 @@ export type RugbyLeague = {
     seasons: RugbyLeagueSeason[]
 }
 
+export type RugbyTeam = {
+    id: number | null
+    name: string | null
+    logo: string | null
+    country: RugbyCountry
+}
+
 export type RugbyFixtureStatus = {
     long: string | null
     short: string | null

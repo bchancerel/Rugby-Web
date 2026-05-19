@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import type { RugbyLeague } from '~/types/rugby'
 import {
     RUGBY_PLACEHOLDER_LOGO,
@@ -28,6 +29,11 @@ defineProps<{
             <p class="detail-meta">
                 {{ competitionMeta }}
             </p>
+            <FavoriteButton
+                entity-type="competition"
+                :entity-id="league.id"
+                :entity-name="league.name"
+            />
         </div>
     </div>
 </template>

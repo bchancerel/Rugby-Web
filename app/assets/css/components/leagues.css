@@ -97,9 +97,51 @@
   box-shadow: none;
 }
 
+.leagues-page .favorite-button,
+.league-detail-page .favorite-button {
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(2, 6, 23, 0.56);
+  color: var(--rj-color-text-primary);
+  box-shadow: none;
+}
+
+.leagues-page .favorite-button.compact,
+.league-detail-page .favorite-button.compact {
+  width: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+}
+
+.leagues-page .favorite-button.active,
+.league-detail-page .favorite-button.active {
+  border-color: rgba(251, 191, 36, 0.58);
+  background: rgba(251, 191, 36, 0.14);
+  color: #fde68a;
+}
+
+.leagues-page .favorite-button:hover:not(:disabled),
+.league-detail-page .favorite-button:hover:not(:disabled) {
+  border-color: rgba(255, 70, 85, 0.56);
+  background: rgba(255, 70, 85, 0.14);
+  box-shadow: none;
+}
+
 .leagues-page button:disabled {
   cursor: wait;
   opacity: 0.7;
+}
+
+.leagues-page .favorite-button.limit-reached:disabled,
+.league-detail-page .favorite-button.limit-reached:disabled {
+  border-color: rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.42);
+  color: var(--rj-color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.48;
 }
 
 .leagues-page .state,
@@ -449,6 +491,11 @@
 .league-detail-page .standing-team span {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.league-detail-page .standing-team .favorite-button-wrap {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .league-detail-page .standing-team-logo {
@@ -993,6 +1040,7 @@
 
 .leagues-page .featured-card,
 .leagues-page .league-card {
+  position: relative;
   display: grid;
   gap: 10px;
   align-content: start;
@@ -1001,8 +1049,6 @@
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
     rgba(2, 6, 23, 0.5);
-  color: inherit;
-  text-decoration: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
@@ -1010,6 +1056,28 @@
 .leagues-page .featured-card {
   min-height: 176px;
   padding: 16px;
+}
+
+.leagues-page .league-card-link {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.leagues-page .league-card-favorite {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.leagues-page .featured-card .league-card-link {
+  padding-right: 42px;
+}
+
+.leagues-page .league-card .league-card-link {
+  padding-right: 38px;
 }
 
 .leagues-page .featured-card:hover,

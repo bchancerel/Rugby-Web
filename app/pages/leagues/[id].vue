@@ -269,6 +269,7 @@ useHead(() => ({
 
 onMounted(() => {
     refreshLeague()
+    void useFavorites().ensureFavorites()
 })
 </script>
 
