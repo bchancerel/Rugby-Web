@@ -11,6 +11,10 @@
     <main class="home-page">
         <section class="hero" aria-labelledby="home-title">
             <div class="hero-overlay">
+                <NuxtLink to="/" class="home-logo-link" aria-label="RugbyJam">
+                    <img src="/images/logo_app.svg" alt="RugbyJam" class="home-logo">
+                </NuxtLink>
+
                 <div class="hero-content">
                     <p class="eyebrow">RugbyJam</p>
                     <h1 id="home-title">Le rugby, partout, facilement</h1>

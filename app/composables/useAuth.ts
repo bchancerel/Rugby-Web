@@ -6,6 +6,7 @@ import type {
     LoginPayload,
     RegisterPayload,
     ResetPasswordPayload,
+    UpdateMePayload,
     VerifyEmailPayload,
 } from '~/types/auth'
 
@@ -124,6 +125,25 @@ export const useAuth = () => {
         }
     }
 
+    const updateMe = async (payload: UpdateMePayload) => {
+        pending.value = true
+
+        try {
+            const data = await $fetch<AuthUser>('/api/users/me', {
+                method: 'PATCH',
+                body: payload,
+                credentials: 'include',
+            })
+
+            setUser(data)
+            return data
+        } catch (error) {
+            throw new Error(getErrorMessage(error))
+        } finally {
+            pending.value = false
+        }
+    }
+
     const refreshSession = async () => {
         if (await refreshAccessToken()) {
             return await fetchMe()
@@ -219,6 +239,7 @@ export const useAuth = () => {
         login,
         register,
         fetchMe,
+        updateMe,
         refreshSession,
         forgotPassword,
         resetPassword,

@@ -6,6 +6,8 @@ export type AuthUser = {
     username: string | null
     role: AuthRole
     emailVerified: boolean
+    createdAt?: string
+    updatedAt?: string
 }
 
 export type AuthResponse = {
@@ -19,6 +21,12 @@ export type LoginPayload = {
 
 export type RegisterPayload = LoginPayload & {
     username?: string
+}
+
+export type UpdateMePayload = {
+    username?: string
+    currentPassword?: string
+    password?: string
 }
 
 export type ForgotPasswordPayload = {

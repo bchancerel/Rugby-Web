@@ -8,7 +8,9 @@ let bodyResizeObserver: ResizeObserver | null = null
 const useAppBackground = computed(() =>
   route.path !== '/' && !route.path.startsWith('/auth/')
 )
-const showAppNavbar = computed(() => !route.path.startsWith('/auth/'))
+const showAppNavbar = computed(() =>
+  route.path !== '/' && !route.path.startsWith('/auth/')
+)
 
 const updateScrollProgress = () => {
   const documentElement = document.documentElement

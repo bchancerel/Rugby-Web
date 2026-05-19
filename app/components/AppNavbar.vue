@@ -23,7 +23,7 @@ const links: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '#', icon: 'calendar' },
     { label: 'Favoris', to: '#', icon: 'star' },
-    { label: 'Mon compte', to: '#', icon: 'user' },
+    { label: 'Mon compte', to: '/user', icon: 'user' },
 ]
 
 const navItems = computed<NavItem[]>(() => {
