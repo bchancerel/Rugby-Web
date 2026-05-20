@@ -89,6 +89,34 @@ const getCompetitionFavoriteName = (favorite: Favorite) =>
 const getTeamFavoriteName = (favorite: Favorite) =>
     favorite.entityName ?? `Equipe ${favorite.entityId}`
 
+const getCompetitionFavoriteLogo = (favorite: Favorite) =>
+    competitionOverviews.value[favorite.entityId]?.league.logo ?? RUGBY_PLACEHOLDER_LOGO
+
+const getTeamFavoriteLogo = (favorite: Favorite) => {
+    const fixtures = teamFixtures.value[favorite.entityId] ?? []
+    const fixtureTeam = fixtures
+        .flatMap((fixture) => [fixture.teams.home, fixture.teams.away])
+        .find((team) => String(team.id) === favorite.entityId && team.logo)
+
+    if (fixtureTeam?.logo) return fixtureTeam.logo
+
+    for (const overview of Object.values(competitionOverviews.value)) {
+        const standingTeam = overview.standings
+            .flatMap((group) => group.rows)
+            .find((row) => String(row.team.id) === favorite.entityId && row.team.logo)
+
+        if (standingTeam?.team.logo) return standingTeam.team.logo
+
+        const overviewTeam = overview.fixtures
+            .flatMap((fixture) => [fixture.teams.home, fixture.teams.away])
+            .find((team) => String(team.id) === favorite.entityId && team.logo)
+
+        if (overviewTeam?.logo) return overviewTeam.logo
+    }
+
+    return RUGBY_PLACEHOLDER_LOGO
+}
+
 const getOverviewSeasonLabel = (overview: RugbyLeagueOverview) =>
     overview.season ? `Saison ${overview.season}` : 'Saison indisponible'
 
@@ -263,8 +291,14 @@ onMounted(async () => {
 
                     <ul v-else class="favorites-list">
                         <li v-for="favorite in favorites.teams.data" :key="favorite.id">
-                            <NuxtLink :to="getTeamFavoritePath(favorite)">
-                                {{ getTeamFavoriteName(favorite) }}
+                            <NuxtLink :to="getTeamFavoritePath(favorite)" class="favorites-list-link">
+                                <img
+                                    :src="getTeamFavoriteLogo(favorite)"
+                                    :alt="getTeamFavoriteName(favorite)"
+                                    class="favorites-list-logo"
+                                    @error="setRugbyPlaceholderLogo"
+                                >
+                                <span class="favorites-list-name">{{ getTeamFavoriteName(favorite) }}</span>
                             </NuxtLink>
                             <button type="button" class="favorites-secondary-button" :disabled="pending" @click="remove(favorite.id)">
                                 Retirer
@@ -285,8 +319,14 @@ onMounted(async () => {
 
                     <ul v-else class="favorites-list">
                         <li v-for="favorite in favorites.competitions.data" :key="favorite.id">
-                            <NuxtLink :to="`/leagues/${favorite.entityId}`">
-                                {{ getCompetitionFavoriteName(favorite) }}
+                            <NuxtLink :to="`/leagues/${favorite.entityId}`" class="favorites-list-link">
+                                <img
+                                    :src="getCompetitionFavoriteLogo(favorite)"
+                                    :alt="getCompetitionFavoriteName(favorite)"
+                                    class="favorites-list-logo"
+                                    @error="setRugbyPlaceholderLogo"
+                                >
+                                <span class="favorites-list-name">{{ getCompetitionFavoriteName(favorite) }}</span>
                             </NuxtLink>
                             <button type="button" class="favorites-secondary-button" :disabled="pending" @click="remove(favorite.id)">
                                 Retirer
@@ -309,7 +349,13 @@ onMounted(async () => {
                 <div v-else class="favorites-match-grid">
                     <article v-for="item in teamFavoriteMatches" :key="item.favorite.id" class="favorites-match-card">
                         <NuxtLink :to="getTeamFavoritePath(item.favorite)" class="favorites-match-card-title">
-                            {{ getTeamFavoriteName(item.favorite) }}
+                            <img
+                                :src="getTeamFavoriteLogo(item.favorite)"
+                                :alt="getTeamFavoriteName(item.favorite)"
+                                class="favorites-match-card-logo"
+                                @error="setRugbyPlaceholderLogo"
+                            >
+                            <span>{{ getTeamFavoriteName(item.favorite) }}</span>
                         </NuxtLink>
 
                         <div class="favorites-team-match-block">
@@ -320,18 +366,46 @@ onMounted(async () => {
                                     :to="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.home.id)"
                                     class="favorites-match-team-link"
                                 >
-                                    {{ item.lastFixture.teams.home.name ?? 'Domicile' }}
+                                    <img
+                                        :src="item.lastFixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.lastFixture.teams.home.name ?? 'Domicile'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
+                                    <span class="favorites-match-team-text">{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
                                 </NuxtLink>
-                                <span v-else>{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
+                                <span v-else class="favorites-match-team-name">
+                                    <img
+                                        :src="item.lastFixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.lastFixture.teams.home.name ?? 'Domicile'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
+                                    <span class="favorites-match-team-text">{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
+                                </span>
                                 <strong>{{ formatFixtureScore(item.lastFixture) }}</strong>
                                 <NuxtLink
                                     v-if="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
                                     :to="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
                                     class="favorites-match-team-link away"
                                 >
-                                    {{ item.lastFixture.teams.away.name ?? 'Exterieur' }}
+                                    <span class="favorites-match-team-text">{{ item.lastFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                    <img
+                                        :src="item.lastFixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.lastFixture.teams.away.name ?? 'Exterieur'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
                                 </NuxtLink>
-                                <span v-else>{{ item.lastFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                <span v-else class="favorites-match-team-name away">
+                                    <span class="favorites-match-team-text">{{ item.lastFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                    <img
+                                        :src="item.lastFixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.lastFixture.teams.away.name ?? 'Exterieur'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
+                                </span>
                             </div>
                             <em v-else>Dernier match indisponible.</em>
                             <small v-if="item.lastFixture">{{ formatFixtureKickoff(item.lastFixture.date) }}</small>
@@ -345,18 +419,46 @@ onMounted(async () => {
                                     :to="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.home.id)"
                                     class="favorites-match-team-link"
                                 >
-                                    {{ item.nextFixture.teams.home.name ?? 'Domicile' }}
+                                    <img
+                                        :src="item.nextFixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.nextFixture.teams.home.name ?? 'Domicile'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
+                                    <span class="favorites-match-team-text">{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
                                 </NuxtLink>
-                                <span v-else>{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
+                                <span v-else class="favorites-match-team-name">
+                                    <img
+                                        :src="item.nextFixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.nextFixture.teams.home.name ?? 'Domicile'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
+                                    <span class="favorites-match-team-text">{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
+                                </span>
                                 <strong>{{ formatFixtureScore(item.nextFixture) }}</strong>
                                 <NuxtLink
                                     v-if="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
                                     :to="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
                                     class="favorites-match-team-link away"
                                 >
-                                    {{ item.nextFixture.teams.away.name ?? 'Exterieur' }}
+                                    <span class="favorites-match-team-text">{{ item.nextFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                    <img
+                                        :src="item.nextFixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.nextFixture.teams.away.name ?? 'Exterieur'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
                                 </NuxtLink>
-                                <span v-else>{{ item.nextFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                <span v-else class="favorites-match-team-name away">
+                                    <span class="favorites-match-team-text">{{ item.nextFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                    <img
+                                        :src="item.nextFixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
+                                        :alt="item.nextFixture.teams.away.name ?? 'Exterieur'"
+                                        class="favorites-match-team-logo"
+                                        @error="setRugbyPlaceholderLogo"
+                                    >
+                                </span>
                             </div>
                             <em v-else>Prochain match indisponible.</em>
                             <small v-if="item.nextFixture">{{ formatFixtureKickoff(item.nextFixture.date) }}</small>

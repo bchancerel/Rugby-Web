@@ -135,6 +135,10 @@
                     >
                 </label>
 
+                <p v-if="isRegister" class="user-password-rules">
+                    Minimum 8 caracteres, avec au moins une majuscule, un chiffre et un caractere special.
+                </p>
+
                 <NuxtLink v-if="!isRegister" to="/auth/forgot-password" class="forgot-password-link">
                     Mot de passe oublie ?
                 </NuxtLink>

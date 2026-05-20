@@ -139,3 +139,18 @@ export type RugbyTeamContext = {
     fixturesCount: number
     lastFixtureTimestamp: number | null
 }
+
+export type RugbyFavoriteMatch = {
+    key: string
+    label: string
+    type: 'competition' | 'team'
+    entityId: string
+    logo: string | null
+    lastFixture: RugbyFixture | null
+    nextFixture: RugbyFixture | null
+}
+
+export type RugbyMatchesHome = {
+    favoriteMatches: RugbyFavoriteMatch[]
+    upcomingFixtures: RugbyFixture[]
+}

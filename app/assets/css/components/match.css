@@ -1,0 +1,346 @@
+.match-page {
+  min-height: 100vh;
+  padding: 48px 20px;
+  color: var(--rj-color-text-primary);
+}
+
+.match-page-shell {
+  display: grid;
+  max-width: 1120px;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
+    rgba(12, 18, 30, 0.82);
+  box-shadow:
+    0 28px 70px rgba(2, 6, 23, 0.54),
+    0 0 34px rgba(230, 57, 70, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.match-page-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.match-page-header h1 {
+  margin: 0;
+  color: var(--rj-color-white);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1;
+}
+
+.match-page-header p:last-child,
+.match-page-section-heading span,
+.match-page-state,
+.match-favorite-block em,
+.match-favorite-block time {
+  color: var(--rj-color-text-secondary);
+}
+
+.match-page-header p:last-child {
+  max-width: 620px;
+  margin: 10px 0 0;
+}
+
+.match-page-eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 8px;
+  margin: 0 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.48);
+  color: var(--rj-color-white);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.match-page-section {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.match-page-section-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.match-page-section-heading h2 {
+  margin: 0;
+  color: var(--rj-color-white);
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  line-height: 1.1;
+}
+
+.match-page-section-heading span {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.match-page-state {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.38);
+}
+
+.match-page-state.error {
+  border-color: rgba(255, 70, 85, 0.36);
+  background: rgba(255, 70, 85, 0.12);
+  color: #ffd5d9;
+}
+
+.match-favorite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 16px;
+}
+
+.match-favorite-card,
+.match-page .match-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+    rgba(2, 6, 23, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.match-favorite-card {
+  gap: 16px;
+  padding: 18px;
+}
+
+.match-favorite-card-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.match-favorite-league-logo {
+  width: 56px;
+  height: 56px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  object-fit: contain;
+}
+
+.match-favorite-card header span,
+.match-favorite-block small,
+.match-page .match-kickoff {
+  color: var(--rj-color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.match-favorite-card h3 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--rj-color-white);
+  font-size: 1.22rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-favorite-block {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.26);
+}
+
+.match-favorite-row,
+.match-page .match-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+}
+
+.match-favorite-row {
+  grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1.25fr);
+  gap: 14px;
+}
+
+.match-favorite-team {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  align-items: center;
+}
+
+.match-favorite-team.away {
+  justify-content: flex-end;
+}
+
+.match-favorite-team-logo {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.match-favorite-row span,
+.match-favorite-row a,
+.match-page .match-team span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--rj-color-white);
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-favorite-row span:last-child,
+.match-favorite-row a.away {
+  text-align: right;
+}
+
+.match-favorite-row strong,
+.match-page .match-score {
+  display: inline-grid;
+  min-width: 58px;
+  min-height: 34px;
+  padding: 0 10px;
+  place-items: center;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--rj-color-white);
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.match-favorite-row strong {
+  min-width: 68px;
+  min-height: 38px;
+  font-size: 1rem;
+}
+
+.match-page .match-list {
+  display: grid;
+  gap: 10px;
+}
+
+.match-page .match-kickoff {
+  margin: 0;
+  text-align: center;
+}
+
+.match-page .match-team {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  align-items: center;
+}
+
+.match-page .match-team.away {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.match-page .match-team-link {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.match-page .match-team-link:hover,
+.match-favorite-row .match-team-link:hover {
+  color: #ffd5d9;
+}
+
+.match-page .match-team-logo {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .match-page {
+    padding: 32px 14px;
+  }
+
+  .match-page-shell {
+    padding: 16px;
+  }
+
+  .match-page-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .match-favorite-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .match-favorite-card {
+    padding: 14px;
+  }
+
+  .match-favorite-league-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .match-favorite-row,
+  .match-page .match-row {
+    gap: 8px;
+  }
+
+  .match-page .match-team,
+  .match-favorite-row {
+    font-size: 0.86rem;
+  }
+
+  .match-page .match-team-logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .match-favorite-team-logo {
+    width: 26px;
+    height: 26px;
+  }
+
+  .match-favorite-row strong,
+  .match-page .match-score {
+    min-width: 50px;
+    min-height: 32px;
+    padding: 0 8px;
+    font-size: 0.88rem;
+  }
+}

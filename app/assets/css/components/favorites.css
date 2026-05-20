@@ -281,6 +281,30 @@
     color: #ffd5d9;
 }
 
+.favorites-list-link {
+    display: flex;
+    min-width: 0;
+    gap: 10px;
+    align-items: center;
+}
+
+.favorites-list-logo {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    padding: 4px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    object-fit: contain;
+}
+
+.favorites-list-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .favorites-match-grid,
 .favorites-standings-grid {
     display: grid;
@@ -331,6 +355,30 @@
     white-space: nowrap;
 }
 
+.favorites-match-card-title {
+    display: flex;
+    min-width: 0;
+    gap: 10px;
+    align-items: center;
+}
+
+.favorites-match-card-title span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorites-match-card-logo {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+    padding: 4px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    object-fit: contain;
+}
+
 .favorites-match-card-title:hover {
     color: #ffd5d9;
 }
@@ -355,7 +403,7 @@
     align-items: center;
 }
 
-.favorites-match-row span {
+.favorites-match-row > span {
     overflow: hidden;
     color: var(--rj-color-white);
     font-weight: 900;
@@ -363,7 +411,12 @@
     white-space: nowrap;
 }
 
-.favorites-match-team-link {
+.favorites-match-team-link,
+.favorites-match-team-name {
+    display: flex;
+    min-width: 0;
+    gap: 6px;
+    align-items: center;
     overflow: hidden;
     color: var(--rj-color-white);
     font-weight: 900;
@@ -372,15 +425,34 @@
     white-space: nowrap;
 }
 
+.favorites-match-team-logo {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+    padding: 2px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    object-fit: contain;
+}
+
+.favorites-match-team-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .favorites-match-team-link:hover {
     color: #ffd5d9;
 }
 
-.favorites-match-row span:last-child {
+.favorites-match-row > span:last-child {
     text-align: right;
 }
 
-.favorites-match-team-link.away {
+.favorites-match-team-link.away,
+.favorites-match-team-name.away {
+    justify-content: flex-end;
     text-align: right;
 }
 

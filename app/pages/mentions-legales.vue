@@ -53,9 +53,18 @@
 }
 
 h1 {
+    max-width: 100%;
     margin: 28px 0 18px;
-    font-size: clamp(2.4rem, 6vw, 4.5rem);
-    line-height: 1;
+    color: #ffffff;
+    font-family: Impact, Haettenschweiler, "Arial Black", "Segoe UI Black", sans-serif;
+    font-size: clamp(2.45rem, 11vw, 3.7rem);
+    font-weight: 900;
+    line-height: 0.9;
+    text-shadow:
+        0 3px 0 rgba(230, 57, 70, 0.82),
+        0 14px 30px rgba(0, 0, 0, 0.48);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 p {
@@ -69,8 +78,5 @@ p {
         padding: 32px 14px;
     }
 
-    h1 {
-        font-size: 2.3rem;
-    }
 }
 </style>
