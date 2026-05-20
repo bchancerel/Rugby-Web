@@ -488,12 +488,29 @@
   font-weight: 800;
 }
 
-.league-detail-page .standing-team span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .league-detail-page .standing-team span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-.league-detail-page .standing-team .favorite-button-wrap {
+  .league-detail-page .standing-team-link {
+    display: inline-flex;
+    min-width: 0;
+    gap: 10px;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .league-detail-page .standing-team-link:hover {
+    color: #fecaca;
+  }
+
+  .league-detail-page .standing-team-link.disabled:hover {
+    color: inherit;
+  }
+  
+  .league-detail-page .standing-team .favorite-button-wrap {
   flex: 0 0 auto;
   margin-left: auto;
 }
@@ -652,6 +669,20 @@
   align-items: center;
   color: var(--rj-color-white);
   font-weight: 800;
+}
+
+.league-detail-page .match-team-link {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.league-detail-page .match-team-link:hover,
+.league-detail-page .bracket-team-link:hover {
+  color: #ffd5d9;
 }
 
 .league-detail-page .match-team.away {
@@ -822,6 +853,14 @@
 
 .league-detail-page .bracket-team-row span {
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.league-detail-page .bracket-team-link {
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

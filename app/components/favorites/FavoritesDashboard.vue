@@ -20,6 +20,7 @@ const insightsPending = ref(false)
 const insightsError = ref('')
 const competitionOverviews = ref<Record<string, RugbyLeagueOverview>>({})
 const teamFixtures = ref<Record<string, RugbyFixture[]>>({})
+const { getFixtureTeamPath } = useRugbyTeamLinks()
 
 const hasFavorites = computed(() =>
     favorites.value.teams.data.length > 0 || favorites.value.competitions.data.length > 0
@@ -99,6 +100,38 @@ const getOverviewKey = (overview: RugbyLeagueOverview, index: number) =>
 
 const getOverviewPath = (overview: RugbyLeagueOverview) =>
     overview.league.id !== null ? `/leagues/${overview.league.id}` : '/leagues'
+
+const overviewContainsTeam = (overview: RugbyLeagueOverview, teamId: string) =>
+    overview.standings.some((group) =>
+        group.rows.some((row) => String(row.team.id) === teamId)
+    )
+    || overview.fixtures.some((fixture) =>
+        String(fixture.teams.home.id) === teamId ||
+        String(fixture.teams.away.id) === teamId
+    )
+
+const getTeamFavoriteOverview = (favorite: Favorite) =>
+    Object.values(competitionOverviews.value).find((overview) =>
+        overview.league.id !== null
+        && overview.season !== null
+        && overviewContainsTeam(overview, favorite.entityId)
+    ) ?? null
+
+const getTeamFavoritePath = (favorite: Favorite) => {
+    const overview = getTeamFavoriteOverview(favorite)
+
+    if (!overview) {
+        return `/teams/${favorite.entityId}`
+    }
+
+    return {
+        path: `/teams/${favorite.entityId}`,
+        query: {
+            league: String(overview.league.id),
+            season: String(overview.season),
+        },
+    }
+}
 
 const getTeamFixtures = (favorite: Favorite, overviews: RugbyLeagueOverview[]) =>
     overviews
@@ -230,7 +263,9 @@ onMounted(async () => {
 
                     <ul v-else class="favorites-list">
                         <li v-for="favorite in favorites.teams.data" :key="favorite.id">
-                            <span>{{ getTeamFavoriteName(favorite) }}</span>
+                            <NuxtLink :to="getTeamFavoritePath(favorite)">
+                                {{ getTeamFavoriteName(favorite) }}
+                            </NuxtLink>
                             <button type="button" class="favorites-secondary-button" :disabled="pending" @click="remove(favorite.id)">
                                 Retirer
                             </button>
@@ -273,14 +308,30 @@ onMounted(async () => {
 
                 <div v-else class="favorites-match-grid">
                     <article v-for="item in teamFavoriteMatches" :key="item.favorite.id" class="favorites-match-card">
-                        <p>{{ getTeamFavoriteName(item.favorite) }}</p>
+                        <NuxtLink :to="getTeamFavoritePath(item.favorite)" class="favorites-match-card-title">
+                            {{ getTeamFavoriteName(item.favorite) }}
+                        </NuxtLink>
 
                         <div class="favorites-team-match-block">
                             <small>Dernier match</small>
                             <div v-if="item.lastFixture" class="favorites-match-row">
-                                <span>{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
+                                <NuxtLink
+                                    v-if="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.home.id)"
+                                    :to="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.home.id)"
+                                    class="favorites-match-team-link"
+                                >
+                                    {{ item.lastFixture.teams.home.name ?? 'Domicile' }}
+                                </NuxtLink>
+                                <span v-else>{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
                                 <strong>{{ formatFixtureScore(item.lastFixture) }}</strong>
-                                <span>{{ item.lastFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                <NuxtLink
+                                    v-if="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
+                                    :to="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
+                                    class="favorites-match-team-link away"
+                                >
+                                    {{ item.lastFixture.teams.away.name ?? 'Exterieur' }}
+                                </NuxtLink>
+                                <span v-else>{{ item.lastFixture.teams.away.name ?? 'Exterieur' }}</span>
                             </div>
                             <em v-else>Dernier match indisponible.</em>
                             <small v-if="item.lastFixture">{{ formatFixtureKickoff(item.lastFixture.date) }}</small>
@@ -289,9 +340,23 @@ onMounted(async () => {
                         <div class="favorites-team-match-block">
                             <small>Prochain match</small>
                             <div v-if="item.nextFixture" class="favorites-match-row">
-                                <span>{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
+                                <NuxtLink
+                                    v-if="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.home.id)"
+                                    :to="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.home.id)"
+                                    class="favorites-match-team-link"
+                                >
+                                    {{ item.nextFixture.teams.home.name ?? 'Domicile' }}
+                                </NuxtLink>
+                                <span v-else>{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
                                 <strong>{{ formatFixtureScore(item.nextFixture) }}</strong>
-                                <span>{{ item.nextFixture.teams.away.name ?? 'Exterieur' }}</span>
+                                <NuxtLink
+                                    v-if="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
+                                    :to="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
+                                    class="favorites-match-team-link away"
+                                >
+                                    {{ item.nextFixture.teams.away.name ?? 'Exterieur' }}
+                                </NuxtLink>
+                                <span v-else>{{ item.nextFixture.teams.away.name ?? 'Exterieur' }}</span>
                             </div>
                             <em v-else>Prochain match indisponible.</em>
                             <small v-if="item.nextFixture">{{ formatFixtureKickoff(item.nextFixture.date) }}</small>

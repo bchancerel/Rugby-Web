@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import '~/assets/css/components/login.css'
-
     definePageMeta({
         middleware: 'guest',
     })

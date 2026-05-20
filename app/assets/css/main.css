@@ -1,6 +1,13 @@
 @import "./variables.css";
 @import "tailwindcss";
+@import "./components/admin.css";
+@import "./components/favorites.css";
+@import "./components/leagues.css";
+@import "./components/login.css";
 @import "./components/navbar.css";
+@import "./components/team-statistics.css";
+@import "./components/user.css";
+@import "./components/vitrine.css";
 
 @layer base {
   html {

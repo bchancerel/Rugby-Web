@@ -104,3 +104,38 @@ export type RugbyLeagueOverview = {
     rounds: string[]
     fixtures: RugbyFixture[]
 }
+
+export type RugbyTeamStatisticsRecord = {
+    played: number | null
+    win: number | null
+    draw: number | null
+    loss: number | null
+    pointsFor: number | null
+    pointsAgainst: number | null
+}
+
+export type RugbyTeamStatistics = {
+    team: RugbyStandingTeam
+    league: {
+        id: number | null
+        name: string | null
+        season: number | null
+        logo: string | null
+    }
+    form: string | null
+    all: RugbyTeamStatisticsRecord
+    home: RugbyTeamStatisticsRecord
+    away: RugbyTeamStatisticsRecord
+}
+
+export type RugbyTeamContext = {
+    team: RugbyStandingTeam
+    league: {
+        id: number
+        name: string | null
+        season: number
+        logo: string | null
+    }
+    fixturesCount: number
+    lastFixtureTimestamp: number | null
+}

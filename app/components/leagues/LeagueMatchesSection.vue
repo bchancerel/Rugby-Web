@@ -26,6 +26,8 @@ const emit = defineEmits<{
     selectRound: [roundIndex: number]
 }>()
 
+const { getFixtureTeamPath } = useRugbyTeamLinks()
+
 const formatFixtureScore = (fixture: RugbyFixture) => {
     if (fixture.score.home === null || fixture.score.away === null) return 'vs'
     return `${fixture.score.home} - ${fixture.score.away}`
@@ -113,13 +115,28 @@ const updateMatchRound = (event: Event) => {
 
                 <div class="match-row">
                     <div class="match-team home">
-                        <img
-                            :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                            :alt="fixture.teams.home.name ?? 'Equipe domicile'"
-                            class="match-team-logo"
-                            @error="setRugbyPlaceholderLogo"
+                        <NuxtLink
+                            v-if="getFixtureTeamPath(fixture, fixture.teams.home.id)"
+                            :to="getFixtureTeamPath(fixture, fixture.teams.home.id)"
+                            class="match-team-link"
                         >
-                        <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                            <img
+                                :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
+                                :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                class="match-team-logo"
+                                @error="setRugbyPlaceholderLogo"
+                            >
+                            <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                        </NuxtLink>
+                        <template v-else>
+                            <img
+                                :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
+                                :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                class="match-team-logo"
+                                @error="setRugbyPlaceholderLogo"
+                            >
+                            <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                        </template>
                     </div>
 
                     <strong class="match-score">
@@ -127,13 +144,28 @@ const updateMatchRound = (event: Event) => {
                     </strong>
 
                     <div class="match-team away">
-                        <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
-                        <img
-                            :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                            :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
-                            class="match-team-logo"
-                            @error="setRugbyPlaceholderLogo"
+                        <NuxtLink
+                            v-if="getFixtureTeamPath(fixture, fixture.teams.away.id)"
+                            :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
+                            class="match-team-link"
                         >
+                            <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                            <img
+                                :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
+                                :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                class="match-team-logo"
+                                @error="setRugbyPlaceholderLogo"
+                            >
+                        </NuxtLink>
+                        <template v-else>
+                            <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                            <img
+                                :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
+                                :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                class="match-team-logo"
+                                @error="setRugbyPlaceholderLogo"
+                            >
+                        </template>
                     </div>
                 </div>
             </article>

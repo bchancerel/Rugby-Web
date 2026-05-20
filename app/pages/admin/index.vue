@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import type { AdminUser } from '~/types/admin'
     import type { AuthRole } from '~/types/auth'
-    import '~/assets/css/components/admin.css'
 
     definePageMeta({
         middleware: 'admin',

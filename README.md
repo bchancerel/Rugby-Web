@@ -1,75 +1,91 @@
-# Nuxt Minimal Starter
+# RugbyJam Frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Frontend Nuxt de RugbyJam.
 
-## Setup
+## Stack
 
-Make sure to install dependencies:
+- Nuxt 4
+- Vue 3
+- TypeScript
+- Pinia
+- Tailwind CSS
+- Vue Query
+
+## Prerequis
+
+- Node.js 20+
+- API RugbyJam lancee, par defaut sur `http://localhost:3000`
+
+## Installation
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+Copie les variables d'environnement:
 
 ```bash
-# npm
+cp .env.example .env
+```
+
+Variables principales:
+
+```env
+NUXT_API_BASE=http://localhost:3000/api
+NUXT_PUBLIC_API_BASE=http://localhost:3000/api
+```
+
+## Developpement
+
+```bash
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Le frontend demarre par defaut sur:
 
-Build the application for production:
+```text
+http://localhost:5173
+```
+
+## Fonctionnalites rugby
+
+- Page championnats avec classement, matchs par journee et phases finales.
+- Page favoris avec equipes et championnats suivis.
+- Page equipe non exposee dans la navbar: `/teams/:id`.
+- Acces a la page equipe depuis:
+  - les favoris;
+  - les lignes du classement;
+  - les cartes de matchs;
+  - les cartes quart, demi et finale;
+  - la liste des matchs d'une page equipe.
+
+La page equipe utilise les query params suivants pour charger le bon contexte:
+
+```text
+/teams/:id?league=:leagueId&season=:season
+```
+
+Elle affiche:
+
+- selection championnat / saison;
+- statistiques globales, domicile et exterieur;
+- forme recente si disponible;
+- matchs de l'equipe pour le championnat et la saison selectionnes.
+
+## Scripts
+
+| Script | Description |
+|---|---|
+| `npm run dev` | Lancer Nuxt en developpement |
+| `npm run build` | Builder l'application |
+| `npm run generate` | Generer une sortie statique |
+| `npm run preview` | Previsualiser le build |
+| `npm run postinstall` | Preparer Nuxt |
+
+## Verification
 
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Le build peut afficher des warnings de sourcemaps venant de plugins Nuxt/Tailwind. Ils ne bloquent pas la compilation.

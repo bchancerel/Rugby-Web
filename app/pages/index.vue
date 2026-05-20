@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import '~/assets/css/components/vitrine.css'
     import { featuredCompetitions } from '~/constants/featuredCompetitions'
 
     useHead({

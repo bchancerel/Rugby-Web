@@ -315,14 +315,24 @@
 }
 
 .favorites-match-card p,
+.favorites-match-card-title,
 .favorites-match-card small {
     margin: 0;
     color: var(--rj-color-text-secondary);
     font-weight: 800;
 }
 
-.favorites-match-card p {
+.favorites-match-card p,
+.favorites-match-card-title {
+    overflow: hidden;
     color: var(--rj-color-white);
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorites-match-card-title:hover {
+    color: #ffd5d9;
 }
 
 .favorites-team-match-block {
@@ -353,7 +363,24 @@
     white-space: nowrap;
 }
 
+.favorites-match-team-link {
+    overflow: hidden;
+    color: var(--rj-color-white);
+    font-weight: 900;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorites-match-team-link:hover {
+    color: #ffd5d9;
+}
+
 .favorites-match-row span:last-child {
+    text-align: right;
+}
+
+.favorites-match-team-link.away {
     text-align: right;
 }
 

@@ -4,7 +4,6 @@ import UserInfoPanel from '~/components/user/UserInfoPanel.vue'
 import UserPasswordForm from '~/components/user/UserPasswordForm.vue'
 import UserSessionsPanel from '~/components/user/UserSessionsPanel.vue'
 import UserUsernameForm from '~/components/user/UserUsernameForm.vue'
-import '~/assets/css/components/user.css'
 
 definePageMeta({
     middleware: 'auth',

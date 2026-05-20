@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import '~/assets/css/components/login.css'
-
     const { user, pending, isAuthenticated, resendVerification } = useAuth()
 
     const errorMessage = ref('')

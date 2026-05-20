@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import '~/assets/css/components/login.css'
-
     const route = useRoute()
     const { verifyEmail, fetchMe, pending, isAuthenticated } = useAuth()
 

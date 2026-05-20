@@ -6,13 +6,27 @@ import {
     setRugbyPlaceholderLogo,
 } from '~/composables/useRugbyLeagues'
 
-defineProps<{
+const props = defineProps<{
     groups: RugbyStandingGroup[]
     isTournament: boolean
     heading: string
+    leagueId: string | number | null
+    season: string | number | null
 }>()
 
 const formatStandingValue = (value: number | null) => value ?? '-'
+
+const getTeamStatisticsPath = (teamId: string | number | null) => {
+    if (teamId === null || !props.leagueId || !props.season) return null
+
+    return {
+        path: `/teams/${teamId}`,
+        query: {
+            league: String(props.leagueId),
+            season: String(props.season),
+        },
+    }
+}
 </script>
 
 <template>
@@ -56,13 +70,28 @@ const formatStandingValue = (value: number | null) => value ?? '-'
                                 <td class="rank-cell">{{ formatStandingValue(row.rank) }}</td>
                                 <td>
                                     <div class="standing-team">
-                                        <img
-                                            :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
-                                            :alt="row.team.name ?? 'Equipe'"
-                                            class="standing-team-logo"
-                                            @error="setRugbyPlaceholderLogo"
+                                        <NuxtLink
+                                            v-if="getTeamStatisticsPath(row.team.id)"
+                                            :to="getTeamStatisticsPath(row.team.id)"
+                                            class="standing-team-link"
                                         >
-                                        <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                            <img
+                                                :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
+                                                :alt="row.team.name ?? 'Equipe'"
+                                                class="standing-team-logo"
+                                                @error="setRugbyPlaceholderLogo"
+                                            >
+                                            <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                        </NuxtLink>
+                                        <span v-else class="standing-team-link disabled">
+                                            <img
+                                                :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
+                                                :alt="row.team.name ?? 'Equipe'"
+                                                class="standing-team-logo"
+                                                @error="setRugbyPlaceholderLogo"
+                                            >
+                                            <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                        </span>
                                         <FavoriteButton
                                             entity-type="team"
                                             :entity-id="row.team.id"

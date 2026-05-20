@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import '~/assets/css/components/leagues.css'
 import LeagueDetailHero from '~/components/leagues/LeagueDetailHero.vue'
 import LeagueKnockoutSection from '~/components/leagues/LeagueKnockoutSection.vue'
 import LeagueMatchesSection from '~/components/leagues/LeagueMatchesSection.vue'
@@ -333,6 +332,8 @@ onMounted(() => {
                     :groups="displayedStandingGroups"
                     :is-tournament="isTournament"
                     :heading="standingsHeading"
+                    :league-id="league.id"
+                    :season="selectedSeason"
                 />
 
                 <LeagueKnockoutSection

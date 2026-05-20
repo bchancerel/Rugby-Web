@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import '~/assets/css/components/leagues.css'
 import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import type { RugbyLeague } from '~/types/rugby'
 import {

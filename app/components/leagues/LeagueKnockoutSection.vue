@@ -11,6 +11,8 @@ const props = defineProps<{
     variant: 'bracket' | 'playoff'
 }>()
 
+const { getFixtureTeamPath } = useRugbyTeamLinks()
+
 const formatStandingValue = (value: number | null) => value ?? '-'
 const formatFixtureScore = (fixture: RugbyFixture) => {
     if (fixture.score.home === null || fixture.score.away === null) return 'vs'
@@ -57,11 +59,25 @@ const formatFixtureDate = (date: string | null) => {
                     >
                         <p class="bracket-date">{{ formatFixtureDate(fixture.date) }}</p>
                         <div class="bracket-team-row">
-                            <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                            <NuxtLink
+                                v-if="getFixtureTeamPath(fixture, fixture.teams.home.id)"
+                                :to="getFixtureTeamPath(fixture, fixture.teams.home.id)"
+                                class="bracket-team-link"
+                            >
+                                {{ fixture.teams.home.name ?? 'Equipe domicile' }}
+                            </NuxtLink>
+                            <span v-else>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.home) }}</strong>
                         </div>
                         <div class="bracket-team-row">
-                            <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                            <NuxtLink
+                                v-if="getFixtureTeamPath(fixture, fixture.teams.away.id)"
+                                :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
+                                class="bracket-team-link"
+                            >
+                                {{ fixture.teams.away.name ?? 'Equipe exterieure' }}
+                            </NuxtLink>
+                            <span v-else>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
                         </div>
                         <p class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
@@ -100,11 +116,25 @@ const formatFixtureDate = (date: string | null) => {
                         </div>
 
                         <div class="bracket-team-row">
-                            <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                            <NuxtLink
+                                v-if="getFixtureTeamPath(fixture, fixture.teams.home.id)"
+                                :to="getFixtureTeamPath(fixture, fixture.teams.home.id)"
+                                class="bracket-team-link"
+                            >
+                                {{ fixture.teams.home.name ?? 'Equipe domicile' }}
+                            </NuxtLink>
+                            <span v-else>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.home) }}</strong>
                         </div>
                         <div class="bracket-team-row">
-                            <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                            <NuxtLink
+                                v-if="getFixtureTeamPath(fixture, fixture.teams.away.id)"
+                                :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
+                                class="bracket-team-link"
+                            >
+                                {{ fixture.teams.away.name ?? 'Equipe exterieure' }}
+                            </NuxtLink>
+                            <span v-else>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
                         </div>
                     </article>
