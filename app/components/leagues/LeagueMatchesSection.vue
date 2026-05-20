@@ -26,7 +26,7 @@ const emit = defineEmits<{
     selectRound: [roundIndex: number]
 }>()
 
-const { getFixtureTeamPath } = useRugbyTeamLinks()
+const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const formatFixtureScore = (fixture: RugbyFixture) => {
     if (fixture.score.home === null || fixture.score.away === null) return 'vs'
@@ -139,7 +139,14 @@ const updateMatchRound = (event: Event) => {
                         </template>
                     </div>
 
-                    <strong class="match-score">
+                    <NuxtLink
+                        v-if="getFixtureMatchPath(fixture)"
+                        :to="getFixtureMatchPath(fixture)"
+                        class="match-score match-score-link"
+                    >
+                        {{ formatFixtureScore(fixture) }}
+                    </NuxtLink>
+                    <strong v-else class="match-score">
                         {{ formatFixtureScore(fixture) }}
                     </strong>
 

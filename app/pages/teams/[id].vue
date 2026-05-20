@@ -12,7 +12,7 @@ definePageMeta({
 
 const route = useRoute()
 const config = useRuntimeConfig()
-const { getFixtureTeamPath } = useRugbyTeamLinks()
+const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const statistics = ref<RugbyTeamStatistics | null>(null)
 const contexts = ref<RugbyTeamContext[]>([])
@@ -491,7 +491,14 @@ useHead(() => ({
                                     </template>
                                 </div>
 
-                                <strong>{{ formatFixtureScore(fixture) }}</strong>
+                                <NuxtLink
+                                    v-if="getFixtureMatchPath(fixture)"
+                                    :to="getFixtureMatchPath(fixture)"
+                                    class="team-fixture-score-link"
+                                >
+                                    {{ formatFixtureScore(fixture) }}
+                                </NuxtLink>
+                                <strong v-else>{{ formatFixtureScore(fixture) }}</strong>
 
                                 <div class="team-fixture-team away">
                                     <NuxtLink

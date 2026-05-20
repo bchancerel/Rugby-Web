@@ -718,6 +718,20 @@
   white-space: nowrap;
 }
 
+.league-detail-page .match-score-link {
+  text-decoration: none;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.league-detail-page .match-score-link:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffd5d9;
+  transform: translateY(-1px);
+}
+
 .league-detail-page .bracket-section {
   overflow-x: auto;
   padding-bottom: 4px;
@@ -840,6 +854,10 @@
 .league-detail-page .bracket-score {
   justify-self: end;
   color: var(--rj-color-white);
+}
+
+.league-detail-page .bracket-score.match-score-link {
+  text-decoration: none;
 }
 
 .league-detail-page .bracket-team-row {

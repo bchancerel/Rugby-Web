@@ -11,7 +11,7 @@ const props = defineProps<{
     variant: 'bracket' | 'playoff'
 }>()
 
-const { getFixtureTeamPath } = useRugbyTeamLinks()
+const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const formatStandingValue = (value: number | null) => value ?? '-'
 const formatFixtureScore = (fixture: RugbyFixture) => {
@@ -80,7 +80,14 @@ const formatFixtureDate = (date: string | null) => {
                             <span v-else>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
                         </div>
-                        <p class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
+                        <NuxtLink
+                            v-if="getFixtureMatchPath(fixture)"
+                            :to="getFixtureMatchPath(fixture)"
+                            class="bracket-score match-score-link"
+                        >
+                            {{ formatFixtureScore(fixture) }}
+                        </NuxtLink>
+                        <p v-else class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
                     </article>
                 </div>
             </section>
@@ -112,7 +119,14 @@ const formatFixtureDate = (date: string | null) => {
                     >
                         <div class="playoff-match-heading">
                             <p class="bracket-date">{{ formatFixtureDate(fixture.date) }}</p>
-                            <p class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
+                            <NuxtLink
+                                v-if="getFixtureMatchPath(fixture)"
+                                :to="getFixtureMatchPath(fixture)"
+                                class="bracket-score match-score-link"
+                            >
+                                {{ formatFixtureScore(fixture) }}
+                            </NuxtLink>
+                            <p v-else class="bracket-score">{{ formatFixtureScore(fixture) }}</p>
                         </div>
 
                         <div class="bracket-team-row">

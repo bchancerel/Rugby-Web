@@ -456,7 +456,8 @@
     text-align: right;
 }
 
-.favorites-match-row strong {
+.favorites-match-row strong,
+.favorites-match-score-link {
     display: inline-grid;
     min-width: 58px;
     min-height: 34px;
@@ -464,6 +465,18 @@
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.1);
     color: var(--rj-color-white);
+    font-weight: 900;
+    text-decoration: none;
+    transition:
+        background 0.16s ease,
+        color 0.16s ease,
+        transform 0.16s ease;
+}
+
+.favorites-match-score-link:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffd5d9;
+    transform: translateY(-1px);
 }
 
 .favorites-standing-card header {

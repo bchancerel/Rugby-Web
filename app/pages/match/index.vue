@@ -10,7 +10,7 @@ definePageMeta({
 })
 
 const config = useRuntimeConfig()
-const { getFixtureTeamPath } = useRugbyTeamLinks()
+const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const favoriteMatches = ref<RugbyFavoriteMatch[]>([])
 const favoriteMatchesPending = ref(false)
@@ -170,7 +170,14 @@ useHead({
                                         <span>{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
                                     </template>
                                 </span>
-                                <strong>{{ formatFixtureScore(item.lastFixture) }}</strong>
+                                <NuxtLink
+                                    v-if="getFixtureMatchPath(item.lastFixture)"
+                                    :to="getFixtureMatchPath(item.lastFixture)"
+                                    class="match-score-link"
+                                >
+                                    {{ formatFixtureScore(item.lastFixture) }}
+                                </NuxtLink>
+                                <strong v-else>{{ formatFixtureScore(item.lastFixture) }}</strong>
                                 <span class="match-favorite-team away">
                                     <NuxtLink
                                         v-if="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
@@ -227,7 +234,14 @@ useHead({
                                         <span>{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
                                     </template>
                                 </span>
-                                <strong>{{ formatFixtureScore(item.nextFixture) }}</strong>
+                                <NuxtLink
+                                    v-if="getFixtureMatchPath(item.nextFixture)"
+                                    :to="getFixtureMatchPath(item.nextFixture)"
+                                    class="match-score-link"
+                                >
+                                    {{ formatFixtureScore(item.nextFixture) }}
+                                </NuxtLink>
+                                <strong v-else>{{ formatFixtureScore(item.nextFixture) }}</strong>
                                 <span class="match-favorite-team away">
                                     <NuxtLink
                                         v-if="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
@@ -317,7 +331,14 @@ useHead({
                                 </template>
                             </div>
 
-                            <strong class="match-score">
+                            <NuxtLink
+                                v-if="getFixtureMatchPath(fixture)"
+                                :to="getFixtureMatchPath(fixture)"
+                                class="match-score match-score-link"
+                            >
+                                {{ formatFixtureScore(fixture) }}
+                            </NuxtLink>
+                            <strong v-else class="match-score">
                                 {{ formatFixtureScore(fixture) }}
                             </strong>
 

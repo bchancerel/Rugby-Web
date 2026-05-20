@@ -1,6 +1,12 @@
 import type { RugbyFixture } from '~/types/rugby'
 
 export const useRugbyTeamLinks = () => {
+    const getFixtureMatchPath = (fixture: RugbyFixture) => {
+        if (fixture.id === null) return undefined
+
+        return `/match/${fixture.id}`
+    }
+
     const getFixtureTeamPath = (fixture: RugbyFixture, teamId: string | number | null) => {
         if (teamId === null) return undefined
 
@@ -15,6 +21,7 @@ export const useRugbyTeamLinks = () => {
     }
 
     return {
+        getFixtureMatchPath,
         getFixtureTeamPath,
     }
 }

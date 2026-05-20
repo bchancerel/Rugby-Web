@@ -20,7 +20,7 @@ const insightsPending = ref(false)
 const insightsError = ref('')
 const competitionOverviews = ref<Record<string, RugbyLeagueOverview>>({})
 const teamFixtures = ref<Record<string, RugbyFixture[]>>({})
-const { getFixtureTeamPath } = useRugbyTeamLinks()
+const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const hasFavorites = computed(() =>
     favorites.value.teams.data.length > 0 || favorites.value.competitions.data.length > 0
@@ -383,7 +383,14 @@ onMounted(async () => {
                                     >
                                     <span class="favorites-match-team-text">{{ item.lastFixture.teams.home.name ?? 'Domicile' }}</span>
                                 </span>
-                                <strong>{{ formatFixtureScore(item.lastFixture) }}</strong>
+                                <NuxtLink
+                                    v-if="getFixtureMatchPath(item.lastFixture)"
+                                    :to="getFixtureMatchPath(item.lastFixture)"
+                                    class="favorites-match-score-link"
+                                >
+                                    {{ formatFixtureScore(item.lastFixture) }}
+                                </NuxtLink>
+                                <strong v-else>{{ formatFixtureScore(item.lastFixture) }}</strong>
                                 <NuxtLink
                                     v-if="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
                                     :to="getFixtureTeamPath(item.lastFixture, item.lastFixture.teams.away.id)"
@@ -436,7 +443,14 @@ onMounted(async () => {
                                     >
                                     <span class="favorites-match-team-text">{{ item.nextFixture.teams.home.name ?? 'Domicile' }}</span>
                                 </span>
-                                <strong>{{ formatFixtureScore(item.nextFixture) }}</strong>
+                                <NuxtLink
+                                    v-if="getFixtureMatchPath(item.nextFixture)"
+                                    :to="getFixtureMatchPath(item.nextFixture)"
+                                    class="favorites-match-score-link"
+                                >
+                                    {{ formatFixtureScore(item.nextFixture) }}
+                                </NuxtLink>
+                                <strong v-else>{{ formatFixtureScore(item.nextFixture) }}</strong>
                                 <NuxtLink
                                     v-if="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
                                     :to="getFixtureTeamPath(item.nextFixture, item.nextFixture.teams.away.id)"
