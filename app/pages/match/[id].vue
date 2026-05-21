@@ -16,6 +16,15 @@ const { getFixtureTeamPath } = useRugbyTeamLinks()
 const fixture = ref<RugbyFixture | null>(null)
 const pending = ref(false)
 const errorMessage = ref('')
+const liveLastUpdatedAt = ref<Date | null>(null)
+let liveRefreshTimer: ReturnType<typeof setInterval> | null = null
+let liveRefreshInFlight = false
+
+const LIVE_REFRESH_INTERVAL_MS = 15_000
+const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'ABD', 'AWD', 'WO'])
+const NOT_STARTED_STATUS_CODES = new Set(['NS', 'TBD'])
+const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT'])
+const LIVE_STATUS_LABELS = ['live', 'in play', 'first half', 'half time', 'second half', 'extra time', 'pause']
 
 const matchId = computed(() => String(route.params.id ?? ''))
 const apiBase = computed(() => import.meta.server ? config.apiBase : config.public.apiBase)
@@ -25,6 +34,35 @@ const hasScore = computed(() =>
 const statusLabel = computed(() =>
     fixture.value?.status.long ?? fixture.value?.status.short ?? (hasScore.value ? 'Termine' : 'A venir')
 )
+const isFixtureFinal = computed(() => {
+    const shortStatus = fixture.value?.status.short?.toUpperCase()
+    const longStatus = fixture.value?.status.long?.toLowerCase()
+
+    return Boolean(
+        shortStatus && FINAL_STATUS_CODES.has(shortStatus)
+        || longStatus?.includes('finished')
+    )
+})
+const isFixtureLive = computed(() => {
+    const shortStatus = fixture.value?.status.short?.toUpperCase()
+    const longStatus = fixture.value?.status.long?.toLowerCase()
+
+    if (!fixture.value || isFixtureFinal.value) return false
+    if (shortStatus && NOT_STARTED_STATUS_CODES.has(shortStatus)) return false
+    if (shortStatus && LIVE_STATUS_CODES.has(shortStatus)) return true
+    if (LIVE_STATUS_LABELS.some((label) => longStatus?.includes(label))) return true
+
+    return fixture.value.status.elapsed !== null
+})
+const liveLastUpdatedLabel = computed(() => {
+    if (!liveLastUpdatedAt.value) return null
+
+    return new Intl.DateTimeFormat('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    }).format(liveLastUpdatedAt.value)
+})
 const matchTitle = computed(() => {
     const home = fixture.value?.teams.home.name ?? 'Domicile'
     const away = fixture.value?.teams.away.name ?? 'Exterieur'
@@ -104,28 +142,85 @@ const getTeamClass = (winner: boolean | null) => ({
     loser: winner === false,
 })
 
-const fetchFixture = async () => {
-    if (!matchId.value) return
+type FetchFixtureOptions = {
+    liveRefresh?: boolean
+    showPending?: boolean
+}
 
-    pending.value = true
-    errorMessage.value = ''
+const stopLiveRefresh = () => {
+    if (!liveRefreshTimer) return
+
+    clearInterval(liveRefreshTimer)
+    liveRefreshTimer = null
+}
+
+const fetchFixture = async ({ liveRefresh = false, showPending = true }: FetchFixtureOptions = {}) => {
+    const requestedMatchId = matchId.value
+    if (!requestedMatchId) return
+
+    if (showPending) {
+        pending.value = true
+        errorMessage.value = ''
+    }
 
     try {
-        fixture.value = await $fetch<RugbyFixture>(`/rugby/fixtures/${matchId.value}`, {
+        const refreshedFixture = await $fetch<RugbyFixture>(`/rugby/fixtures/${requestedMatchId}`, {
             baseURL: apiBase.value,
             credentials: 'include',
+            query: liveRefresh ? { live: '1' } : undefined,
         })
+        if (requestedMatchId !== matchId.value) return
+
+        fixture.value = refreshedFixture
+        if (liveRefresh || isFixtureLive.value) {
+            liveLastUpdatedAt.value = new Date()
+        }
+        errorMessage.value = ''
     } catch (error) {
-        fixture.value = null
-        errorMessage.value = getApiErrorMessage(error)
+        if (showPending || !fixture.value) {
+            fixture.value = null
+            errorMessage.value = getApiErrorMessage(error)
+        }
     } finally {
-        pending.value = false
+        if (showPending) pending.value = false
     }
 }
 
+const refreshLiveFixture = () => {
+    if (liveRefreshInFlight) return
+
+    liveRefreshInFlight = true
+    void fetchFixture({ liveRefresh: true, showPending: false })
+        .finally(() => {
+            liveRefreshInFlight = false
+        })
+}
+
+const startLiveRefresh = () => {
+    if (!import.meta.client || liveRefreshTimer) return
+
+    liveRefreshTimer = setInterval(refreshLiveFixture, LIVE_REFRESH_INTERVAL_MS)
+}
+
 watch(matchId, () => {
+    stopLiveRefresh()
+    liveLastUpdatedAt.value = null
     void fetchFixture()
 }, { immediate: true })
+
+watch(isFixtureLive, (isLive) => {
+    if (isLive) {
+        startLiveRefresh()
+        return
+    }
+
+    stopLiveRefresh()
+    liveLastUpdatedAt.value = null
+})
+
+onBeforeUnmount(() => {
+    stopLiveRefresh()
+})
 
 useHead(() => ({
     title: fixture.value
@@ -238,6 +333,19 @@ useHead(() => ({
                             <strong v-else>{{ formatFixtureTime(fixture.date) }}</strong>
                             <em v-if="fixture.status.elapsed">Temps de jeu {{ fixture.status.elapsed }}'</em>
                             <em v-else>{{ hasScore ? 'Score final' : 'Coup d’envoi' }}</em>
+                            <div
+                                v-if="isFixtureLive"
+                                class="match-detail-live-refresh"
+                                aria-live="polite"
+                            >
+                                <span>Direct</span>
+                                <small>
+                                    Actualisation automatique
+                                    <template v-if="liveLastUpdatedLabel">
+                                        / {{ liveLastUpdatedLabel }}
+                                    </template>
+                                </small>
+                            </div>
                         </div>
 
                         <div class="match-detail-team away" :class="getTeamClass(fixture.teams.away.winner)">
