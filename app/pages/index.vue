@@ -16,7 +16,7 @@
 
                 <div class="hero-content">
                     <p class="eyebrow">RugbyJam</p>
-                    <h1 id="home-title">Le rugby, partout, facilement</h1>
+                    <h1 id="home-title" class="hero-title">Le rugby, partout, facilement</h1>
                     <p class="hero-copy">
                         Retrouve tous les resultats, classements et statistiques de tes competitions de rugby preferees en un seul endroit.
                     </p>

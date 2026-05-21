@@ -374,7 +374,6 @@
   overflow: hidden;
 }
 
-.match-detail-back,
 .match-detail-league-link {
   display: inline-flex;
   width: fit-content;
@@ -384,10 +383,38 @@
 }
 
 .match-detail-back {
-  color: var(--rj-color-text-secondary);
+  display: inline-flex;
+  width: fit-content;
+  gap: 8px;
+  align-items: center;
+  margin: 18px 24px 0;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.42);
+  color: var(--rj-color-text-primary);
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
 }
 
-.match-detail-back:hover,
+.match-detail-back:hover {
+  border-color: rgba(255, 70, 85, 0.46);
+  background: rgba(2, 6, 23, 0.62);
+  color: var(--rj-color-white);
+  transform: translateX(-2px);
+}
+
+.match-detail-back-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
 .match-detail-league-link:hover {
   color: var(--rj-color-white);
 }
@@ -594,8 +621,9 @@
   color: var(--rj-color-white);
 }
 
-.match-detail-sheet {
-  padding: 0 24px;
+.match-detail-sheet,
+.match-detail-info {
+  padding: 8px 24px 0;
 }
 
 .match-detail-sheet-card {
@@ -652,7 +680,7 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 0;
-  padding: 0 24px 24px;
+  padding-bottom: 24px;
 }
 
 .match-detail-info-grid div {
@@ -685,6 +713,10 @@
     padding: 18px 16px 14px;
   }
 
+  .match-detail-back {
+    margin: 16px 16px 0;
+  }
+
   .match-detail-competition-logo {
     width: 48px;
     height: 48px;
@@ -709,8 +741,9 @@
     height: 68px;
   }
 
-  .match-detail-sheet {
-    padding: 0 16px;
+  .match-detail-sheet,
+  .match-detail-info {
+    padding: 6px 16px 0;
   }
 
   .match-detail-sheet-card {
@@ -723,6 +756,6 @@
 
   .match-detail-info-grid {
     grid-template-columns: 1fr;
-    padding: 0 16px 18px;
+    padding-bottom: 18px;
   }
 }

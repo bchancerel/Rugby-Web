@@ -124,7 +124,24 @@ useHead(() => ({
 <template>
     <main class="match-page match-detail-page">
         <section class="match-page-shell match-detail-shell" aria-labelledby="match-detail-title">
-            <NuxtLink to="/match" class="match-detail-back">Retour aux matchs</NuxtLink>
+            <NuxtLink to="/match" class="match-detail-back">
+                <svg
+                    class="match-detail-back-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M19 12H5M12 19l-7-7 7-7"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+                Retour aux matchs
+            </NuxtLink>
 
             <div v-if="pending" class="match-page-state">
                 Chargement du match...
@@ -255,7 +272,7 @@ useHead(() => ({
                     </div>
                 </section>
 
-                <section class="match-page-section" aria-labelledby="match-detail-info-title">
+                <section class="match-page-section match-detail-info" aria-labelledby="match-detail-info-title">
                     <div class="match-page-section-heading">
                         <div>
                             <p class="match-page-eyebrow">Details</p>

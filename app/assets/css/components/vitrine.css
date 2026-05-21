@@ -77,14 +77,14 @@
     text-transform: uppercase;
 }
 
-.home-page h1 {
-    max-width: 780px;
+.home-page .hero-title {
+    max-width: 750px;
     margin: 0;
     color: #ffffff;
     font-family: Impact, Haettenschweiler, "Arial Black", "Segoe UI Black", sans-serif;
-    font-size: clamp(4rem, 9vw, 8.5rem);
+    font-size: clamp(4.5rem, 10vw, 8rem);
     font-weight: 900;
-    line-height: 0.86;
+    line-height: 0.84;
     text-shadow:
         0 5px 0 rgba(230, 57, 70, 0.82),
         0 18px 36px rgba(0, 0, 0, 0.48);
@@ -269,8 +269,8 @@
         grid-template-columns: auto 1fr;
     }
 
-    .home-page h1 {
-        font-size: 4.1rem;
+    .home-page .hero-title {
+        font-size: 4.6rem;
     }
 
     .home-page .primary-button,
@@ -307,7 +307,7 @@
         font-size: 1rem;
     }
 
-    .home-page h1 {
-        font-size: 3.2rem;
+    .home-page .hero-title {
+        font-size: 3.7rem;
     }
 }
