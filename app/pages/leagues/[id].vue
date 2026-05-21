@@ -13,6 +13,7 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
+const { trackEntityView } = useSupporterTracking()
 const leagueId = computed(() => String(route.params.id))
 const competitionView = ref<'pools' | 'bracket'>('pools')
 const selectedMatchRoundIndex = ref(0)
@@ -260,6 +261,14 @@ watch(
         const nextSeason = typeof season === 'string' && !Number.isNaN(Number(season)) ? Number(season) : null
         if (nextSeason !== requestedSeason.value) requestedSeason.value = nextSeason
     }
+)
+
+watch(
+    leagueId,
+    () => {
+        trackEntityView('COMPETITION_VIEWED', leagueId.value)
+    },
+    { immediate: true }
 )
 
 useHead(() => ({

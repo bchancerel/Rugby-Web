@@ -12,15 +12,18 @@ definePageMeta({
 const route = useRoute()
 const config = useRuntimeConfig()
 const { getFixtureTeamPath } = useRugbyTeamLinks()
+const { trackEntityView } = useSupporterTracking()
 
 const fixture = ref<RugbyFixture | null>(null)
 const pending = ref(false)
 const errorMessage = ref('')
 const liveLastUpdatedAt = ref<Date | null>(null)
 let liveRefreshTimer: ReturnType<typeof setInterval> | null = null
+let liveFollowTimer: ReturnType<typeof setTimeout> | null = null
 let liveRefreshInFlight = false
 
 const LIVE_REFRESH_INTERVAL_MS = 15_000
+const LIVE_FOLLOW_DELAY_MS = 60_000
 const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'ABD', 'AWD', 'WO'])
 const NOT_STARTED_STATUS_CODES = new Set(['NS', 'TBD'])
 const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT'])
@@ -154,6 +157,13 @@ const stopLiveRefresh = () => {
     liveRefreshTimer = null
 }
 
+const stopLiveFollowTracking = () => {
+    if (!liveFollowTimer) return
+
+    clearTimeout(liveFollowTimer)
+    liveFollowTimer = null
+}
+
 const fetchFixture = async ({ liveRefresh = false, showPending = true }: FetchFixtureOptions = {}) => {
     const requestedMatchId = matchId.value
     if (!requestedMatchId) return
@@ -202,8 +212,18 @@ const startLiveRefresh = () => {
     liveRefreshTimer = setInterval(refreshLiveFixture, LIVE_REFRESH_INTERVAL_MS)
 }
 
+const startLiveFollowTracking = () => {
+    if (!import.meta.client || liveFollowTimer || !matchId.value) return
+
+    liveFollowTimer = setTimeout(() => {
+        trackEntityView('LIVE_MATCH_FOLLOWED', matchId.value)
+        liveFollowTimer = null
+    }, LIVE_FOLLOW_DELAY_MS)
+}
+
 watch(matchId, () => {
     stopLiveRefresh()
+    stopLiveFollowTracking()
     liveLastUpdatedAt.value = null
     void fetchFixture()
 }, { immediate: true })
@@ -211,15 +231,28 @@ watch(matchId, () => {
 watch(isFixtureLive, (isLive) => {
     if (isLive) {
         startLiveRefresh()
+        startLiveFollowTracking()
         return
     }
 
     stopLiveRefresh()
+    stopLiveFollowTracking()
     liveLastUpdatedAt.value = null
+})
+
+watch(fixture, (currentFixture) => {
+    if (!currentFixture || !matchId.value) return
+
+    trackEntityView('MATCH_VIEWED', matchId.value)
+
+    if (isFixtureFinal.value) {
+        trackEntityView('FINISHED_MATCH_VIEWED', matchId.value)
+    }
 })
 
 onBeforeUnmount(() => {
     stopLiveRefresh()
+    stopLiveFollowTracking()
 })
 
 useHead(() => ({

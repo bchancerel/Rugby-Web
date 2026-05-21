@@ -1,0 +1,366 @@
+.supporter-page {
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: var(--rj-color-text-primary);
+}
+
+.supporter-shell {
+    width: min(1080px, 100%);
+    margin: 0 auto;
+}
+
+.supporter-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+.supporter-heading {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.supporter-eyebrow {
+    margin: 0;
+    color: #e63946;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.supporter-heading h1 {
+    margin: 0;
+}
+
+.supporter-state,
+.supporter-panel {
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(2, 6, 23, 0.48);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(18px);
+}
+
+.supporter-dashboard > .supporter-panel {
+    grid-column: 1 / -1;
+}
+
+.supporter-state.error {
+    border-color: rgba(255, 70, 85, 0.34);
+    color: #fecaca;
+}
+
+.supporter-panel h2,
+.supporter-badge h3,
+.supporter-event h3,
+.supporter-goal h3 {
+    margin: 0;
+}
+
+.supporter-panel-heading {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.supporter-panel-heading strong {
+    color: #9af2c2;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.supporter-gauge {
+    overflow: hidden;
+    height: 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.supporter-gauge-meta {
+    display: flex;
+    justify-content: space-between;
+    color: var(--rj-color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.supporter-gauge span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #e63946, #ff7a86 54%, #9af2c2);
+    transition: width 920ms cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+.supporter-progress-copy,
+.supporter-badge p,
+.supporter-event p,
+.supporter-goal p {
+    margin: 0;
+    color: var(--rj-color-text-secondary);
+    line-height: 1.5;
+}
+
+.supporter-badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.supporter-badge {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    min-height: 138px;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(2, 6, 23, 0.34);
+}
+
+.supporter-badge.recently-unlocked {
+    z-index: 1;
+    border-color: rgba(251, 191, 36, 0.58);
+    animation: supporter-badge-reveal 1300ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+    box-shadow:
+        0 0 0 1px rgba(251, 191, 36, 0.18),
+        0 18px 46px rgba(251, 191, 36, 0.16);
+}
+
+.supporter-badge.locked {
+    opacity: 0.55;
+}
+
+.supporter-badge-mark {
+    display: grid;
+    width: 96px;
+    height: 96px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(251, 191, 36, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.18);
+}
+
+.supporter-badge-mark img,
+.supporter-badge-toast-mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.supporter-badge small {
+    display: inline-block;
+    margin-top: 8px;
+    color: #9af2c2;
+    font-weight: 900;
+}
+
+.supporter-goals {
+    display: grid;
+    gap: 10px;
+}
+
+.supporter-goal,
+.supporter-event {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(2, 6, 23, 0.34);
+}
+
+.supporter-goal span,
+.supporter-event strong {
+    color: #9af2c2;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.supporter-event-list {
+    display: grid;
+    gap: 10px;
+}
+
+.supporter-toast-stack {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 10000;
+    display: grid;
+    width: min(360px, calc(100vw - 28px));
+    gap: 12px;
+    pointer-events: none;
+}
+
+.supporter-badge-toast {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    align-items: center;
+    padding: 20px 50px 20px 20px;
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(154, 242, 194, 0.1)),
+        rgba(2, 6, 23, 0.94);
+    color: var(--rj-color-text-primary);
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.38),
+        0 0 36px rgba(251, 191, 36, 0.18);
+    pointer-events: auto;
+    animation:
+        supporter-toast-in 420ms cubic-bezier(0.2, 0.9, 0.25, 1) both,
+        supporter-toast-out 420ms ease 6080ms forwards;
+}
+
+.supporter-badge-toast-mark {
+    display: grid;
+    width: 76px;
+    height: 76px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(251, 191, 36, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.24);
+}
+
+.supporter-badge-toast p,
+.supporter-badge-toast h2 {
+    margin: 0;
+}
+
+.supporter-badge-toast p {
+    color: #9af2c2;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.supporter-badge-toast h2 {
+    margin-top: 3px;
+    font-size: 1.16rem;
+    line-height: 1.15;
+}
+
+.supporter-badge-toast div > span {
+    display: inline-block;
+    margin-top: 6px;
+    color: #fde68a;
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.supporter-badge-toast-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--rj-color-text-primary);
+    font: inherit;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.supporter-badge-toast-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+@keyframes supporter-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes supporter-toast-out {
+    to {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+}
+
+@keyframes supporter-badge-reveal {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    22% {
+        transform: scale(1.08) rotate(-1.5deg);
+    }
+
+    46% {
+        transform: scale(1.04) rotate(1.5deg);
+    }
+
+    72% {
+        transform: scale(1.02) rotate(-0.5deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@media (max-width: 760px) {
+    .supporter-page {
+        padding: 28px 14px;
+    }
+
+    .supporter-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .supporter-panel-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .supporter-badge-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .supporter-badge {
+        min-height: 0;
+        padding: 16px;
+    }
+
+    .supporter-badge-mark {
+        width: 74px;
+        height: 74px;
+    }
+
+    .supporter-goal,
+    .supporter-event {
+        flex-direction: column;
+    }
+
+    .supporter-toast-stack {
+        right: 14px;
+        bottom: 14px;
+    }
+}

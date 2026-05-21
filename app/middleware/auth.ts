@@ -10,4 +10,6 @@ export default defineNuxtRouteMiddleware(async () => {
     if (!isAuthenticated.value) {
         return navigateTo('/auth/login')
     }
+
+    useSupporterTracking().trackDailyActive()
 })

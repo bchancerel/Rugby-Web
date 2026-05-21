@@ -2,6 +2,7 @@
 const route = useRoute()
 const open = ref(false)
 const { user } = useAuth()
+const logoPath = computed(() => user.value ? '/supporter' : '/')
 
 type NavIcon = 'trophy' | 'calendar' | 'star' | 'user' | 'shield' | 'arrow' | 'menu' | 'close'
 
@@ -29,7 +30,7 @@ const links: NavLink[] = [
 const navItems = computed<NavItem[]>(() => {
     const center = {
         kind: 'logo' as const,
-        to: '#',
+        to: logoPath.value,
         label: 'RugbyJam',
     }
 
@@ -74,8 +75,6 @@ const iconPaths: Record<NavIcon, string[]> = {
 }
 
 const isActive = (to: string) => {
-    if (to === '#') return false
-
     return route.path === to || route.path.startsWith(`${to}/`)
 }
 
@@ -194,6 +193,7 @@ watch(
                             v-else
                             :to="item.to"
                             class="app-navbar-brand"
+                            :class="{ active: isActive(item.to) }"
                             :aria-label="item.label"
                             :title="item.label"
                         >
@@ -205,7 +205,7 @@ watch(
                     </div>
                 </div>
 
-                <NuxtLink to="#" class="app-navbar-mobile-brand" aria-label="RugbyJam">
+                <NuxtLink :to="logoPath" class="app-navbar-mobile-brand" aria-label="RugbyJam" @click="closeMenu">
                     <img src="/images/logo_app.svg" alt="RugbyJam" class="app-navbar-mobile-logo">
                 </NuxtLink>
 
@@ -220,8 +220,9 @@ watch(
             >
                 <div class="app-navbar-mobile-list">
                     <NuxtLink
-                        to="#"
+                        :to="logoPath"
                         class="app-navbar-mobile-link"
+                        :class="{ active: isActive(logoPath) }"
                         @click="closeMenu"
                     >
                         <span class="app-navbar-mobile-label">

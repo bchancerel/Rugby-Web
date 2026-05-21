@@ -13,6 +13,7 @@ definePageMeta({
 const route = useRoute()
 const config = useRuntimeConfig()
 const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
+const { trackEntityView } = useSupporterTracking()
 
 const statistics = ref<RugbyTeamStatistics | null>(null)
 const contexts = ref<RugbyTeamContext[]>([])
@@ -220,6 +221,7 @@ watch(
     teamId,
     () => {
         void fetchContexts()
+        trackEntityView('TEAM_VIEWED', teamId.value)
     },
     { immediate: true }
 )

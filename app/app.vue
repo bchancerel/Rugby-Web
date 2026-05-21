@@ -62,5 +62,6 @@ onUnmounted(() => {
     />
     <AppNavbar v-if="showAppNavbar" />
     <NuxtPage />
+    <SupporterBadgeToast />
   </div>
 </template>

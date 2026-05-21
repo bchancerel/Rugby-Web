@@ -6,6 +6,7 @@
 @import "./components/login.css";
 @import "./components/match.css";
 @import "./components/navbar.css";
+@import "./components/supporter.css";
 @import "./components/team-statistics.css";
 @import "./components/user.css";
 @import "./components/vitrine.css";
@@ -191,6 +192,7 @@
 .leagues-page h1,
 .league-detail-page h1,
 .match-page-header h1,
+.supporter-heading h1,
 .team-statistics-header h1,
 .team-statistics-empty h1,
 .user-heading h1,
