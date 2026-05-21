@@ -37,11 +37,6 @@ const getApiErrorMessage = (error: unknown) => {
     return apiError.data?.message || apiError.message || 'Match indisponible.'
 }
 
-const formatFixtureScore = (currentFixture: RugbyFixture) => {
-    if (currentFixture.score.home === null || currentFixture.score.away === null) return 'vs'
-    return `${currentFixture.score.home} - ${currentFixture.score.away}`
-}
-
 const formatFixtureKickoff = (date: string | null) => {
     if (!date) return 'Date a venir'
 
@@ -84,7 +79,25 @@ const formatFixtureTime = (date: string | null) => {
     }).format(kickoff)
 }
 
+const formatTimestamp = (timestamp: number | null) => timestamp !== null ? String(timestamp) : 'Non renseigne'
+
+const formatTimezone = (timezone: string | null) => timezone ?? 'Non renseigne'
+
+const formatWinner = (winner: boolean | null) => {
+    if (winner === true) return 'Victoire'
+    if (winner === false) return 'Defaite'
+    return 'Non renseigne'
+}
+
 const getTeamScore = (score: number | null) => score ?? '-'
+
+const hasPeriodScore = (home: number | null, away: number | null) =>
+    home !== null || away !== null
+
+const hasOvertime = computed(() =>
+    hasPeriodScore(fixture.value?.periods?.overtime.home ?? null, fixture.value?.periods?.overtime.away ?? null)
+    || hasPeriodScore(fixture.value?.periods?.secondOvertime.home ?? null, fixture.value?.periods?.secondOvertime.away ?? null)
+)
 
 const getTeamClass = (winner: boolean | null) => ({
     winner: winner === true,
@@ -163,7 +176,14 @@ useHead(() => ({
                             >
                             <div>
                                 <p class="match-page-eyebrow">
-                                    {{ fixture.league.name ?? 'Competition' }}
+                                    <NuxtLink
+                                        v-if="fixture.league.id"
+                                        :to="{ path: `/leagues/${fixture.league.id}`, query: fixture.league.season ? { season: String(fixture.league.season) } : {} }"
+                                        class="match-detail-competition-link"
+                                    >
+                                        {{ fixture.league.name ?? 'Competition' }}
+                                    </NuxtLink>
+                                    <span v-else>{{ fixture.league.name ?? 'Competition' }}</span>
                                     <span v-if="fixture.league.season"> / Saison {{ fixture.league.season }}</span>
                                 </p>
                             </div>
@@ -245,42 +265,84 @@ useHead(() => ({
                         </div>
                     </section>
 
-                    <nav class="match-detail-tabs" aria-label="Sections du match">
-                        <a href="#match-detail-sheet" class="active">Feuille de match</a>
-                        <a href="#match-detail-info-title">Informations</a>
-                    </nav>
                 </article>
 
-                <section id="match-detail-sheet" class="match-page-section match-detail-sheet" aria-labelledby="match-detail-sheet-title">
+                <section
+                    v-if="hasScore"
+                    class="match-page-section match-detail-score-breakdown"
+                    aria-labelledby="match-detail-score-breakdown-title"
+                >
                     <div class="match-page-section-heading">
                         <div>
-                            <p class="match-page-eyebrow">Resume</p>
-                            <h2 id="match-detail-sheet-title">Feuille de match</h2>
+                            <p class="match-page-eyebrow">Details</p>
+                            <h2 id="match-detail-score-breakdown-title">Detail du score</h2>
                         </div>
                     </div>
 
-                    <div class="match-detail-sheet-card">
-                        <div>
-                            <span>{{ fixture.teams.home.name ?? 'Domicile' }}</span>
-                            <strong>{{ getTeamScore(fixture.score.home) }}</strong>
+                    <div class="match-detail-score-card">
+                        <div class="match-detail-score-row match-detail-score-row-head">
+                            <span>Periode</span>
+                            <strong>{{ fixture.teams.home.name ?? 'Domicile' }}</strong>
+                            <strong>{{ fixture.teams.away.name ?? 'Exterieur' }}</strong>
                         </div>
-                        <p>{{ hasScore ? 'Mi-temps et evenements disponibles prochainement.' : `Match programme a ${formatFixtureTime(fixture.date)}.` }}</p>
-                        <div>
+
+                        <div class="match-detail-score-row">
+                            <span>Mi-temps</span>
+                            <strong>{{ fixture.periods?.first.home ?? '-' }}</strong>
+                            <strong>{{ fixture.periods?.first.away ?? '-' }}</strong>
+                        </div>
+
+                        <div class="match-detail-score-row">
+                            <span>Deuxieme periode</span>
+                            <strong>{{ fixture.periods?.second.home ?? '-' }}</strong>
+                            <strong>{{ fixture.periods?.second.away ?? '-' }}</strong>
+                        </div>
+
+                        <template v-if="hasOvertime">
+                            <div class="match-detail-score-row">
+                                <span>Prolongation</span>
+                                <strong>{{ fixture.periods?.overtime.home ?? '-' }}</strong>
+                                <strong>{{ fixture.periods?.overtime.away ?? '-' }}</strong>
+                            </div>
+
+                            <div
+                                v-if="hasPeriodScore(fixture.periods?.secondOvertime.home ?? null, fixture.periods?.secondOvertime.away ?? null)"
+                                class="match-detail-score-row"
+                            >
+                                <span>Deuxieme prolongation</span>
+                                <strong>{{ fixture.periods?.secondOvertime.home ?? '-' }}</strong>
+                                <strong>{{ fixture.periods?.secondOvertime.away ?? '-' }}</strong>
+                            </div>
+                        </template>
+
+                        <div class="match-detail-score-row match-detail-score-row-final">
+                            <span>Score final</span>
+                            <strong>{{ getTeamScore(fixture.score.home) }}</strong>
                             <strong>{{ getTeamScore(fixture.score.away) }}</strong>
-                            <span>{{ fixture.teams.away.name ?? 'Exterieur' }}</span>
                         </div>
                     </div>
                 </section>
 
-                <section class="match-page-section match-detail-info" aria-labelledby="match-detail-info-title">
+                <section
+                    class="match-page-section match-detail-info"
+                    aria-labelledby="match-detail-info-title"
+                >
                     <div class="match-page-section-heading">
                         <div>
-                            <p class="match-page-eyebrow">Details</p>
+                            <p class="match-page-eyebrow">Informations</p>
                             <h2 id="match-detail-info-title">Informations</h2>
                         </div>
                     </div>
 
                     <dl class="match-detail-info-grid">
+                        <div>
+                            <dt>Competition</dt>
+                            <dd>{{ fixture.league.name ?? 'Non renseignee' }}</dd>
+                        </div>
+                        <div>
+                            <dt>Saison</dt>
+                            <dd>{{ fixture.league.season ?? 'Non renseignee' }}</dd>
+                        </div>
                         <div>
                             <dt>Journee</dt>
                             <dd>{{ fixture.league.round ?? 'Non renseignee' }}</dd>
@@ -292,10 +354,6 @@ useHead(() => ({
                         <div>
                             <dt>Coup d'envoi</dt>
                             <dd>{{ formatFixtureKickoff(fixture.date) }}</dd>
-                        </div>
-                        <div>
-                            <dt>Identifiant</dt>
-                            <dd>{{ fixture.id ?? matchId }}</dd>
                         </div>
                     </dl>
                 </section>

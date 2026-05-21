@@ -48,6 +48,11 @@ export type RugbyFixtureTeam = {
     winner: boolean | null
 }
 
+export type RugbyFixturePeriodScore = {
+    home: number | null
+    away: number | null
+}
+
 export type RugbyFixture = {
     id: number | null
     date: string | null
@@ -62,6 +67,12 @@ export type RugbyFixture = {
     score: {
         home: number | null
         away: number | null
+    }
+    periods: {
+        first: RugbyFixturePeriodScore
+        second: RugbyFixturePeriodScore
+        overtime: RugbyFixturePeriodScore
+        secondOvertime: RugbyFixturePeriodScore
     }
 }
 
