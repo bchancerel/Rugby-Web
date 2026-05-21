@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import {
     RUGBY_PLACEHOLDER_LOGO,
     setRugbyPlaceholderLogo,
@@ -415,7 +416,10 @@ onMounted(async () => {
                                 </span>
                             </div>
                             <em v-else>Dernier match indisponible.</em>
-                            <small v-if="item.lastFixture">{{ formatFixtureKickoff(item.lastFixture.date) }}</small>
+                            <small v-if="item.lastFixture">
+                                <MatchLiveIndicator :fixture="item.lastFixture" />
+                                {{ formatFixtureKickoff(item.lastFixture.date) }}
+                            </small>
                         </div>
 
                         <div class="favorites-team-match-block">
@@ -475,7 +479,10 @@ onMounted(async () => {
                                 </span>
                             </div>
                             <em v-else>Prochain match indisponible.</em>
-                            <small v-if="item.nextFixture">{{ formatFixtureKickoff(item.nextFixture.date) }}</small>
+                            <small v-if="item.nextFixture">
+                                <MatchLiveIndicator :fixture="item.nextFixture" />
+                                {{ formatFixtureKickoff(item.nextFixture.date) }}
+                            </small>
                         </div>
                     </article>
                 </div>

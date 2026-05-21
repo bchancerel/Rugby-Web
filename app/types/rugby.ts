@@ -163,5 +163,6 @@ export type RugbyFavoriteMatch = {
 
 export type RugbyMatchesHome = {
     favoriteMatches: RugbyFavoriteMatch[]
+    liveFixtures: RugbyFixture[]
     upcomingFixtures: RugbyFixture[]
 }

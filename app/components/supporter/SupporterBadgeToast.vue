@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { getSupporterBadgeImageSrc } from '~/utils/supporterBadges'
-
 const { toasts, dismissToast } = useSupporterRewards()
+
+const getBadgeInitials = (label: string) =>
+    label
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((word) => word[0]?.toUpperCase())
+        .join('')
 </script>
 
 <template>
@@ -21,7 +27,7 @@ const { toasts, dismissToast } = useSupporterRewards()
                     ×
                 </button>
                 <span class="supporter-badge-toast-mark" aria-hidden="true">
-                    <img :src="getSupporterBadgeImageSrc(toast.badge.key)" alt="">
+                    {{ getBadgeInitials(toast.badge.label) }}
                 </span>
                 <div>
                     <p>Badge debloque</p>

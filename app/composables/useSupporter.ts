@@ -63,7 +63,7 @@ export const useSupporter = () => {
 
     const recordSupporterEvent = async (payload: CreateSupporterEventPayload) => {
         errorMessage.value = ''
-        const previousProfile = profile.value
+        const previousProfile = profile.value ?? await ensureSupporterProfile().catch(() => null)
         const previousBadgeKeys = new Set<SupporterBadgeKey>(
             previousProfile?.badges
                 .filter((badge) => badge.unlocked)
@@ -79,14 +79,12 @@ export const useSupporter = () => {
 
             const nextProfile = await fetchSupporterProfile()
 
-            if (previousProfile) {
-                const unlockedBadges = nextProfile.badges.filter(
-                    (badge) => badge.unlocked && !previousBadgeKeys.has(badge.key)
-                )
+            const unlockedBadges = nextProfile.badges.filter(
+                (badge) => badge.unlocked && !previousBadgeKeys.has(badge.key)
+            )
 
-                if (unlockedBadges.length) {
-                    useSupporterRewards().notifyUnlockedBadges(unlockedBadges)
-                }
+            if (unlockedBadges.length) {
+                useSupporterRewards().notifyUnlockedBadges(unlockedBadges)
             }
 
             return event

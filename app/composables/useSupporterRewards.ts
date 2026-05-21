@@ -41,6 +41,12 @@ export const useSupporterRewards = () => {
     }
 
     const notifyBadgeUnlocked = (badge: SupporterBadge) => {
+        const isBadgeAlreadyNotified =
+            recentBadgeKeys.value.includes(badge.key) ||
+            toasts.value.some((toast) => toast.badge.key === badge.key)
+
+        if (isBadgeAlreadyNotified) return
+
         const toastId = `badge-${badge.key}-${Date.now()}-${toastCounter++}`
 
         toasts.value = [...toasts.value, { id: toastId, badge }]

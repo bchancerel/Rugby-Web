@@ -18,12 +18,12 @@ const fixture = ref<RugbyFixture | null>(null)
 const pending = ref(false)
 const errorMessage = ref('')
 const liveLastUpdatedAt = ref<Date | null>(null)
+const scoringSides = ref<Array<'home' | 'away'>>([])
 let liveRefreshTimer: ReturnType<typeof setInterval> | null = null
-let liveFollowTimer: ReturnType<typeof setTimeout> | null = null
+let scoreCelebrationTimer: ReturnType<typeof setTimeout> | null = null
 let liveRefreshInFlight = false
 
-const LIVE_REFRESH_INTERVAL_MS = 15_000
-const LIVE_FOLLOW_DELAY_MS = 60_000
+const LIVE_REFRESH_INTERVAL_MS = 5_000
 const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'ABD', 'AWD', 'WO'])
 const NOT_STARTED_STATUS_CODES = new Set(['NS', 'TBD'])
 const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT'])
@@ -56,6 +56,23 @@ const isFixtureLive = computed(() => {
     if (LIVE_STATUS_LABELS.some((label) => longStatus?.includes(label))) return true
 
     return fixture.value.status.elapsed !== null
+})
+const shouldProbeLiveFixture = computed(() => {
+    if (!fixture.value || isFixtureFinal.value) return false
+
+    const kickoffTime = fixture.value.timestamp !== null
+        ? fixture.value.timestamp * 1000
+        : fixture.value.date
+            ? new Date(fixture.value.date).getTime()
+            : Number.NaN
+
+    if (Number.isNaN(kickoffTime)) return true
+
+    const now = Date.now()
+    const probeStartsAt = kickoffTime - 30 * 60 * 1000
+    const probeEndsAt = kickoffTime + 3 * 60 * 60 * 1000
+
+    return now >= probeStartsAt && now <= probeEndsAt
 })
 const liveLastUpdatedLabel = computed(() => {
     if (!liveLastUpdatedAt.value) return null
@@ -145,9 +162,48 @@ const getTeamClass = (winner: boolean | null) => ({
     loser: winner === false,
 })
 
+const stopScoreCelebration = () => {
+    if (!scoreCelebrationTimer) return
+
+    clearTimeout(scoreCelebrationTimer)
+    scoreCelebrationTimer = null
+}
+
+const triggerScoreCelebration = (nextScoringSides: Array<'home' | 'away'>) => {
+    if (nextScoringSides.length === 0) return
+
+    stopScoreCelebration()
+    scoringSides.value = nextScoringSides
+    scoreCelebrationTimer = setTimeout(() => {
+        scoringSides.value = []
+        scoreCelebrationTimer = null
+    }, 1800)
+}
+
+const detectScoreCelebration = (previousFixture: RugbyFixture | null, nextFixture: RugbyFixture) => {
+    if (!previousFixture) return
+
+    const nextScoringSides: Array<'home' | 'away'> = []
+    const previousHomeScore = previousFixture.score.home
+    const nextHomeScore = nextFixture.score.home
+    const previousAwayScore = previousFixture.score.away
+    const nextAwayScore = nextFixture.score.away
+
+    if (previousHomeScore !== null && nextHomeScore !== null && nextHomeScore > previousHomeScore) {
+        nextScoringSides.push('home')
+    }
+
+    if (previousAwayScore !== null && nextAwayScore !== null && nextAwayScore > previousAwayScore) {
+        nextScoringSides.push('away')
+    }
+
+    triggerScoreCelebration(nextScoringSides)
+}
+
 type FetchFixtureOptions = {
     liveRefresh?: boolean
     showPending?: boolean
+    probeAfterFetch?: boolean
 }
 
 const stopLiveRefresh = () => {
@@ -157,14 +213,7 @@ const stopLiveRefresh = () => {
     liveRefreshTimer = null
 }
 
-const stopLiveFollowTracking = () => {
-    if (!liveFollowTimer) return
-
-    clearTimeout(liveFollowTimer)
-    liveFollowTimer = null
-}
-
-const fetchFixture = async ({ liveRefresh = false, showPending = true }: FetchFixtureOptions = {}) => {
+const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfterFetch = false }: FetchFixtureOptions = {}) => {
     const requestedMatchId = matchId.value
     if (!requestedMatchId) return
 
@@ -174,16 +223,30 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true }: FetchFi
     }
 
     try {
+        const previousFixture = fixture.value
         const refreshedFixture = await $fetch<RugbyFixture>(`/rugby/fixtures/${requestedMatchId}`, {
             baseURL: apiBase.value,
+            cache: liveRefresh ? 'no-store' : undefined,
             credentials: 'include',
+            headers: liveRefresh
+                ? {
+                    'Cache-Control': 'no-cache',
+                    Pragma: 'no-cache',
+                }
+                : undefined,
             query: liveRefresh ? { live: '1' } : undefined,
         })
         if (requestedMatchId !== matchId.value) return
 
+        if (liveRefresh) {
+            detectScoreCelebration(previousFixture, refreshedFixture)
+        }
         fixture.value = refreshedFixture
         if (liveRefresh || isFixtureLive.value) {
             liveLastUpdatedAt.value = new Date()
+        }
+        if (!liveRefresh && probeAfterFetch && shouldProbeLiveFixture.value) {
+            refreshLiveFixture()
         }
         errorMessage.value = ''
     } catch (error) {
@@ -209,23 +272,22 @@ const refreshLiveFixture = () => {
 const startLiveRefresh = () => {
     if (!import.meta.client || liveRefreshTimer) return
 
+    refreshLiveFixture()
     liveRefreshTimer = setInterval(refreshLiveFixture, LIVE_REFRESH_INTERVAL_MS)
 }
 
 const startLiveFollowTracking = () => {
-    if (!import.meta.client || liveFollowTimer || !matchId.value) return
+    if (!import.meta.client || !matchId.value) return
 
-    liveFollowTimer = setTimeout(() => {
-        trackEntityView('LIVE_MATCH_FOLLOWED', matchId.value)
-        liveFollowTimer = null
-    }, LIVE_FOLLOW_DELAY_MS)
+    trackEntityView('LIVE_MATCH_FOLLOWED', matchId.value)
 }
 
 watch(matchId, () => {
     stopLiveRefresh()
-    stopLiveFollowTracking()
+    stopScoreCelebration()
+    scoringSides.value = []
     liveLastUpdatedAt.value = null
-    void fetchFixture()
+    void fetchFixture({ probeAfterFetch: true })
 }, { immediate: true })
 
 watch(isFixtureLive, (isLive) => {
@@ -236,7 +298,6 @@ watch(isFixtureLive, (isLive) => {
     }
 
     stopLiveRefresh()
-    stopLiveFollowTracking()
     liveLastUpdatedAt.value = null
 })
 
@@ -252,7 +313,7 @@ watch(fixture, (currentFixture) => {
 
 onBeforeUnmount(() => {
     stopLiveRefresh()
-    stopLiveFollowTracking()
+    stopScoreCelebration()
 })
 
 useHead(() => ({
@@ -316,14 +377,6 @@ useHead(() => ({
                                 </p>
                             </div>
                         </div>
-
-                        <NuxtLink
-                            v-if="fixture.league.id"
-                            :to="{ path: `/leagues/${fixture.league.id}`, query: fixture.league.season ? { season: String(fixture.league.season) } : {} }"
-                            class="match-detail-league-link"
-                        >
-                            Championnat
-                        </NuxtLink>
                     </header>
 
                     <div class="match-detail-meta-strip">
@@ -341,6 +394,7 @@ useHead(() => ({
                                 <img
                                     :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
                                     :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                    :class="{ 'is-score-celebrating': scoringSides.includes('home') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
                                 <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
@@ -349,6 +403,7 @@ useHead(() => ({
                                 <img
                                     :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
                                     :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                    :class="{ 'is-score-celebrating': scoringSides.includes('home') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
                                 <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
@@ -390,6 +445,7 @@ useHead(() => ({
                                 <img
                                     :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
                                     :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                    :class="{ 'is-score-celebrating': scoringSides.includes('away') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
                                 <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
@@ -399,6 +455,7 @@ useHead(() => ({
                                 <img
                                     :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
                                     :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                    :class="{ 'is-score-celebrating': scoringSides.includes('away') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
                             </template>

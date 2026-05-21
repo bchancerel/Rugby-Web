@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import type { RugbyFixture } from '~/types/rugby'
 import {
     RUGBY_PLACEHOLDER_LOGO,
@@ -110,6 +111,7 @@ const updateMatchRound = (event: Event) => {
                 class="match-card"
             >
                 <p class="match-kickoff">
+                    <MatchLiveIndicator :fixture="fixture" />
                     {{ formatFixtureKickoff(fixture.date) }}
                 </p>
 

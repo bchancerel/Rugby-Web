@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
+import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import {
     RUGBY_PLACEHOLDER_LOGO,
     setRugbyPlaceholderLogo,
@@ -465,7 +466,10 @@ useHead(() => ({
                             class="team-fixture-card"
                         >
                             <div class="team-fixture-meta">
-                                <span>{{ fixture.league.round ? `Journee ${fixture.league.round}` : 'Match' }}</span>
+                                <span>
+                                    <MatchLiveIndicator :fixture="fixture" />
+                                    {{ fixture.league.round ? `Journee ${fixture.league.round}` : 'Match' }}
+                                </span>
                                 <time>{{ formatFixtureKickoff(fixture.date) }}</time>
                             </div>
 

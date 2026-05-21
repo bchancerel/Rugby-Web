@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import type { RugbyFixture } from '~/types/rugby'
 
 type BracketRound = {
@@ -57,7 +58,10 @@ const formatFixtureDate = (date: string | null) => {
                         :key="fixture.id ?? `${fixture.teams.home.name}-${fixture.teams.away.name}`"
                         class="bracket-match"
                     >
-                        <p class="bracket-date">{{ formatFixtureDate(fixture.date) }}</p>
+                        <p class="bracket-date">
+                            <MatchLiveIndicator :fixture="fixture" />
+                            {{ formatFixtureDate(fixture.date) }}
+                        </p>
                         <div class="bracket-team-row">
                             <NuxtLink
                                 v-if="getFixtureTeamPath(fixture, fixture.teams.home.id)"
@@ -118,7 +122,10 @@ const formatFixtureDate = (date: string | null) => {
                         class="playoff-match"
                     >
                         <div class="playoff-match-heading">
-                            <p class="bracket-date">{{ formatFixtureDate(fixture.date) }}</p>
+                            <p class="bracket-date">
+                                <MatchLiveIndicator :fixture="fixture" />
+                                {{ formatFixtureDate(fixture.date) }}
+                            </p>
                             <NuxtLink
                                 v-if="getFixtureMatchPath(fixture)"
                                 :to="getFixtureMatchPath(fixture)"
