@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-    ci:
-      name: Typecheck - Test - Build
+  ci:
+    name: Typecheck - Test - Build
     runs-on: ubuntu-latest
 
     env:
