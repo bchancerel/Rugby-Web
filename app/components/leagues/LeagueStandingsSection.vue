@@ -17,7 +17,7 @@ const props = defineProps<{
 const formatStandingValue = (value: number | null) => value ?? '-'
 
 const getTeamStatisticsPath = (teamId: string | number | null) => {
-    if (teamId === null || !props.leagueId || !props.season) return null
+    if (teamId === null || !props.leagueId || !props.season) return undefined
 
     return {
         path: `/teams/${teamId}`,

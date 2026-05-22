@@ -7,7 +7,11 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "check": "npm run typecheck && npm run test:run && npm run build"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.11.3",
@@ -20,6 +24,11 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^25.7.0"
+    "@nuxt/test-utils": "^4.0.3",
+    "@types/node": "^25.7.0",
+    "@vue/test-utils": "^2.4.10",
+    "happy-dom": "^20.9.0",
+    "vitest": "^4.1.7",
+    "vue-tsc": "^3.3.1"
   }
 }

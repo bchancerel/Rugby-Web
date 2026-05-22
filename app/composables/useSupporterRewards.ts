@@ -67,7 +67,7 @@ export const useSupporterRewards = () => {
     const notifyBadgeUnlocked = (badge: SupporterBadge) => {
         const isBadgeAlreadyNotified =
             recentBadgeKeys.value.includes(badge.key) ||
-            toasts.value.some((toast) => toast.badge.key === badge.key)
+            toasts.value.some((toast) => toast.type === 'badge' && toast.badge.key === badge.key)
 
         if (isBadgeAlreadyNotified) return
 
