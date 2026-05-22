@@ -4,6 +4,11 @@ import type { SupporterLevel } from '~/types/supporter'
 const props = defineProps<{
     level: SupporterLevel
     totalXp: number
+    recentlyUnlocked?: boolean
+}>()
+
+const emit = defineEmits<{
+    animationComplete: [levelValue: SupporterLevel['value']]
 }>()
 
 const animatedProgress = ref(0)
@@ -48,7 +53,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <section class="supporter-panel supporter-level-panel" aria-labelledby="supporter-level-title">
+    <section
+        class="supporter-panel supporter-level-panel"
+        :class="{ 'recently-unlocked': recentlyUnlocked }"
+        aria-labelledby="supporter-level-title"
+        @animationend.self="emit('animationComplete', level.value)"
+    >
         <div class="supporter-panel-heading">
             <div>
                 <p class="supporter-eyebrow">Niveau {{ level.value }}</p>

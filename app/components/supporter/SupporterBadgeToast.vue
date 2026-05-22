@@ -1,13 +1,7 @@
 <script setup lang="ts">
-const { toasts, dismissToast } = useSupporterRewards()
+import { getSupporterBadgeImageSrc } from '~/utils/supporterBadges'
 
-const getBadgeInitials = (label: string) =>
-    label
-        .split(' ')
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((word) => word[0]?.toUpperCase())
-        .join('')
+const { toasts, dismissToast } = useSupporterRewards()
 </script>
 
 <template>
@@ -17,6 +11,7 @@ const getBadgeInitials = (label: string) =>
                 v-for="toast in toasts"
                 :key="toast.id"
                 class="supporter-badge-toast"
+                :class="{ 'level-up': toast.type === 'level' }"
             >
                 <button
                     class="supporter-badge-toast-close"
@@ -24,15 +19,29 @@ const getBadgeInitials = (label: string) =>
                     aria-label="Fermer la notification"
                     @click="dismissToast(toast.id)"
                 >
-                    ×
+                    x
                 </button>
-                <span class="supporter-badge-toast-mark" aria-hidden="true">
-                    {{ getBadgeInitials(toast.badge.label) }}
+                <span
+                    v-if="toast.type === 'badge'"
+                    class="supporter-badge-toast-mark"
+                    aria-hidden="true"
+                >
+                    <img :src="getSupporterBadgeImageSrc(toast.badge.key)" alt="" loading="lazy">
+                </span>
+                <span v-else class="supporter-badge-toast-mark" aria-hidden="true">
+                    {{ toast.level.value }}
                 </span>
                 <div>
-                    <p>Badge debloque</p>
-                    <h2>{{ toast.badge.label }}</h2>
-                    <span>+{{ toast.badge.xp }} XP bonus</span>
+                    <template v-if="toast.type === 'badge'">
+                        <p>Badge debloque</p>
+                        <h2>{{ toast.badge.label }}</h2>
+                        <span>+{{ toast.badge.xp }} XP bonus</span>
+                    </template>
+                    <template v-else>
+                        <p>Niveau atteint</p>
+                        <h2>{{ toast.level.label }}</h2>
+                        <span>Niveau {{ toast.level.value }}</span>
+                    </template>
                 </div>
             </article>
         </div>

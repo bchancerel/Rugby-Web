@@ -69,6 +69,7 @@ export const useSupporter = () => {
                 .filter((badge) => badge.unlocked)
                 .map((badge) => badge.key) ?? []
         )
+        const previousLevelValue = previousProfile?.level.value ?? 1
 
         try {
             const event = await $fetch<SupporterEvent>('/api/supporter/events', {
@@ -85,6 +86,10 @@ export const useSupporter = () => {
 
             if (unlockedBadges.length) {
                 useSupporterRewards().notifyUnlockedBadges(unlockedBadges)
+            }
+
+            if (nextProfile.level.value > previousLevelValue) {
+                useSupporterRewards().notifyLevelUnlocked(nextProfile.level)
             }
 
             return event

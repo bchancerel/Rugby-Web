@@ -8,6 +8,8 @@ const props = defineProps<{
     profile: SupporterProfile
 }>()
 
+const { isLevelRecentlyUnlocked, clearRecentLevel } = useSupporterRewards()
+
 const lockedBadges = computed(() =>
     props.profile.badges.filter((badge) => !badge.unlocked)
 )
@@ -20,6 +22,8 @@ const nextGoals = computed(() => lockedBadges.value.slice(0, 3))
         <SupporterLevelGauge
             :level="profile.level"
             :total-xp="profile.totalXp"
+            :recently-unlocked="isLevelRecentlyUnlocked(profile.level.value)"
+            @animation-complete="clearRecentLevel"
         />
 
         <SupporterBadgeGrid :badges="profile.badges" />
