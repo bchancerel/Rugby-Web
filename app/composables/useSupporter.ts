@@ -27,6 +27,7 @@ const getErrorMessage = (error: unknown) => {
 }
 
 export const useSupporter = () => {
+    const apiFetch = useApiRequest()
     const profile = useState<SupporterProfile | null>('supporter:profile', () => null)
     const pending = useState<boolean>('supporter:pending', () => false)
     const initialized = useState<boolean>('supporter:initialized', () => false)
@@ -39,9 +40,7 @@ export const useSupporter = () => {
         errorMessage.value = ''
 
         try {
-            supporterRequest = $fetch<SupporterProfile>('/api/supporter/me', {
-                credentials: 'include',
-            })
+            supporterRequest = apiFetch<SupporterProfile>('/supporter/me')
 
             profile.value = await supporterRequest
             initialized.value = true
@@ -72,10 +71,9 @@ export const useSupporter = () => {
         const previousLevelValue = previousProfile?.level.value ?? 1
 
         try {
-            const event = await $fetch<SupporterEvent>('/api/supporter/events', {
+            const event = await apiFetch<SupporterEvent>('/supporter/events', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
 
             const nextProfile = await fetchSupporterProfile()

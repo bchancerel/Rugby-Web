@@ -8,6 +8,7 @@ type UserSession = {
 }
 
 const { setUser } = useAuth()
+const apiFetch = useApiRequest()
 const sessions = ref<UserSession[]>([])
 const sessionsPending = ref(false)
 const sessionsErrorMessage = ref('')
@@ -29,9 +30,7 @@ const fetchSessions = async () => {
     sessionsErrorMessage.value = ''
 
     try {
-        sessions.value = await $fetch<UserSession[]>('/api/users/sessions', {
-            credentials: 'include',
-        })
+        sessions.value = await apiFetch<UserSession[]>('/users/sessions')
     } catch (error) {
         sessionsErrorMessage.value = error instanceof Error ? error.message : 'Impossible de charger les sessions.'
     } finally {
@@ -44,9 +43,8 @@ const revokeSession = async (sessionId: string) => {
     sessionsErrorMessage.value = ''
 
     try {
-        await $fetch(`/api/users/sessions/${sessionId}`, {
+        await apiFetch(`/users/sessions/${sessionId}`, {
             method: 'DELETE',
-            credentials: 'include',
         })
 
         sessions.value = sessions.value.filter((session) => session.id !== sessionId)
@@ -62,9 +60,8 @@ const revokeAllSessions = async () => {
     sessionsErrorMessage.value = ''
 
     try {
-        await $fetch('/api/users/sessions', {
+        await apiFetch('/users/sessions', {
             method: 'DELETE',
-            credentials: 'include',
         })
 
         setUser(null)

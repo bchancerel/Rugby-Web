@@ -6,6 +6,7 @@ const props = defineProps<{
 }>()
 
 const { logout, setUser } = useAuth()
+const apiFetch = useApiRequest()
 const deleteAccountModalOpen = ref(false)
 const deleteAccountPending = ref(false)
 const deleteAccountErrorMessage = ref('')
@@ -33,9 +34,8 @@ const deleteAccount = async () => {
     deleteAccountErrorMessage.value = ''
 
     try {
-        await $fetch('/api/users/me', {
+        await apiFetch('/users/me', {
             method: 'DELETE',
-            credentials: 'include',
         })
 
         setUser(null)

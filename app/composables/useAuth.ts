@@ -41,6 +41,7 @@ const getErrorStatus = (error: unknown) => {
 }
 
 export const useAuth = () => {
+    const apiFetch = useApiRequest()
     const user = useState<AuthUser | null>('auth:user', () => null)
     const pending = useState<boolean>('auth:pending', () => false)
     const initialized = useState<boolean>('auth:initialized', () => false)
@@ -55,10 +56,9 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            const data = await $fetch<AuthResponse>('/api/auth/login', {
+            const data = await apiFetch<AuthResponse>('/auth/login', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
 
             setUser(data.user)
@@ -74,10 +74,9 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            const data = await $fetch<AuthResponse>('/api/auth/register', {
+            const data = await apiFetch<AuthResponse>('/auth/register', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
 
             setUser(data.user)
@@ -91,9 +90,8 @@ export const useAuth = () => {
 
     const refreshAccessToken = async () => {
         try {
-            await $fetch<ApiMessageResponse>('/api/auth/refresh', {
+            await apiFetch<ApiMessageResponse>('/auth/refresh', {
                 method: 'POST',
-                credentials: 'include',
             })
 
             return true
@@ -106,9 +104,7 @@ export const useAuth = () => {
         pending.value = true
         
         try {
-            const data = await $fetch<AuthUser>('/api/users/me', {
-                credentials: 'include',
-            })
+            const data = await apiFetch<AuthUser>('/users/me')
 
             setUser(data)
             return data
@@ -129,10 +125,9 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            const data = await $fetch<AuthUser>('/api/users/me', {
+            const data = await apiFetch<AuthUser>('/users/me', {
                 method: 'PATCH',
                 body: payload,
-                credentials: 'include',
             })
 
             setUser(data)
@@ -157,10 +152,9 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            return await $fetch<ApiMessageResponse>('/api/auth/forgot-password', {
+            return await apiFetch<ApiMessageResponse>('/auth/forgot-password', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
         } catch (error) {
             throw new Error(getErrorMessage(error))
@@ -173,10 +167,9 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            return await $fetch<ApiMessageResponse>('/api/auth/reset-password', {
+            return await apiFetch<ApiMessageResponse>('/auth/reset-password', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
         } catch (error) {
             throw new Error(getErrorMessage(error))
@@ -189,10 +182,9 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            return await $fetch<ApiMessageResponse>('/api/auth/verify-email', {
+            return await apiFetch<ApiMessageResponse>('/auth/verify-email', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
         } catch (error) {
             throw new Error(getErrorMessage(error))
@@ -205,9 +197,8 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            return await $fetch<ApiMessageResponse>('/api/auth/resend-verification', {
+            return await apiFetch<ApiMessageResponse>('/auth/resend-verification', {
                 method: 'POST',
-                credentials: 'include',
             })
         } catch (error) {
             throw new Error(getErrorMessage(error))
@@ -220,9 +211,8 @@ export const useAuth = () => {
         pending.value = true
 
         try {
-            await $fetch('/api/auth/logout', {
+            await apiFetch('/auth/logout', {
                 method: 'POST',
-                credentials: 'include',
             })
         } finally {
             setUser(null)

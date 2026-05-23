@@ -48,6 +48,7 @@ const getCollectionKey = (entityType: FavoriteEntityType) =>
     entityType === 'team' ? 'teams' : 'competitions'
 
 export const useFavorites = () => {
+    const apiFetch = useApiRequest()
     const favorites = useState<FavoritesResponse>('favorites:data', createEmptyFavorites)
     const pending = useState<boolean>('favorites:pending', () => false)
     const initialized = useState<boolean>('favorites:initialized', () => false)
@@ -61,9 +62,7 @@ export const useFavorites = () => {
         errorMessage.value = ''
 
         try {
-            favoritesRequest = $fetch<FavoritesResponse>('/api/favorites', {
-                credentials: 'include',
-            })
+            favoritesRequest = apiFetch<FavoritesResponse>('/favorites')
 
             favorites.value = await favoritesRequest
             initialized.value = true
@@ -110,10 +109,9 @@ export const useFavorites = () => {
         successMessage.value = ''
 
         try {
-            const favorite = await $fetch<Favorite>('/api/favorites', {
+            const favorite = await apiFetch<Favorite>('/favorites', {
                 method: 'POST',
                 body: payload,
-                credentials: 'include',
             })
 
             await fetchFavorites()
@@ -133,9 +131,8 @@ export const useFavorites = () => {
         successMessage.value = ''
 
         try {
-            await $fetch(`/api/favorites/${favoriteId}`, {
+            await apiFetch(`/favorites/${favoriteId}`, {
                 method: 'DELETE',
-                credentials: 'include',
             })
 
             await fetchFavorites()

@@ -25,6 +25,7 @@ const getAdminErrorMessage = (error: unknown) => {
 }
 
 export const useAdminUsers = () => {
+    const apiFetch = useApiRequest()
     const users = useState<AdminUser[]>('admin-users:list', () => [])
     const page = useState<number>('admin-users:page', () => 1)
     const limit = useState<number>('admin-users:limit', () => 20)
@@ -39,12 +40,11 @@ export const useAdminUsers = () => {
         errorMessage.value = null
 
         try {
-            const data = await $fetch<AdminUsersResponse>('/api/admin/users', {
+            const data = await apiFetch<AdminUsersResponse>('/admin/users', {
                 query: {
                     page: nextPage,
                     limit: limit.value,
                 },
-                credentials: 'include',
             })
 
             users.value = data.users
@@ -66,10 +66,9 @@ export const useAdminUsers = () => {
         errorMessage.value = null
 
         try {
-            const updatedUser = await $fetch<AdminRoleUpdateResponse>(`/api/admin/users/${userId}/role`, {
+            const updatedUser = await apiFetch<AdminRoleUpdateResponse>(`/admin/users/${userId}/role`, {
                 method: 'PATCH',
                 body: { role },
-                credentials: 'include',
             })
 
             users.value = users.value.map((user) => {
@@ -97,9 +96,8 @@ export const useAdminUsers = () => {
         errorMessage.value = null
 
         try {
-            await $fetch(`/api/admin/users/${userId}`, {
+            await apiFetch(`/admin/users/${userId}`, {
                 method: 'DELETE',
-                credentials: 'include',
             })
 
             const shouldGoBack = users.value.length === 1 && page.value > 1
