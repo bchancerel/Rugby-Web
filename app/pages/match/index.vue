@@ -10,7 +10,7 @@ definePageMeta({
     middleware: 'auth',
 })
 
-const config = useRuntimeConfig()
+const apiFetch = useApiRequest()
 const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const favoriteMatches = ref<RugbyFavoriteMatch[]>([])
@@ -22,8 +22,6 @@ const liveFixturesError = ref('')
 const upcomingFixtures = ref<RugbyFixture[]>([])
 const upcomingFixturesPending = ref(false)
 const upcomingFixturesError = ref('')
-
-const apiBase = computed(() => import.meta.server ? config.apiBase : config.public.apiBase)
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
@@ -39,10 +37,7 @@ const fetchMatchesHome = async () => {
     upcomingFixturesError.value = ''
 
     try {
-        const data = await $fetch<RugbyMatchesHome>('/rugby/matches/home', {
-            baseURL: apiBase.value,
-            credentials: 'include',
-        })
+        const data = await apiFetch<RugbyMatchesHome>('/rugby/matches/home')
 
         favoriteMatches.value = data.favoriteMatches
         liveFixtures.value = data.liveFixtures

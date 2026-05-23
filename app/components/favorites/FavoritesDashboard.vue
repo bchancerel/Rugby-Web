@@ -16,6 +16,7 @@ const {
     removeFavorite,
     getFavoriteLimit,
 } = useFavorites()
+const apiFetch = useApiRequest()
 
 const insightsPending = ref(false)
 const insightsError = ref('')
@@ -205,9 +206,7 @@ const refreshInsights = async () => {
     try {
         const overviews = await Promise.all(
             favorites.value.competitions.data.map(async (favorite) => {
-                const overview = await $fetch<RugbyLeagueOverview>(`/api/rugby/leagues/${favorite.entityId}/overview`, {
-                    credentials: 'include',
-                })
+                const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
 
                 return [favorite.entityId, overview] as const
             })

@@ -12,7 +12,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const config = useRuntimeConfig()
+const apiFetch = useApiRequest()
 const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 const { trackEntityView } = useSupporterTracking()
 
@@ -119,11 +119,7 @@ const fetchContexts = async () => {
     contextsErrorMessage.value = ''
 
     try {
-        const baseURL = import.meta.server ? config.apiBase : config.public.apiBase
-        contexts.value = await $fetch<RugbyTeamContext[]>(`/rugby/teams/${teamId.value}/contexts`, {
-            baseURL,
-            credentials: 'include',
-        })
+        contexts.value = await apiFetch<RugbyTeamContext[]>(`/rugby/teams/${teamId.value}/contexts`)
     } catch (error) {
         contexts.value = []
         contextsErrorMessage.value = getApiErrorMessage(error)
@@ -143,11 +139,7 @@ const fetchStatistics = async () => {
     errorMessage.value = ''
 
     try {
-        const baseURL = import.meta.server ? config.apiBase : config.public.apiBase
-
-        statistics.value = await $fetch<RugbyTeamStatistics>(`/rugby/teams/${teamId.value}/statistics`, {
-            baseURL,
-            credentials: 'include',
+        statistics.value = await apiFetch<RugbyTeamStatistics>(`/rugby/teams/${teamId.value}/statistics`, {
             query: {
                 league: leagueId.value,
                 season: season.value,
@@ -172,11 +164,7 @@ const fetchFixtures = async () => {
     fixturesErrorMessage.value = ''
 
     try {
-        const baseURL = import.meta.server ? config.apiBase : config.public.apiBase
-
-        fixtures.value = await $fetch<RugbyFixture[]>('/rugby/fixtures', {
-            baseURL,
-            credentials: 'include',
+        fixtures.value = await apiFetch<RugbyFixture[]>('/rugby/fixtures', {
             query: {
                 team: teamId.value,
                 league: leagueId.value,

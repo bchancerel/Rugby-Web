@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
 
+const apiProxyTarget = (process.env.NUXT_API_PROXY_TARGET || 'http://localhost:3000/api').replace(/\/$/, '')
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -19,13 +21,14 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
+    '/api/**': { proxy: `${apiProxyTarget}/**` },
     '/mentions-légales': { redirect: '/mentions-legales' },
     '/mentions-l%C3%A9gales': { redirect: '/mentions-legales' },
   },
   nitro: {
     devProxy: {
       '/api': {
-        target: process.env.NUXT_API_PROXY_TARGET || 'http://localhost:3000/api',
+        target: apiProxyTarget,
         changeOrigin: true,
       },
     },

@@ -10,7 +10,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const config = useRuntimeConfig()
+const apiFetch = useApiRequest()
 const { getFixtureTeamPath } = useRugbyTeamLinks()
 const { trackEntityView } = useSupporterTracking()
 
@@ -30,7 +30,6 @@ const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'I
 const LIVE_STATUS_LABELS = ['live', 'in play', 'first half', 'half time', 'second half', 'extra time', 'pause']
 
 const matchId = computed(() => String(route.params.id ?? ''))
-const apiBase = computed(() => import.meta.server ? config.apiBase : config.public.apiBase)
 const hasScore = computed(() =>
     fixture.value?.score.home !== null && fixture.value?.score.away !== null
 )
@@ -224,10 +223,8 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfte
 
     try {
         const previousFixture = fixture.value
-        const refreshedFixture = await $fetch<RugbyFixture>(`/rugby/fixtures/${requestedMatchId}`, {
-            baseURL: apiBase.value,
+        const refreshedFixture = await apiFetch<RugbyFixture>(`/rugby/fixtures/${requestedMatchId}`, {
             cache: liveRefresh ? 'no-store' : undefined,
-            credentials: 'include',
             headers: liveRefresh
                 ? {
                     'Cache-Control': 'no-cache',
