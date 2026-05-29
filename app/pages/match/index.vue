@@ -44,10 +44,7 @@ const fetchMatchesHome = async ({ showPending = true } = {}) => {
     try {
         const data = await apiFetch<RugbyMatchesHome>('/rugby/matches/home', {
             cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache',
-                Pragma: 'no-cache',
-            },
+            query: { t: String(Date.now()) },
         })
 
         favoriteMatches.value = data.favoriteMatches

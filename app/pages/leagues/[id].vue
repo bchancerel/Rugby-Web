@@ -249,10 +249,7 @@ const refreshLeagueLive = async () => {
     try {
         overview.value = await apiFetch<RugbyLeagueOverview | null>(getOverviewPath(), {
             cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache',
-                Pragma: 'no-cache',
-            },
+            query: { t: String(Date.now()) },
         })
     } catch {
         // On garde les donnees visibles si une actualisation live echoue.

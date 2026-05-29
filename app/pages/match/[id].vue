@@ -23,7 +23,7 @@ let liveRefreshTimer: ReturnType<typeof setInterval> | null = null
 let scoreCelebrationTimer: ReturnType<typeof setTimeout> | null = null
 let liveRefreshInFlight = false
 
-const LIVE_REFRESH_INTERVAL_MS = 5_000
+const LIVE_REFRESH_INTERVAL_MS = 15_000
 const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'POST', 'ABD', 'AWD', 'WO'])
 const NOT_STARTED_STATUS_CODES = new Set(['NS', 'TBD'])
 const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT', 'INTR'])
@@ -241,12 +241,6 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfte
         const previousFixture = fixture.value
         const refreshedFixture = await apiFetch<RugbyFixture>(`/rugby/fixtures/${requestedMatchId}`, {
             cache: liveRefresh ? 'no-store' : undefined,
-            headers: liveRefresh
-                ? {
-                    'Cache-Control': 'no-cache',
-                    Pragma: 'no-cache',
-                }
-                : undefined,
             query: liveRefresh ? { live: '1', t: String(Date.now()) } : undefined,
         })
         if (requestedMatchId !== matchId.value) return
