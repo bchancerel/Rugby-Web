@@ -22,38 +22,71 @@ const liveFixturesError = ref('')
 const upcomingFixtures = ref<RugbyFixture[]>([])
 const upcomingFixturesPending = ref(false)
 const upcomingFixturesError = ref('')
+let matchesRefreshTimer: ReturnType<typeof setInterval> | null = null
+
+const MATCHES_REFRESH_INTERVAL_MS = 15_000
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
     return apiError.data?.message || apiError.message || 'Matchs indisponibles.'
 }
 
-const fetchMatchesHome = async () => {
-    favoriteMatchesPending.value = true
-    liveFixturesPending.value = true
-    upcomingFixturesPending.value = true
-    favoriteMatchesError.value = ''
-    liveFixturesError.value = ''
-    upcomingFixturesError.value = ''
+const fetchMatchesHome = async ({ showPending = true } = {}) => {
+    if (showPending) {
+        favoriteMatchesPending.value = true
+        liveFixturesPending.value = true
+        upcomingFixturesPending.value = true
+        favoriteMatchesError.value = ''
+        liveFixturesError.value = ''
+        upcomingFixturesError.value = ''
+    }
 
     try {
-        const data = await apiFetch<RugbyMatchesHome>('/rugby/matches/home')
+        const data = await apiFetch<RugbyMatchesHome>('/rugby/matches/home', {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+            },
+        })
 
         favoriteMatches.value = data.favoriteMatches
         liveFixtures.value = data.liveFixtures
         upcomingFixtures.value = data.upcomingFixtures
+        favoriteMatchesError.value = ''
+        liveFixturesError.value = ''
+        upcomingFixturesError.value = ''
     } catch (error) {
-        favoriteMatches.value = []
-        liveFixtures.value = []
-        upcomingFixtures.value = []
-        favoriteMatchesError.value = getApiErrorMessage(error)
-        liveFixturesError.value = getApiErrorMessage(error)
-        upcomingFixturesError.value = getApiErrorMessage(error)
+        if (showPending || (favoriteMatches.value.length === 0 && liveFixtures.value.length === 0 && upcomingFixtures.value.length === 0)) {
+            favoriteMatches.value = []
+            liveFixtures.value = []
+            upcomingFixtures.value = []
+            favoriteMatchesError.value = getApiErrorMessage(error)
+            liveFixturesError.value = getApiErrorMessage(error)
+            upcomingFixturesError.value = getApiErrorMessage(error)
+        }
     } finally {
-        favoriteMatchesPending.value = false
-        liveFixturesPending.value = false
-        upcomingFixturesPending.value = false
+        if (showPending) {
+            favoriteMatchesPending.value = false
+            liveFixturesPending.value = false
+            upcomingFixturesPending.value = false
+        }
     }
+}
+
+const startMatchesRefresh = () => {
+    if (!import.meta.client || matchesRefreshTimer) return
+
+    matchesRefreshTimer = setInterval(() => {
+        void fetchMatchesHome({ showPending: false })
+    }, MATCHES_REFRESH_INTERVAL_MS)
+}
+
+const stopMatchesRefresh = () => {
+    if (!matchesRefreshTimer) return
+
+    clearInterval(matchesRefreshTimer)
+    matchesRefreshTimer = null
 }
 
 const hasFavoriteMatches = computed(() =>
@@ -90,6 +123,11 @@ const formatFixtureKickoff = (date: string | null) => {
 
 onMounted(() => {
     void fetchMatchesHome()
+    startMatchesRefresh()
+})
+
+onBeforeUnmount(() => {
+    stopMatchesRefresh()
 })
 
 useHead({

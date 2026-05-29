@@ -24,10 +24,22 @@ let scoreCelebrationTimer: ReturnType<typeof setTimeout> | null = null
 let liveRefreshInFlight = false
 
 const LIVE_REFRESH_INTERVAL_MS = 5_000
-const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'ABD', 'AWD', 'WO'])
+const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'POST', 'ABD', 'AWD', 'WO'])
 const NOT_STARTED_STATUS_CODES = new Set(['NS', 'TBD'])
-const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT'])
-const LIVE_STATUS_LABELS = ['live', 'in play', 'first half', 'half time', 'second half', 'extra time', 'pause']
+const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT', 'INTR'])
+const LIVE_STATUS_LABELS = [
+    'live',
+    'in play',
+    'in progress',
+    'first half',
+    'half time',
+    'halftime',
+    'second half',
+    'extra time',
+    'break time',
+    'interrupted',
+    'pause',
+]
 
 const matchId = computed(() => String(route.params.id ?? ''))
 const hasScore = computed(() =>
@@ -43,6 +55,9 @@ const isFixtureFinal = computed(() => {
     return Boolean(
         shortStatus && FINAL_STATUS_CODES.has(shortStatus)
         || longStatus?.includes('finished')
+        || longStatus?.includes('cancelled')
+        || longStatus?.includes('postponed')
+        || longStatus?.includes('abandoned')
     )
 })
 const isFixtureLive = computed(() => {
@@ -69,10 +84,11 @@ const shouldProbeLiveFixture = computed(() => {
 
     const now = Date.now()
     const probeStartsAt = kickoffTime - 30 * 60 * 1000
-    const probeEndsAt = kickoffTime + 3 * 60 * 60 * 1000
+    const probeEndsAt = kickoffTime + 4 * 60 * 60 * 1000
 
     return now >= probeStartsAt && now <= probeEndsAt
 })
+const shouldAutoRefreshFixture = computed(() => isFixtureLive.value || shouldProbeLiveFixture.value)
 const liveLastUpdatedLabel = computed(() => {
     if (!liveLastUpdatedAt.value) return null
 
@@ -231,7 +247,7 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfte
                     Pragma: 'no-cache',
                 }
                 : undefined,
-            query: liveRefresh ? { live: '1' } : undefined,
+            query: liveRefresh ? { live: '1', t: String(Date.now()) } : undefined,
         })
         if (requestedMatchId !== matchId.value) return
 
@@ -242,8 +258,8 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfte
         if (liveRefresh || isFixtureLive.value) {
             liveLastUpdatedAt.value = new Date()
         }
-        if (!liveRefresh && probeAfterFetch && shouldProbeLiveFixture.value) {
-            refreshLiveFixture()
+        if (!liveRefresh && probeAfterFetch && shouldAutoRefreshFixture.value) {
+            startLiveRefresh()
         }
         errorMessage.value = ''
     } catch (error) {
@@ -287,15 +303,25 @@ watch(matchId, () => {
     void fetchFixture({ probeAfterFetch: true })
 }, { immediate: true })
 
-watch(isFixtureLive, (isLive) => {
-    if (isLive) {
+watch(shouldAutoRefreshFixture, (shouldRefresh) => {
+    if (shouldRefresh) {
         startLiveRefresh()
-        startLiveFollowTracking()
         return
     }
 
     stopLiveRefresh()
     liveLastUpdatedAt.value = null
+})
+
+watch(isFixtureLive, (isLive) => {
+    if (isLive) {
+        startLiveFollowTracking()
+        return
+    }
+
+    if (!shouldAutoRefreshFixture.value) {
+        liveLastUpdatedAt.value = null
+    }
 })
 
 watch(fixture, (currentFixture) => {

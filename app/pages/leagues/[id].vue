@@ -13,6 +13,7 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
+const apiFetch = useApiRequest()
 const { trackEntityView } = useSupporterTracking()
 const leagueId = computed(() => String(route.params.id))
 const competitionView = ref<'pools' | 'bracket'>('pools')
@@ -34,14 +35,23 @@ type MatchRound = BracketRound & {
 }
 
 const UPCOMING_ROUND_THRESHOLD_MS = 48 * 60 * 60 * 1000
+const LEAGUE_LIVE_REFRESH_INTERVAL_MS = 15_000
+const ACTIVE_FIXTURE_START_OFFSET_MS = 30 * 60 * 1000
+const ACTIVE_FIXTURE_END_OFFSET_MS = 4 * 60 * 60 * 1000
+const FINAL_STATUS_CODES = new Set(['FT', 'AET', 'CANC', 'PST', 'POST', 'ABD', 'AWD', 'WO'])
+const LIVE_STATUS_CODES = new Set(['LIVE', '1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT', 'INTR'])
+const LIVE_STATUS_LABELS = ['live', 'in play', 'in progress', 'first half', 'half time', 'halftime', 'second half', 'extra time', 'break time', 'interrupted', 'pause']
+let leagueRefreshTimer: ReturnType<typeof setInterval> | null = null
+
+const getOverviewPath = () => {
+    const season = requestedSeason.value
+    const path = `/rugby/leagues/${leagueId.value}/overview`
+
+    return season ? `${path}?season=${season}` : path
+}
 
 const { data: overview, error, pending, refresh } = await useApiFetch<RugbyLeagueOverview | null>(
-    () => {
-        const season = requestedSeason.value
-        const path = `/rugby/leagues/${leagueId.value}/overview`
-
-        return season ? `${path}?season=${season}` : path
-    },
+    getOverviewPath,
     {
         default: () => null,
     }
@@ -135,6 +145,40 @@ const getFixtureKickoffTime = (fixture: RugbyFixture) => {
     const kickoff = new Date(fixture.date).getTime()
     return Number.isNaN(kickoff) ? null : kickoff
 }
+const isFinalFixture = (fixture: RugbyFixture) => {
+    const shortStatus = fixture.status.short?.toUpperCase()
+    const longStatus = fixture.status.long?.toLowerCase()
+
+    return Boolean(
+        shortStatus && FINAL_STATUS_CODES.has(shortStatus)
+        || longStatus?.includes('finished')
+        || longStatus?.includes('cancelled')
+        || longStatus?.includes('postponed')
+        || longStatus?.includes('abandoned')
+    )
+}
+const isLiveFixture = (fixture: RugbyFixture) => {
+    const shortStatus = fixture.status.short?.toUpperCase()
+    const longStatus = fixture.status.long?.toLowerCase()
+
+    if (isFinalFixture(fixture)) return false
+    if (shortStatus && LIVE_STATUS_CODES.has(shortStatus)) return true
+
+    return LIVE_STATUS_LABELS.some((label) => longStatus?.includes(label))
+}
+const shouldRefreshFixture = (fixture: RugbyFixture) => {
+    if (isLiveFixture(fixture)) return true
+    if (isFinalFixture(fixture)) return false
+
+    const kickoff = getFixtureKickoffTime(fixture)
+    if (kickoff === null) return false
+
+    const now = Date.now()
+    return now >= kickoff - ACTIVE_FIXTURE_START_OFFSET_MS && now <= kickoff + ACTIVE_FIXTURE_END_OFFSET_MS
+}
+const shouldRefreshLeagueLive = computed(() =>
+    overview.value?.fixtures.some(shouldRefreshFixture) ?? false
+)
 const getRoundKickoffTimes = (round: MatchRound) =>
     round.fixtures
         .map(getFixtureKickoffTime)
@@ -199,6 +243,35 @@ const hasVisibleContent = computed(() =>
 
 const refreshLeague = () => {
     void refresh()
+}
+
+const refreshLeagueLive = async () => {
+    try {
+        overview.value = await apiFetch<RugbyLeagueOverview | null>(getOverviewPath(), {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+            },
+        })
+    } catch {
+        // On garde les donnees visibles si une actualisation live echoue.
+    }
+}
+
+const startLeagueLiveRefresh = () => {
+    if (!import.meta.client || leagueRefreshTimer) return
+
+    leagueRefreshTimer = setInterval(() => {
+        void refreshLeagueLive()
+    }, LEAGUE_LIVE_REFRESH_INTERVAL_MS)
+}
+
+const stopLeagueLiveRefresh = () => {
+    if (!leagueRefreshTimer) return
+
+    clearInterval(leagueRefreshTimer)
+    leagueRefreshTimer = null
 }
 
 const goToPreviousMatchRound = () => {
@@ -271,6 +344,15 @@ watch(
     { immediate: true }
 )
 
+watch(shouldRefreshLeagueLive, (shouldRefresh) => {
+    if (shouldRefresh) {
+        startLeagueLiveRefresh()
+        return
+    }
+
+    stopLeagueLiveRefresh()
+}, { immediate: true })
+
 useHead(() => ({
     title: league.value?.name ? `RugbyJam | ${league.value.name}` : 'RugbyJam | Competition',
 }))
@@ -278,6 +360,10 @@ useHead(() => ({
 onMounted(() => {
     refreshLeague()
     void useFavorites().ensureFavorites()
+})
+
+onBeforeUnmount(() => {
+    stopLeagueLiveRefresh()
 })
 </script>
 
