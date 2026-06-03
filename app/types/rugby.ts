@@ -166,3 +166,42 @@ export type RugbyMatchesHome = {
     liveFixtures: RugbyFixture[]
     upcomingFixtures: RugbyFixture[]
 }
+
+export type RugbyOddsSide = 'home' | 'away' | 'draw'
+export type RugbyOddsConfidence = 'clear' | 'close' | 'unknown'
+
+export type RugbyOddsValue = {
+    label: string
+    odd: number | null
+    side: RugbyOddsSide | null
+}
+
+export type RugbyOddsBookmaker = {
+    id: number | null
+    name: string | null
+    values: RugbyOddsValue[]
+}
+
+export type RugbyOddsMarket = {
+    id: number | null
+    name: string | null
+    bookmakers: RugbyOddsBookmaker[]
+}
+
+export type RugbyMatchOdds = {
+    gameId: number | null
+    favorite: {
+        side: RugbyOddsSide | null
+        teamName: string | null
+        odd: number | null
+        confidence: RugbyOddsConfidence
+    }
+    averages: {
+        home: number | null
+        away: number | null
+        draw: number | null
+    }
+    markets: RugbyOddsMarket[]
+    bookmakersCount: number
+    updatedAt: string | null
+}

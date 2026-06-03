@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RugbyFixture } from '~/types/rugby'
+import type { RugbyFixture, RugbyMatchOdds } from '~/types/rugby'
 import {
     RUGBY_PLACEHOLDER_LOGO,
     setRugbyPlaceholderLogo,
@@ -15,8 +15,11 @@ const { getFixtureTeamPath } = useRugbyTeamLinks()
 const { trackEntityView } = useSupporterTracking()
 
 const fixture = ref<RugbyFixture | null>(null)
+const odds = ref<RugbyMatchOdds | null>(null)
 const pending = ref(false)
+const oddsPending = ref(false)
 const errorMessage = ref('')
+const oddsErrorMessage = ref('')
 const liveLastUpdatedAt = ref<Date | null>(null)
 const scoringSides = ref<Array<'home' | 'away'>>([])
 let liveRefreshTimer: ReturnType<typeof setInterval> | null = null
@@ -70,6 +73,12 @@ const isFixtureLive = computed(() => {
     if (LIVE_STATUS_LABELS.some((label) => longStatus?.includes(label))) return true
 
     return fixture.value.status.elapsed !== null
+})
+const shouldShowFixtureOdds = computed(() => {
+    if (!fixture.value || isFixtureFinal.value) return false
+
+    const shortStatus = fixture.value.status.short?.toUpperCase()
+    return isFixtureLive.value || Boolean(shortStatus && NOT_STARTED_STATUS_CODES.has(shortStatus))
 })
 const shouldProbeLiveFixture = computed(() => {
     if (!fixture.value || isFixtureFinal.value) return false
@@ -255,6 +264,9 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfte
         if (!liveRefresh && probeAfterFetch && shouldAutoRefreshFixture.value) {
             startLiveRefresh()
         }
+        if (!liveRefresh && shouldShowFixtureOdds.value) {
+            void fetchFixtureOdds()
+        }
         errorMessage.value = ''
     } catch (error) {
         if (showPending || !fixture.value) {
@@ -263,6 +275,30 @@ const fetchFixture = async ({ liveRefresh = false, showPending = true, probeAfte
         }
     } finally {
         if (showPending) pending.value = false
+    }
+}
+
+const fetchFixtureOdds = async () => {
+    const requestedMatchId = matchId.value
+    if (!requestedMatchId || oddsPending.value) return
+
+    oddsPending.value = true
+    oddsErrorMessage.value = ''
+
+    try {
+        const nextOdds = await apiFetch<RugbyMatchOdds>(`/rugby/fixtures/${requestedMatchId}/odds`)
+        if (requestedMatchId !== matchId.value) return
+
+        odds.value = nextOdds
+    } catch (error) {
+        if (requestedMatchId !== matchId.value) return
+
+        odds.value = null
+        oddsErrorMessage.value = getApiErrorMessage(error)
+    } finally {
+        if (requestedMatchId === matchId.value) {
+            oddsPending.value = false
+        }
     }
 }
 
@@ -293,9 +329,17 @@ watch(matchId, () => {
     stopLiveRefresh()
     stopScoreCelebration()
     scoringSides.value = []
+    odds.value = null
+    oddsErrorMessage.value = ''
     liveLastUpdatedAt.value = null
     void fetchFixture({ probeAfterFetch: true })
 }, { immediate: true })
+
+watch(shouldShowFixtureOdds, (shouldShow) => {
+    if (shouldShow && !odds.value) {
+        void fetchFixtureOdds()
+    }
+})
 
 watch(shouldAutoRefreshFixture, (shouldRefresh) => {
     if (shouldRefresh) {
@@ -481,6 +525,20 @@ useHead(() => ({
                     </section>
 
                 </article>
+
+                <section
+                    v-if="shouldShowFixtureOdds"
+                    class="match-detail-odds"
+                    aria-label="Cotes du match"
+                >
+                    <MatchOddsPanel
+                        :fixture="fixture"
+                        :odds="odds"
+                        :pending="oddsPending"
+                        :error-message="oddsErrorMessage"
+                        :is-live="isFixtureLive"
+                    />
+                </section>
 
                 <section
                     v-if="hasScore"
