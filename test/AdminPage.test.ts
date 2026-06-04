@@ -18,7 +18,7 @@ const adminUsers: AdminUser[] = [
         label: 'Analyste du vestiaire',
         currentLevelXp: 500,
         nextLevelXp: 900,
-        nextLevelLabel: 'Legende RugbyJam',
+        nextLevelLabel: 'Legende locale',
         progress: 45,
       },
       badges: {

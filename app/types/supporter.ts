@@ -1,5 +1,5 @@
 export type SupporterLevel = {
-    value: 1 | 2 | 3 | 4 | 5
+    value: number
     label: string
     currentLevelXp: number
     nextLevelXp: number | null
