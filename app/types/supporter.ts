@@ -15,6 +15,11 @@ export type SupporterBadgeKey =
     | 'LOYAL_SUPPORTER'
     | 'EXPLORER'
     | 'DERBY_HUNTER'
+    | 'LIVE_REGULAR'
+    | 'MATCH_ARCHIVIST'
+    | 'TEAM_SCOUT'
+    | 'COMPETITION_TOUR'
+    | 'SUPER_FAVORITE'
 
 export type SupporterBadge = {
     key: SupporterBadgeKey

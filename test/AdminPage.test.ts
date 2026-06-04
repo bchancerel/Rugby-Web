@@ -23,7 +23,7 @@ const adminUsers: AdminUser[] = [
       },
       badges: {
         unlocked: 4,
-        total: 7,
+        total: 12,
       },
     },
   },
@@ -57,6 +57,6 @@ describe('AdminPage', () => {
     expect(wrapper.text()).toContain('Supporter')
     expect(wrapper.text()).toContain('Niv. 4')
     expect(wrapper.text()).toContain('Analyste du vestiaire')
-    expect(wrapper.text()).toContain('680 XP / 4/7 badges')
+    expect(wrapper.text()).toContain('680 XP / 4/12 badges')
   })
 })
