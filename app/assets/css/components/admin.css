@@ -161,7 +161,7 @@
 
 .admin-table {
     width: 100%;
-    min-width: 840px;
+    min-width: 980px;
     border-collapse: collapse;
     background: rgba(2, 6, 23, 0.32);
 }
@@ -241,6 +241,39 @@
     color: var(--rj-color-text-muted);
 }
 
+.admin-supporter-cell {
+    display: grid;
+    min-width: 148px;
+    gap: 4px;
+}
+
+.admin-supporter-cell strong {
+    color: var(--rj-color-white);
+    font-size: 0.94rem;
+    font-weight: 950;
+    line-height: 1.1;
+}
+
+.admin-supporter-cell span,
+.admin-supporter-cell small {
+    overflow: hidden;
+    color: var(--rj-color-text-secondary);
+    font-weight: 800;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-supporter-cell span {
+    max-width: 180px;
+    font-size: 0.8rem;
+}
+
+.admin-supporter-cell small {
+    color: var(--rj-color-text-muted);
+    font-size: 0.76rem;
+}
+
 .admin-actions-heading,
 .admin-actions {
     text-align: right;
@@ -302,6 +335,6 @@
     }
 
     .admin-table {
-        min-width: 720px;
+        min-width: 900px;
     }
 }

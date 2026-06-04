@@ -54,6 +54,18 @@
         return isCurrentUser(adminUser)
     }
 
+    const formatSupporterLevel = (adminUser: AdminUser) => {
+        return `Niv. ${adminUser.supporter.level.value}`
+    }
+
+    const formatSupporterBadges = (adminUser: AdminUser) => {
+        return `${adminUser.supporter.badges.unlocked}/${adminUser.supporter.badges.total} badges`
+    }
+
+    const formatSupporterXp = (adminUser: AdminUser) => {
+        return `${adminUser.supporter.totalXp} XP`
+    }
+
     const handleRoleChange = async (adminUser: AdminUser, event: Event) => {
         const target = event.target as HTMLSelectElement
         const role = target.value as AuthRole
@@ -147,6 +159,7 @@
                                 <th scope="col">Utilisateur</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Role</th>
+                                <th scope="col">Supporter</th>
                                 <th scope="col">Creation</th>
                                 <th scope="col" class="admin-actions-heading">Actions</th>
                             </tr>
@@ -178,6 +191,16 @@
                                             {{ role }}
                                         </option>
                                     </select>
+                                </td>
+
+                                <td>
+                                    <div class="admin-supporter-cell">
+                                        <strong>{{ formatSupporterLevel(adminUser) }}</strong>
+                                        <span>{{ adminUser.supporter.level.label }}</span>
+                                        <small>
+                                            {{ formatSupporterXp(adminUser) }} / {{ formatSupporterBadges(adminUser) }}
+                                        </small>
+                                    </div>
                                 </td>
 
                                 <td>{{ formatDate(adminUser.createdAt) }}</td>
