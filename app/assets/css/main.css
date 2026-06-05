@@ -1,6 +1,7 @@
 @import "./variables.css";
 @import "tailwindcss";
 @import "./components/admin.css";
+@import "./components/dashboard.css";
 @import "./components/favorites.css";
 @import "./components/leagues.css";
 @import "./components/login.css";
@@ -188,6 +189,7 @@
 .home-page h1,
 .auth-page h1,
 .favorites-heading h1,
+.dashboard-heading h1,
 .admin-heading h1,
 .leagues-page h1,
 .league-detail-page h1,

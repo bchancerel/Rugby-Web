@@ -1,0 +1,315 @@
+@layer components {
+  .dashboard-page {
+    min-height: 100vh;
+    padding: clamp(24px, 4vw, 44px);
+  }
+
+  .dashboard-shell {
+    display: grid;
+    width: min(1180px, 100%);
+    gap: 24px;
+    margin: 0 auto;
+  }
+
+  .dashboard-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .dashboard-heading p,
+  .dashboard-empty p {
+    max-width: 680px;
+    margin: 10px 0 0;
+    color: var(--rj-color-text-secondary);
+    font-weight: 700;
+    line-height: 1.6;
+  }
+
+  .dashboard-eyebrow {
+    margin: 0 0 8px;
+    color: #9af2c2;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .dashboard-alert,
+  .dashboard-state,
+  .dashboard-empty {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(7, 17, 29, 0.68);
+    color: var(--rj-color-text-secondary);
+    font-weight: 800;
+    box-shadow: 0 20px 48px rgba(2, 6, 23, 0.3);
+  }
+
+  .dashboard-alert {
+    padding: 14px 16px;
+    border-color: rgba(255, 70, 85, 0.32);
+    color: #fecaca;
+  }
+
+  .dashboard-state {
+    padding: 22px;
+    text-align: center;
+  }
+
+  .dashboard-state.compact {
+    padding: 18px;
+  }
+
+  .dashboard-empty {
+    display: grid;
+    justify-items: start;
+    gap: 12px;
+    padding: clamp(22px, 4vw, 34px);
+  }
+
+  .dashboard-empty h2,
+  .dashboard-section-heading h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.2rem, 3vw, 1.65rem);
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .dashboard-primary-link,
+  .dashboard-section-heading > a,
+  .dashboard-shortcuts a {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 6px;
+    background: rgba(255, 70, 85, 0.13);
+    color: #ffffff;
+    font-size: 0.86rem;
+    font-weight: 900;
+    text-decoration: none;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+  }
+
+  .dashboard-primary-link:hover,
+  .dashboard-section-heading > a:hover,
+  .dashboard-shortcuts a:hover {
+    border-color: rgba(154, 242, 194, 0.46);
+    background: rgba(154, 242, 194, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .dashboard-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .dashboard-stat {
+    display: grid;
+    min-height: 104px;
+    align-content: space-between;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background:
+      linear-gradient(135deg, rgba(154, 242, 194, 0.08), transparent),
+      rgba(7, 17, 29, 0.68);
+    color: var(--rj-color-text-secondary);
+    text-decoration: none;
+    box-shadow: 0 20px 48px rgba(2, 6, 23, 0.28);
+  }
+
+  .dashboard-stat span {
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .dashboard-stat strong {
+    color: #ffffff;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .dashboard-section {
+    display: grid;
+    gap: 14px;
+  }
+
+  .dashboard-section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .dashboard-competition-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .dashboard-competition-card,
+  .dashboard-match-card {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(7, 17, 29, 0.72);
+    box-shadow: 0 20px 48px rgba(2, 6, 23, 0.28);
+  }
+
+  .dashboard-competition-card {
+    display: flex;
+    min-height: 86px;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    color: #ffffff;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .dashboard-competition-card img {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    object-fit: contain;
+  }
+
+  .dashboard-match-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .dashboard-match-card {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .dashboard-match-card header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .dashboard-match-card header img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+  }
+
+  .dashboard-match-card h3 {
+    margin: 2px 0 0;
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .dashboard-match-card header span,
+  .dashboard-match-card time {
+    color: var(--rj-color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .dashboard-match-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+  }
+
+  .dashboard-team-link,
+  .dashboard-team-name {
+    display: inline-flex;
+    min-width: 0;
+    gap: 8px;
+    align-items: center;
+    color: var(--rj-color-text-primary);
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .dashboard-team-link.away,
+  .dashboard-team-name.away {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .dashboard-team-link img,
+  .dashboard-team-name img {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    object-fit: contain;
+  }
+
+  .dashboard-team-link span,
+  .dashboard-team-name span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-score {
+    display: inline-flex;
+    min-width: 64px;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: rgba(154, 242, 194, 0.12);
+    color: #ffffff;
+    font-weight: 950;
+    text-decoration: none;
+  }
+
+  .dashboard-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 860px) {
+    .dashboard-page {
+      padding: 18px 12px 28px;
+    }
+
+    .dashboard-heading,
+    .dashboard-section-heading {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .dashboard-summary,
+    .dashboard-competition-grid,
+    .dashboard-shortcuts {
+      grid-template-columns: 1fr;
+    }
+
+    .dashboard-match-row {
+      grid-template-columns: 1fr;
+      justify-items: stretch;
+    }
+
+    .dashboard-team-link.away,
+    .dashboard-team-name.away {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .dashboard-score {
+      width: 100%;
+    }
+  }
+}

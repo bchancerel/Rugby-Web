@@ -2,9 +2,9 @@
 const route = useRoute()
 const open = ref(false)
 const { user } = useAuth()
-const logoPath = computed(() => user.value ? '/supporter' : '/')
+const logoPath = '/dashboard'
 
-type NavIcon = 'trophy' | 'calendar' | 'star' | 'user' | 'shield' | 'arrow' | 'menu' | 'close'
+type NavIcon = 'trophy' | 'calendar' | 'star' | 'user' | 'shield' | 'medal' | 'arrow' | 'menu' | 'close'
 
 type NavLink = {
     to: string
@@ -23,6 +23,7 @@ type NavItem =
 const links: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '/match', icon: 'calendar' },
+    { label: 'Supporter', to: '/supporter', icon: 'medal' },
     { label: 'Favoris', to: '/favoris', icon: 'star' },
     { label: 'Mon compte', to: '/user', icon: 'user' },
 ]
@@ -30,12 +31,12 @@ const links: NavLink[] = [
 const navItems = computed<NavItem[]>(() => {
     const center = {
         kind: 'logo' as const,
-        to: logoPath.value,
+        to: logoPath,
         label: 'RugbyJam',
     }
 
     const left = links.slice(0, 2).map((link) => ({ kind: 'link' as const, ...link }))
-    const right = links.slice(2, 4).map((link) => ({ kind: 'link' as const, ...link }))
+    const right = links.slice(2).map((link) => ({ kind: 'link' as const, ...link }))
 
     return [...left, center, ...right]
 })
@@ -68,6 +69,11 @@ const iconPaths: Record<NavIcon, string[]> = {
     shield: [
         'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z',
         'M9.5 12.5 11 14l3.5-4',
+    ],
+    medal: [
+        'M8 3h8l-2 5h-4L8 3Z',
+        'M12 8a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z',
+        'm10.5 14 1 1 2-2',
     ],
     arrow: ['M5 12h14', 'm13 6 6 6-6 6'],
     menu: ['M4 7h16', 'M4 12h16', 'M4 17h16'],
