@@ -257,25 +257,24 @@ const fetchMatchesHome = async () => {
 }
 
 const fetchCompetitionOverviews = async () => {
-    const entries = await Promise.all(
-        favorites.value.competitions.data.map(async (favorite) => {
-            try {
-                const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
-                return [favorite.entityId, overview] as const
-            } catch {
-                return [favorite.entityId, null] as const
-            }
-        })
-    )
+    const entries: Array<[string, RugbyLeagueOverview]> = []
 
-    competitionOverviews.value = Object.fromEntries(
-        entries.filter((entry): entry is [string, RugbyLeagueOverview] => entry[1] !== null)
-    )
+    for (const favorite of favorites.value.competitions.data) {
+        try {
+            const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
+            entries.push([favorite.entityId, overview])
+        } catch {
+            // Keep the dashboard usable if one favorite competition is temporarily unavailable.
+        }
+    }
+
+    competitionOverviews.value = Object.fromEntries(entries)
 }
 
 onMounted(async () => {
     await fetchFavorites().catch(() => undefined)
-    await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
+    await fetchMatchesHome()
+    await fetchCompetitionOverviews()
 })
 
 useHead({
