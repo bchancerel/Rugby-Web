@@ -60,6 +60,21 @@ const formatFixtureKickoff = (date: string | null) => {
     }).format(kickoff)
 }
 
+const getTeamFavoriteMatch = (teamId: string) =>
+    favoriteMatches.value.find((item) => item.type === 'team' && item.entityId === teamId) ?? null
+
+const getTeamFavoriteLogo = (teamId: string) =>
+    getTeamFavoriteMatch(teamId)?.logo || RUGBY_PLACEHOLDER_LOGO
+
+const getTeamFavoritePath = (teamId: string) => {
+    const match = getTeamFavoriteMatch(teamId)
+    const fixture = match?.nextFixture ?? match?.lastFixture ?? null
+
+    if (!fixture) return `/teams/${teamId}`
+
+    return getFixtureTeamPath(fixture, teamId) ?? `/teams/${teamId}`
+}
+
 const fetchMatchesHome = async () => {
     matchesPending.value = true
     matchesError.value = ''
@@ -169,6 +184,36 @@ useHead({
                                 @error="setRugbyPlaceholderLogo"
                             >
                             <span>{{ favorite.entityName ?? `Championnat ${favorite.entityId}` }}</span>
+                        </NuxtLink>
+                    </div>
+                </section>
+
+                <section class="dashboard-section" aria-labelledby="dashboard-teams-title">
+                    <div class="dashboard-section-heading">
+                        <div>
+                            <p class="dashboard-eyebrow">Acces rapide</p>
+                            <h2 id="dashboard-teams-title">Equipes favorites</h2>
+                        </div>
+                        <NuxtLink to="/favoris">Gerer</NuxtLink>
+                    </div>
+
+                    <div v-if="favoriteTeams.length === 0" class="dashboard-state compact">
+                        Aucune equipe favorite.
+                    </div>
+
+                    <div v-else class="dashboard-competition-grid">
+                        <NuxtLink
+                            v-for="favorite in favoriteTeams"
+                            :key="favorite.id"
+                            :to="getTeamFavoritePath(favorite.entityId)"
+                            class="dashboard-competition-card"
+                        >
+                            <img
+                                :src="getTeamFavoriteLogo(favorite.entityId)"
+                                :alt="favorite.entityName ?? `Equipe ${favorite.entityId}`"
+                                @error="setRugbyPlaceholderLogo"
+                            >
+                            <span>{{ favorite.entityName ?? `Equipe ${favorite.entityId}` }}</span>
                         </NuxtLink>
                     </div>
                 </section>
