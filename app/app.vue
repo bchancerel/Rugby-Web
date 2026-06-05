@@ -9,7 +9,7 @@ const useAppBackground = computed(() =>
   route.path !== '/' && !route.path.startsWith('/auth/')
 )
 const showAppNavbar = computed(() =>
-  route.path !== '/' && !route.path.startsWith('/auth/')
+  route.path !== '/' && !route.path.startsWith('/auth/') && route.path !== '/mentions-legales'
 )
 
 const updateScrollProgress = () => {
