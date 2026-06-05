@@ -5,7 +5,7 @@ import {
     setRugbyPlaceholderLogo,
 } from '~/composables/useRugbyLeagues'
 import type { Favorite } from '~/types/favorites'
-import type { RugbyFixture, RugbyLeagueOverview, RugbyStanding } from '~/types/rugby'
+import type { RugbyFavoriteMatch, RugbyFixture, RugbyLeagueOverview, RugbyMatchesHome, RugbyStanding } from '~/types/rugby'
 
 const {
     favorites,
@@ -21,7 +21,7 @@ const apiFetch = useApiRequest()
 const insightsPending = ref(false)
 const insightsError = ref('')
 const competitionOverviews = ref<Record<string, RugbyLeagueOverview>>({})
-const teamFixtures = ref<Record<string, RugbyFixture[]>>({})
+const favoriteMatches = ref<RugbyFavoriteMatch[]>([])
 const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const hasFavorites = computed(() =>
@@ -34,12 +34,12 @@ const displayedOverviews = computed(() =>
 )
 const teamFavoriteMatches = computed(() =>
     favorites.value.teams.data.map((favorite) => {
-        const fixtures = teamFixtures.value[favorite.entityId] ?? []
+        const match = getTeamFavoriteMatch(favorite)
 
         return {
             favorite,
-            lastFixture: getLastPlayedFixture(fixtures),
-            nextFixture: getNextFixture(fixtures),
+            lastFixture: match?.lastFixture ?? null,
+            nextFixture: match?.nextFixture ?? null,
         }
     })
 )
@@ -74,17 +74,6 @@ const formatFixtureKickoff = (date: string | null) => {
     }).format(kickoff)
 }
 
-const getFixtureTime = (fixture: RugbyFixture) => {
-    if (fixture.timestamp !== null) return fixture.timestamp * 1000
-    if (!fixture.date) return null
-
-    const date = new Date(fixture.date).getTime()
-    return Number.isNaN(date) ? null : date
-}
-
-const hasFixtureScore = (fixture: RugbyFixture) =>
-    fixture.score.home !== null && fixture.score.away !== null
-
 const getCompetitionFavoriteName = (favorite: Favorite) =>
     favorite.entityName ?? `Championnat ${favorite.entityId}`
 
@@ -94,8 +83,17 @@ const getTeamFavoriteName = (favorite: Favorite) =>
 const getCompetitionFavoriteLogo = (favorite: Favorite) =>
     competitionOverviews.value[favorite.entityId]?.league.logo ?? RUGBY_PLACEHOLDER_LOGO
 
+const getTeamFavoriteMatch = (favorite: Favorite) =>
+    favoriteMatches.value.find((match) => match.type === 'team' && match.entityId === favorite.entityId) ?? null
+
 const getTeamFavoriteLogo = (favorite: Favorite) => {
-    const fixtures = teamFixtures.value[favorite.entityId] ?? []
+    const favoriteMatch = getTeamFavoriteMatch(favorite)
+    if (favoriteMatch?.logo) return favoriteMatch.logo
+
+    const fixtures = [
+        favoriteMatch?.nextFixture,
+        favoriteMatch?.lastFixture,
+    ].filter((fixture): fixture is RugbyFixture => Boolean(fixture))
     const fixtureTeam = fixtures
         .flatMap((fixture) => [fixture.teams.home, fixture.teams.away])
         .find((team) => String(team.id) === favorite.entityId && team.logo)
@@ -148,6 +146,10 @@ const getTeamFavoriteOverview = (favorite: Favorite) =>
     ) ?? null
 
 const getTeamFavoritePath = (favorite: Favorite) => {
+    const favoriteMatch = getTeamFavoriteMatch(favorite)
+    const fixture = favoriteMatch?.nextFixture ?? favoriteMatch?.lastFixture ?? null
+    if (fixture) return getFixtureTeamPath(fixture, favorite.entityId) ?? `/teams/${favorite.entityId}`
+
     const overview = getTeamFavoriteOverview(favorite)
 
     if (!overview) {
@@ -163,37 +165,6 @@ const getTeamFavoritePath = (favorite: Favorite) => {
     }
 }
 
-const getTeamFixtures = (favorite: Favorite, overviews: RugbyLeagueOverview[]) =>
-    overviews
-        .flat()
-        .flatMap((overview) => overview.fixtures)
-        .filter((fixture) =>
-            String(fixture.teams.home.id) === favorite.entityId ||
-            String(fixture.teams.away.id) === favorite.entityId
-        )
-
-const getLastPlayedFixture = (fixtures: RugbyFixture[]) => {
-    const now = Date.now()
-
-    return fixtures
-        .filter((fixture) => {
-            const fixtureTime = getFixtureTime(fixture)
-            return fixtureTime !== null && fixtureTime <= now && hasFixtureScore(fixture)
-        })
-        .sort((a, b) => (getFixtureTime(b) ?? 0) - (getFixtureTime(a) ?? 0))[0] ?? null
-}
-
-const getNextFixture = (fixtures: RugbyFixture[]) => {
-    const now = Date.now()
-
-    return fixtures
-        .filter((fixture) => {
-            const fixtureTime = getFixtureTime(fixture)
-            return fixtureTime !== null && fixtureTime > now
-        })
-        .sort((a, b) => (getFixtureTime(a) ?? 0) - (getFixtureTime(b) ?? 0))[0] ?? null
-}
-
 const remove = async (favoriteId: string) => {
     await removeFavorite(favoriteId)
     await refreshInsights()
@@ -204,23 +175,21 @@ const refreshInsights = async () => {
     insightsError.value = ''
 
     try {
-        const overviews = await Promise.all(
-            favorites.value.competitions.data.map(async (favorite) => {
-                const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
+        const [overviews, matchesHome] = await Promise.all([
+            Promise.all(
+                favorites.value.competitions.data.map(async (favorite) => {
+                    const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
 
-                return [favorite.entityId, overview] as const
-            })
-        )
+                    return [favorite.entityId, overview] as const
+                })
+            ),
+            apiFetch<RugbyMatchesHome>('/rugby/matches/home', {
+                cache: 'no-store',
+                query: { t: String(Date.now()) },
+            }),
+        ])
         competitionOverviews.value = Object.fromEntries(overviews)
-        const currentOverviews = Object.values(competitionOverviews.value)
-
-        const fixtures = await Promise.all(
-            favorites.value.teams.data.map(async (favorite) => {
-                const teamMatches = getTeamFixtures(favorite, currentOverviews)
-                return [favorite.entityId, teamMatches] as const
-            })
-        )
-        teamFixtures.value = Object.fromEntries(fixtures)
+        favoriteMatches.value = matchesHome.favoriteMatches
     } catch (error) {
         insightsError.value = getApiErrorMessage(error)
     } finally {
