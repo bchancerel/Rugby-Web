@@ -59,6 +59,13 @@ const groupedContexts = computed(() => {
 const selectedLeagueGroup = computed(() =>
     groupedContexts.value.find((group) => String(group.league.id) === leagueId.value) ?? null
 )
+const defaultContext = computed(() =>
+    [...contexts.value].sort((a, b) =>
+        b.league.season - a.league.season
+        || (b.lastFixtureTimestamp ?? 0) - (a.lastFixtureTimestamp ?? 0)
+        || (a.league.name ?? '').localeCompare(b.league.name ?? '')
+    )[0] ?? null
+)
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
@@ -120,6 +127,7 @@ const fetchContexts = async () => {
 
     try {
         contexts.value = await apiFetch<RugbyTeamContext[]>(`/rugby/teams/${teamId.value}/contexts`)
+        applyDefaultContext()
     } catch (error) {
         contexts.value = []
         contextsErrorMessage.value = getApiErrorMessage(error)
@@ -189,6 +197,22 @@ const updateContext = (contextKey: string) => {
             league: nextLeagueId,
             season: nextSeason,
         },
+    })
+}
+
+const applyDefaultContext = () => {
+    if (contexts.value.length === 0 || selectedContext.value) return
+
+    const context = defaultContext.value
+    if (!context) return
+
+    void navigateTo({
+        path: `/teams/${teamId.value}`,
+        query: {
+            league: String(context.league.id),
+            season: String(context.league.season),
+        },
+        replace: true,
     })
 }
 
