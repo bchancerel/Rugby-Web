@@ -21,8 +21,6 @@ const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 
 const favoriteMatches = ref<RugbyFavoriteMatch[]>([])
 const competitionOverviews = ref<Record<string, RugbyLeagueOverview>>({})
-const liveFixtures = ref<RugbyFixture[]>([])
-const upcomingFixtures = ref<RugbyFixture[]>([])
 const matchesPending = ref(false)
 const matchesError = ref('')
 
@@ -45,30 +43,8 @@ const displayedOverviews = computed(() =>
         .map((favorite) => competitionOverviews.value[favorite.entityId] ?? null)
         .filter((overview): overview is RugbyLeagueOverview => Boolean(overview))
 )
-const todayFavoriteFixtures = computed(() => {
-    const fixtures = [...liveFixtures.value, ...upcomingFixtures.value]
-    const seen = new Set<string>()
-
-    return fixtures
-        .filter((fixture) => isFixtureToday(fixture))
-        .filter((fixture) => {
-            const key = getFixtureKey(fixture)
-            if (seen.has(key)) return false
-            seen.add(key)
-            return true
-        })
-        .slice(0, 5)
-})
 const alertItems = computed(() => {
     const alerts: Array<{ key: string, label: string, to: string | ReturnType<typeof getFixtureMatchPath> }> = []
-
-    if (liveFixtures.value.length > 0) {
-        alerts.push({
-            key: 'live',
-            label: `${liveFixtures.value.length} match${liveFixtures.value.length > 1 ? 's' : ''} en live maintenant.`,
-            to: '/match',
-        })
-    }
 
     for (const match of allTeamUpcomingMatches.value.slice(0, 3)) {
         if (!match.nextFixture) continue
@@ -154,9 +130,6 @@ const formatFixtureAlertDate = (date: string | null) => {
     }).format(kickoff)
 }
 
-const getFixtureKey = (fixture: RugbyFixture) =>
-    String(fixture.id ?? `${fixture.date}-${fixture.teams.home.id}-${fixture.teams.away.id}`)
-
 const getFixtureTime = (fixture: RugbyFixture | null) => {
     if (!fixture) return Number.MAX_SAFE_INTEGER
     if (fixture.timestamp !== null) return fixture.timestamp * 1000
@@ -165,22 +138,6 @@ const getFixtureTime = (fixture: RugbyFixture | null) => {
     const time = new Date(fixture.date).getTime()
     return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time
 }
-
-const getFixtureDay = (date: string | null) => {
-    if (!date) return ''
-    const parsed = new Date(date)
-    if (Number.isNaN(parsed.getTime())) return ''
-
-    return new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'Europe/Paris',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(parsed)
-}
-
-const isFixtureToday = (fixture: RugbyFixture) =>
-    getFixtureDay(fixture.date) === getFixtureDay(new Date().toISOString())
 
 const getTeamFavoriteMatch = (teamId: string) =>
     favoriteMatches.value.find((item) => item.type === 'team' && item.entityId === teamId) ?? null
@@ -241,15 +198,11 @@ const fetchMatchesHome = async () => {
     try {
         const data = await apiFetch<RugbyMatchesHome>('/rugby/matches/home', {
             cache: 'no-store',
-            query: { t: String(Date.now()) },
+            query: { t: String(Date.now()), includeGlobalFixtures: '0' },
         })
         favoriteMatches.value = data.favoriteMatches
-        liveFixtures.value = data.liveFixtures
-        upcomingFixtures.value = data.upcomingFixtures
     } catch (error) {
         favoriteMatches.value = []
-        liveFixtures.value = []
-        upcomingFixtures.value = []
         matchesError.value = getApiErrorMessage(error)
     } finally {
         matchesPending.value = false
@@ -552,90 +505,6 @@ useHead({
 
                             <p v-else class="dashboard-standing-empty">Classement indisponible.</p>
                         </NuxtLink>
-                    </div>
-                </section>
-
-                <section class="dashboard-section" aria-labelledby="dashboard-today-title">
-                    <div class="dashboard-section-heading">
-                        <div>
-                            <p class="dashboard-eyebrow">Live / aujourd'hui</p>
-                            <h2 id="dashboard-today-title">Matchs du jour</h2>
-                        </div>
-                        <NuxtLink to="/match">Calendrier</NuxtLink>
-                    </div>
-
-                    <div v-if="matchesPending" class="dashboard-state compact">
-                        Chargement des matchs du jour...
-                    </div>
-
-                    <div v-else-if="todayFavoriteFixtures.length === 0" class="dashboard-state compact">
-                        Aucun match live ou coup d'envoi favori aujourd'hui.
-                    </div>
-
-                    <div v-else class="dashboard-today-list">
-                        <article
-                            v-for="fixture in todayFavoriteFixtures"
-                            :key="getFixtureKey(fixture)"
-                            class="dashboard-today-card"
-                        >
-                            <p>
-                                <MatchLiveIndicator :fixture="fixture" />
-                                {{ fixture.league.name ?? 'Competition' }} / {{ formatFixtureKickoff(fixture.date) }}
-                            </p>
-
-                            <div class="dashboard-match-row">
-                                <NuxtLink
-                                    v-if="getFixtureTeamPath(fixture, fixture.teams.home.id)"
-                                    :to="getFixtureTeamPath(fixture, fixture.teams.home.id)"
-                                    class="dashboard-team-link"
-                                >
-                                    <img
-                                        :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.home.name ?? 'Domicile'"
-                                        @error="setRugbyPlaceholderLogo"
-                                    >
-                                    <span>{{ fixture.teams.home.name ?? 'Domicile' }}</span>
-                                </NuxtLink>
-                                <span v-else class="dashboard-team-name">
-                                    <img
-                                        :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.home.name ?? 'Domicile'"
-                                        @error="setRugbyPlaceholderLogo"
-                                    >
-                                    <span>{{ fixture.teams.home.name ?? 'Domicile' }}</span>
-                                </span>
-
-                                <NuxtLink
-                                    v-if="getFixtureMatchPath(fixture)"
-                                    :to="getFixtureMatchPath(fixture)"
-                                    class="dashboard-score"
-                                >
-                                    {{ formatFixtureScore(fixture) }}
-                                </NuxtLink>
-                                <strong v-else class="dashboard-score">{{ formatFixtureScore(fixture) }}</strong>
-
-                                <NuxtLink
-                                    v-if="getFixtureTeamPath(fixture, fixture.teams.away.id)"
-                                    :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
-                                    class="dashboard-team-link away"
-                                >
-                                    <span>{{ fixture.teams.away.name ?? 'Exterieur' }}</span>
-                                    <img
-                                        :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.away.name ?? 'Exterieur'"
-                                        @error="setRugbyPlaceholderLogo"
-                                    >
-                                </NuxtLink>
-                                <span v-else class="dashboard-team-name away">
-                                    <span>{{ fixture.teams.away.name ?? 'Exterieur' }}</span>
-                                    <img
-                                        :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.away.name ?? 'Exterieur'"
-                                        @error="setRugbyPlaceholderLogo"
-                                    >
-                                </span>
-                            </div>
-                        </article>
                     </div>
                 </section>
 
