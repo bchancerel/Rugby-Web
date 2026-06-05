@@ -15,7 +15,7 @@
     })
 
     const primaryLabel = computed(() => {
-        return isAuthenticated.value ? 'Retour aux ligues' : 'Retour a la connexion'
+        return isAuthenticated.value ? 'Entre les perches !' : 'Retour a la connexion'
     })
 
     const submit = async () => {

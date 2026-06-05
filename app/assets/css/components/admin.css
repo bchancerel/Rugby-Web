@@ -279,7 +279,7 @@
     text-align: right;
 }
 
-.admin-actions {
+.admin-actions-content {
     display: grid;
     gap: 6px;
     justify-items: end;
@@ -320,7 +320,7 @@
         width: 100%;
     }
 
-    .admin-actions {
+    .admin-actions-content {
         justify-items: stretch;
     }
 

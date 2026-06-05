@@ -134,42 +134,6 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <section class="featured-section" aria-labelledby="featured-title">
-                    <div class="section-heading">
-                        <p class="eyebrow">Selection</p>
-                        <h2 id="featured-title">Competitions majeures</h2>
-                    </div>
-
-                    <div class="featured-grid">
-                        <article
-                            v-for="league in majorLeagues"
-                            :key="getRugbyLeagueKey(league, 'major-league')"
-                            class="featured-card"
-                        >
-                            <NuxtLink :to="getRugbyLeaguePath(league)" class="league-card-link">
-                                <img
-                                    :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
-                                    :alt="league.name ?? 'Competition'"
-                                    class="featured-logo"
-                                    @error="setRugbyPlaceholderLogo"
-                                >
-                                <span class="featured-name">{{ league.name ?? 'Competition sans nom' }}</span>
-                                <span class="featured-meta">
-                                    {{ [league.country.name, league.type].filter(Boolean).join(' / ') || 'Competition majeure' }}
-                                </span>
-                            </NuxtLink>
-
-                            <FavoriteButton
-                                class="league-card-favorite"
-                                entity-type="competition"
-                                :entity-id="league.id"
-                                :entity-name="league.name"
-                                compact
-                            />
-                        </article>
-                    </div>
-                </section>
-
                 <section class="filters" aria-label="Filtres des competitions">
                     <label class="search-field">
                         <span>Recherche</span>
@@ -220,6 +184,42 @@ onMounted(() => {
                     <button type="button" class="secondary-button" @click="resetFilters">
                         Reinitialiser
                     </button>
+                </section>
+
+                <section class="featured-section" aria-labelledby="featured-title">
+                    <div class="section-heading">
+                        <p class="eyebrow">Selection</p>
+                        <h2 id="featured-title">Competitions majeures</h2>
+                    </div>
+
+                    <div class="featured-grid">
+                        <article
+                            v-for="league in majorLeagues"
+                            :key="getRugbyLeagueKey(league, 'major-league')"
+                            class="featured-card"
+                        >
+                            <NuxtLink :to="getRugbyLeaguePath(league)" class="league-card-link">
+                                <img
+                                    :src="league.logo || RUGBY_PLACEHOLDER_LOGO"
+                                    :alt="league.name ?? 'Competition'"
+                                    class="featured-logo"
+                                    @error="setRugbyPlaceholderLogo"
+                                >
+                                <span class="featured-name">{{ league.name ?? 'Competition sans nom' }}</span>
+                                <span class="featured-meta">
+                                    {{ [league.country.name, league.type].filter(Boolean).join(' / ') || 'Competition majeure' }}
+                                </span>
+                            </NuxtLink>
+
+                            <FavoriteButton
+                                class="league-card-favorite"
+                                entity-type="competition"
+                                :entity-id="league.id"
+                                :entity-name="league.name"
+                                compact
+                            />
+                        </article>
+                    </div>
                 </section>
 
                 <section class="all-section" aria-labelledby="all-title">

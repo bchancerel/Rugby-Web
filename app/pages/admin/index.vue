@@ -206,19 +206,21 @@
                                 <td>{{ formatDate(adminUser.createdAt) }}</td>
 
                                 <td class="admin-actions">
-                                    <button
-                                        type="button"
-                                        class="admin-danger-button"
-                                        :disabled="isUserProtected(adminUser) || isUserActionPending(adminUser)"
-                                        :title="isUserProtected(adminUser) ? 'Vous ne pouvez pas supprimer votre propre compte' : 'Supprimer ce compte'"
-                                        @click="handleDelete(adminUser)"
-                                    >
-                                        {{ isUserActionPending(adminUser) ? 'Traitement...' : 'Supprimer' }}
-                                    </button>
+                                    <div class="admin-actions-content">
+                                        <button
+                                            type="button"
+                                            class="admin-danger-button"
+                                            :disabled="isUserProtected(adminUser) || isUserActionPending(adminUser)"
+                                            :title="isUserProtected(adminUser) ? 'Vous ne pouvez pas supprimer votre propre compte' : 'Supprimer ce compte'"
+                                            @click="handleDelete(adminUser)"
+                                        >
+                                            {{ isUserActionPending(adminUser) ? 'Traitement...' : 'Supprimer' }}
+                                        </button>
 
-                                    <span v-if="isUserProtected(adminUser)" class="admin-action-note">
-                                        Compte protege
-                                    </span>
+                                        <span v-if="isUserProtected(adminUser)" class="admin-action-note">
+                                            Compte protege
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
