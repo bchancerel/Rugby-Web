@@ -292,6 +292,40 @@ watch(
                             />
                         </svg>
                     </NuxtLink>
+
+                    <NuxtLink
+                        v-if="isAdmin"
+                        to="/admin"
+                        class="app-navbar-mobile-link"
+                        :class="{ active: isActive('/admin') }"
+                        @click="closeMenu"
+                    >
+                        <span class="app-navbar-mobile-label">
+                            <svg class="app-navbar-mobile-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path
+                                    v-for="path in iconPaths.shield"
+                                    :key="path"
+                                    :d="path"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            <span>Administration</span>
+                        </span>
+                        <svg class="app-navbar-mobile-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path
+                                v-for="path in iconPaths.arrow"
+                                :key="path"
+                                :d="path"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </NuxtLink>
                 </div>
             </div>
         </nav>
