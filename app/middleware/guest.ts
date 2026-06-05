@@ -8,6 +8,6 @@ export default defineNuxtRouteMiddleware(async () => {
     }
 
     if (isAuthenticated.value) {
-        return navigateTo('/leagues')
+        return navigateTo('/dashboard')
     }
 })

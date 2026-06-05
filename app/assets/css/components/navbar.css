@@ -33,8 +33,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: fit-content;
+    justify-content: space-between;
+    width: min(1120px, 100%);
     min-height: 62px;
     margin: 0 auto;
     padding: 8px 12px;
@@ -52,65 +52,27 @@
   }
 
   .app-navbar-admin-link {
-    position: fixed;
-    top: 16px;
-    right: clamp(14px, 4vw, 48px);
-    z-index: 1000;
-    display: inline-flex;
-    width: 62px;
-    height: 62px;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 8px;
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025)),
-      rgba(7, 17, 29, 0.68);
-    box-shadow:
-      0 22px 56px rgba(2, 6, 23, 0.36),
-      0 0 28px rgba(230, 57, 70, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    color: var(--rj-color-text-secondary);
-    pointer-events: auto;
-    text-decoration: none;
-    backdrop-filter: blur(18px) saturate(1.12);
-    transition: color 180ms ease, transform 180ms ease, border-color 180ms ease;
-  }
-
-  .app-navbar-admin-bg {
-    position: absolute;
-    inset: 8px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    opacity: 0;
-    transition: opacity 180ms ease, background 180ms ease, box-shadow 180ms ease;
-  }
-
-  .app-navbar-admin-link:hover,
-  .app-navbar-admin-link.active {
     border-color: rgba(255, 70, 85, 0.34);
-    color: var(--rj-color-white);
-    transform: translateY(-1px);
-  }
-
-  .app-navbar-admin-link:hover .app-navbar-admin-bg {
-    opacity: 1;
-  }
-
-  .app-navbar-admin-link.active .app-navbar-admin-bg {
-    background: rgba(255, 70, 85, 0.12);
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 70, 85, 0.26),
-      0 0 22px rgba(230, 57, 70, 0.18);
-    opacity: 1;
   }
 
   .app-navbar-desktop {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 0 8px;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+  }
+
+  .app-navbar-desktop-main,
+  .app-navbar-desktop-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .app-navbar-desktop-actions {
+    padding-left: 14px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .app-navbar-link {
@@ -164,7 +126,6 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 36px;
     text-decoration: none;
   }
 
@@ -183,8 +144,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 68px;
-    height: 68px;
+    width: 52px;
+    height: 52px;
     border: 1px solid rgba(255, 70, 85, 0.28);
     border-radius: 50%;
     background:
@@ -214,8 +175,8 @@
   }
 
   .app-navbar-logo {
-    width: 54px;
-    height: 54px;
+    width: 42px;
+    height: 42px;
     object-fit: contain;
   }
 
@@ -403,10 +364,7 @@
     }
 
     .app-navbar-admin-link {
-      top: 12px;
-      right: 12px;
-      width: 64px;
-      height: 64px;
+      border-color: rgba(255, 255, 255, 0.14);
     }
 
     .app-navbar-desktop {

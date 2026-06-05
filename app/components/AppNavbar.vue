@@ -12,14 +12,6 @@ type NavLink = {
     icon: NavIcon
 }
 
-type NavItem =
-    | ({ kind: 'link' } & NavLink)
-    | {
-        kind: 'logo'
-        to: string
-        label: string
-    }
-
 const links: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '/match', icon: 'calendar' },
@@ -27,19 +19,12 @@ const links: NavLink[] = [
     { label: 'Favoris', to: '/favoris', icon: 'star' },
     { label: 'Mon compte', to: '/user', icon: 'user' },
 ]
-
-const navItems = computed<NavItem[]>(() => {
-    const center = {
-        kind: 'logo' as const,
-        to: logoPath,
-        label: 'RugbyJam',
-    }
-
-    const left = links.slice(0, 2).map((link) => ({ kind: 'link' as const, ...link }))
-    const right = links.slice(2).map((link) => ({ kind: 'link' as const, ...link }))
-
-    return [...left, center, ...right]
-})
+const desktopLinks: NavLink[] = [
+    { label: 'Leagues', to: '/leagues', icon: 'trophy' },
+    { label: 'Matchs', to: '/match', icon: 'calendar' },
+    { label: 'Favoris', to: '/favoris', icon: 'star' },
+    { label: 'Supporter', to: '/supporter', icon: 'medal' },
+]
 const isAdmin = computed(() => user.value?.role === 'ADMIN')
 
 const iconPaths: Record<NavIcon, string[]> = {
@@ -101,29 +86,6 @@ watch(
         <div class="app-navbar-fade" aria-hidden="true" />
 
         <nav class="app-navbar-wrap" aria-label="Navigation principale">
-            <NuxtLink
-                v-if="isAdmin"
-                to="/admin"
-                class="app-navbar-admin-link"
-                :class="{ active: isActive('/admin') }"
-                aria-label="Administration"
-                title="Administration"
-                @click="closeMenu"
-            >
-                <span class="app-navbar-admin-bg" aria-hidden="true" />
-                <svg class="app-navbar-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path
-                        v-for="path in iconPaths.shield"
-                        :key="path"
-                        :d="path"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                </svg>
-            </NuxtLink>
-
             <div class="app-navbar-inner">
                 <button
                     type="button"
@@ -172,19 +134,55 @@ watch(
                 </button>
 
                 <div class="app-navbar-desktop">
-                    <div v-for="item in navItems" :key="`${item.kind}-${item.to}-${item.label}`">
+                    <div class="app-navbar-desktop-main">
                         <NuxtLink
-                            v-if="item.kind === 'link'"
-                            :to="item.to"
+                            :to="logoPath"
+                            class="app-navbar-brand"
+                            :class="{ active: isActive(logoPath) }"
+                            aria-label="RugbyJam"
+                            title="RugbyJam"
+                        >
+                            <span class="app-navbar-brand-frame">
+                                <img src="/images/logo_app.svg" alt="RugbyJam" class="app-navbar-logo">
+                            </span>
+                        </NuxtLink>
+
+                        <NuxtLink
+                            v-for="link in desktopLinks"
+                            :key="link.to + link.label"
+                            :to="link.to"
                             class="app-navbar-link"
-                            :class="{ active: isActive(item.to) }"
-                            :aria-label="item.label"
-                            :title="item.label"
+                            :class="{ active: isActive(link.to) }"
+                            :aria-label="link.label"
+                            :title="link.label"
                         >
                             <span class="app-navbar-link-bg" aria-hidden="true" />
                             <svg class="app-navbar-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path
-                                    v-for="path in iconPaths[item.icon]"
+                                    v-for="path in iconPaths[link.icon]"
+                                    :key="path"
+                                    :d="path"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                        </NuxtLink>
+                    </div>
+
+                    <div class="app-navbar-desktop-actions">
+                        <NuxtLink
+                            to="/user"
+                            class="app-navbar-link"
+                            :class="{ active: isActive('/user') }"
+                            aria-label="Mon compte"
+                            title="Mon compte"
+                        >
+                            <span class="app-navbar-link-bg" aria-hidden="true" />
+                            <svg class="app-navbar-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path
+                                    v-for="path in iconPaths.user"
                                     :key="path"
                                     :d="path"
                                     stroke="currentColor"
@@ -196,17 +194,25 @@ watch(
                         </NuxtLink>
 
                         <NuxtLink
-                            v-else
-                            :to="item.to"
-                            class="app-navbar-brand"
-                            :class="{ active: isActive(item.to) }"
-                            :aria-label="item.label"
-                            :title="item.label"
+                            v-if="isAdmin"
+                            to="/admin"
+                            class="app-navbar-link app-navbar-admin-link"
+                            :class="{ active: isActive('/admin') }"
+                            aria-label="Administration"
+                            title="Administration"
                         >
-                            <span class="app-navbar-brand-pulse" aria-hidden="true" />
-                            <span class="app-navbar-brand-frame">
-                                <img src="/images/logo_app.svg" alt="RugbyJam" class="app-navbar-logo">
-                            </span>
+                            <span class="app-navbar-link-bg" aria-hidden="true" />
+                            <svg class="app-navbar-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path
+                                    v-for="path in iconPaths.shield"
+                                    :key="path"
+                                    :d="path"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
                         </NuxtLink>
                     </div>
                 </div>

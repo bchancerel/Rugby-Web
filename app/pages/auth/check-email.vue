@@ -9,7 +9,7 @@
             return '/auth/login'
         }
 
-        return user.value?.emailVerified ? '/leagues' : '/auth/login'
+        return user.value?.emailVerified ? '/dashboard' : '/auth/login'
     })
 
     const primaryLabel = computed(() => {
@@ -17,7 +17,7 @@
             return 'Retour a la connexion'
         }
 
-        return user.value?.emailVerified ? 'Aller aux ligues' : 'Se reconnecter plus tard'
+        return user.value?.emailVerified ? 'Aller au dashboard' : 'Se reconnecter plus tard'
     })
 
     const canResendVerification = computed(() => {

@@ -25,7 +25,7 @@
 
     watch(isAuthenticated, async (authenticated) => {
         if (authenticated && !isRegister.value) {
-            await navigateTo('/leagues')
+            await navigateTo('/dashboard')
         }
     }, { immediate: true })
 
@@ -49,7 +49,7 @@
                 })
             }
 
-            await navigateTo('/leagues')
+            await navigateTo('/dashboard')
         } catch (error) {
             errorMessage.value = error instanceof Error ? error.message : 'Une erreur est survenue.'
         }
