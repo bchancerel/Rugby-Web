@@ -14,7 +14,7 @@ const {
     favorites,
     pending: favoritesPending,
     errorMessage: favoritesError,
-    fetchFavorites,
+    ensureFavorites,
     removeFavorite,
 } = useFavorites()
 const apiFetch = useApiRequest()
@@ -198,8 +198,7 @@ const fetchMatchesHome = async () => {
 
     try {
         const data = await apiFetch<RugbyMatchesHome>('/rugby/matches/home', {
-            cache: 'no-store',
-            query: { t: String(Date.now()), includeGlobalFixtures: '0' },
+            query: { includeGlobalFixtures: '0' },
         })
         favoriteMatches.value = data.favoriteMatches
     } catch (error) {
@@ -211,20 +210,18 @@ const fetchMatchesHome = async () => {
 }
 
 const fetchCompetitionOverviews = async () => {
-    const entries = await Promise.all(
-        favorites.value.competitions.data.map(async (favorite) => {
-            try {
-                const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
-                return [favorite.entityId, overview] as const
-            } catch {
-                return [favorite.entityId, null] as const
-            }
-        })
-    )
+    const entries: Array<[string, RugbyLeagueOverview]> = []
 
-    competitionOverviews.value = Object.fromEntries(
-        entries.filter((entry): entry is [string, RugbyLeagueOverview] => entry[1] !== null)
-    )
+    for (const favorite of favoriteCompetitions.value) {
+        try {
+            const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
+            entries.push([favorite.entityId, overview])
+        } catch {
+            continue
+        }
+    }
+
+    competitionOverviews.value = Object.fromEntries(entries)
 }
 
 const removeDashboardFavorite = async (favoriteId: string) => {
@@ -233,7 +230,7 @@ const removeDashboardFavorite = async (favoriteId: string) => {
 }
 
 onMounted(async () => {
-    await fetchFavorites().catch(() => undefined)
+    await ensureFavorites().catch(() => undefined)
     await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
 })
 
