@@ -50,10 +50,10 @@ http://localhost:5173
 ## Fonctionnalites rugby
 
 - Page championnats avec classement, matchs par journee et phases finales.
-- Page favoris avec equipes et championnats suivis.
+- Dashboard avec equipes et championnats suivis.
 - Page equipe non exposee dans la navbar: `/teams/:id`.
 - Acces a la page equipe depuis:
-  - les favoris;
+  - le dashboard;
   - les lignes du classement;
   - les cartes de matchs;
   - les cartes quart, demi et finale;

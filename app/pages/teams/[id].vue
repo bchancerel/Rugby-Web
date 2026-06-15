@@ -33,9 +33,9 @@ const hasStatisticsContext = computed(() => Boolean(teamId.value && leagueId.val
 const backPath = computed(() =>
     hasStatisticsContext.value
         ? { path: `/leagues/${leagueId.value}`, query: { season: season.value } }
-        : '/favoris'
+        : '/dashboard'
 )
-const backLabel = computed(() => hasStatisticsContext.value ? 'Retour au championnat' : 'Retour aux favoris')
+const backLabel = computed(() => hasStatisticsContext.value ? 'Retour au championnat' : 'Retour au dashboard')
 const selectedContextKey = computed(() => hasStatisticsContext.value ? `${leagueId.value}:${season.value}` : '')
 const selectedContext = computed(() =>
     contexts.value.find((context) => `${context.league.id}:${context.league.season}` === selectedContextKey.value) ?? null

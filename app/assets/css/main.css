@@ -2,7 +2,6 @@
 @import "tailwindcss";
 @import "./components/admin.css";
 @import "./components/dashboard.css";
-@import "./components/favorites.css";
 @import "./components/leagues.css";
 @import "./components/login.css";
 @import "./components/match.css";
@@ -188,7 +187,6 @@
 
 .home-page h1,
 .auth-page h1,
-.favorites-heading h1,
 .dashboard-heading h1,
 .admin-heading h1,
 .leagues-page h1,
@@ -214,9 +212,6 @@
 }
 
 .home-page h2,
-.favorites-empty-state h2,
-.favorites-section-heading h2,
-.favorites-group h2,
 .match-page-section-heading h2,
 .league-detail-page .section-heading h2,
 .leagues-page .section-heading h2,

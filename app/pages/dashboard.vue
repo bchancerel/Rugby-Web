@@ -15,6 +15,7 @@ const {
     pending: favoritesPending,
     errorMessage: favoritesError,
     fetchFavorites,
+    removeFavorite,
 } = useFavorites()
 const apiFetch = useApiRequest()
 const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
@@ -60,7 +61,7 @@ const alertItems = computed(() => {
         alerts.push({
             key: 'no-team-match',
             label: 'Aucun prochain match trouve pour tes equipes favorites.',
-            to: '/favoris',
+            to: '/match',
         })
     }
 
@@ -68,7 +69,7 @@ const alertItems = computed(() => {
         alerts.push({
             key: 'no-standings',
             label: 'Les classements de tes championnats favoris sont indisponibles.',
-            to: '/favoris',
+            to: '/leagues',
         })
     }
 
@@ -226,6 +227,11 @@ const fetchCompetitionOverviews = async () => {
     )
 }
 
+const removeDashboardFavorite = async (favoriteId: string) => {
+    await removeFavorite(favoriteId)
+    await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
+}
+
 onMounted(async () => {
     await fetchFavorites().catch(() => undefined)
     await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
@@ -251,14 +257,14 @@ useHead({
             <p v-if="matchesError" class="dashboard-alert">{{ matchesError }}</p>
 
             <section class="dashboard-summary" aria-label="Resume">
-                <NuxtLink to="/favoris" class="dashboard-stat">
+                <div class="dashboard-stat">
                     <span>Equipes favorites</span>
                     <strong>{{ favorites.teams.total }}</strong>
-                </NuxtLink>
-                <NuxtLink to="/favoris" class="dashboard-stat">
+                </div>
+                <div class="dashboard-stat">
                     <span>Championnats favoris</span>
                     <strong>{{ favorites.competitions.total }}</strong>
-                </NuxtLink>
+                </div>
                 <NuxtLink to="/match" class="dashboard-stat">
                     <span>Prochains matchs</span>
                     <strong>{{ teamUpcomingMatches.length }}</strong>
@@ -302,7 +308,6 @@ useHead({
                             <p class="dashboard-eyebrow">Acces rapide</p>
                             <h2 id="dashboard-competitions-title">Championnats favoris</h2>
                         </div>
-                        <NuxtLink to="/favoris">Gerer</NuxtLink>
                     </div>
 
                     <div v-if="favoriteCompetitions.length === 0" class="dashboard-state compact">
@@ -310,19 +315,33 @@ useHead({
                     </div>
 
                     <div v-else class="dashboard-competition-grid">
-                        <NuxtLink
+                        <article
                             v-for="favorite in favoriteCompetitions"
                             :key="favorite.id"
-                            :to="`/leagues/${favorite.entityId}`"
-                            class="dashboard-competition-card"
+                            class="dashboard-favorite-card"
                         >
-                            <img
-                                :src="competitionOverviews[favorite.entityId]?.league.logo || RUGBY_PLACEHOLDER_LOGO"
-                                :alt="favorite.entityName ?? `Championnat ${favorite.entityId}`"
-                                @error="setRugbyPlaceholderLogo"
+                            <NuxtLink
+                                :to="`/leagues/${favorite.entityId}`"
+                                class="dashboard-competition-card"
                             >
-                            <span>{{ favorite.entityName ?? `Championnat ${favorite.entityId}` }}</span>
-                        </NuxtLink>
+                                <img
+                                    :src="competitionOverviews[favorite.entityId]?.league.logo || RUGBY_PLACEHOLDER_LOGO"
+                                    :alt="favorite.entityName ?? `Championnat ${favorite.entityId}`"
+                                    @error="setRugbyPlaceholderLogo"
+                                >
+                                <span>{{ favorite.entityName ?? `Championnat ${favorite.entityId}` }}</span>
+                            </NuxtLink>
+                            <button
+                                type="button"
+                                class="dashboard-favorite-remove"
+                                :disabled="favoritesPending"
+                                :aria-label="`Retirer ${favorite.entityName ?? `Championnat ${favorite.entityId}`} des favoris`"
+                                :title="`Retirer ${favorite.entityName ?? `Championnat ${favorite.entityId}`} des favoris`"
+                                @click="removeDashboardFavorite(favorite.id)"
+                            >
+                                x
+                            </button>
+                        </article>
                     </div>
                 </section>
 
@@ -332,7 +351,6 @@ useHead({
                             <p class="dashboard-eyebrow">Acces rapide</p>
                             <h2 id="dashboard-teams-title">Equipes favorites</h2>
                         </div>
-                        <NuxtLink to="/favoris">Gerer</NuxtLink>
                     </div>
 
                     <div v-if="favoriteTeams.length === 0" class="dashboard-state compact">
@@ -340,22 +358,36 @@ useHead({
                     </div>
 
                     <div v-else class="dashboard-competition-grid">
-                        <NuxtLink
+                        <article
                             v-for="favorite in favoriteTeams"
                             :key="favorite.id"
-                            :to="getTeamFavoritePath(favorite.entityId)"
-                            class="dashboard-competition-card"
+                            class="dashboard-favorite-card"
                         >
-                            <img
-                                :src="getTeamFavoriteLogo(favorite.entityId)"
-                                :alt="favorite.entityName ?? `Equipe ${favorite.entityId}`"
-                                @error="setRugbyPlaceholderLogo"
+                            <NuxtLink
+                                :to="getTeamFavoritePath(favorite.entityId)"
+                                class="dashboard-competition-card"
                             >
-                            <span>
-                                <strong>{{ favorite.entityName ?? `Equipe ${favorite.entityId}` }}</strong>
-                                <small>{{ formatTeamFavoriteStanding(favorite.entityId) }}</small>
-                            </span>
-                        </NuxtLink>
+                                <img
+                                    :src="getTeamFavoriteLogo(favorite.entityId)"
+                                    :alt="favorite.entityName ?? `Equipe ${favorite.entityId}`"
+                                    @error="setRugbyPlaceholderLogo"
+                                >
+                                <span>
+                                    <strong>{{ favorite.entityName ?? `Equipe ${favorite.entityId}` }}</strong>
+                                    <small>{{ formatTeamFavoriteStanding(favorite.entityId) }}</small>
+                                </span>
+                            </NuxtLink>
+                            <button
+                                type="button"
+                                class="dashboard-favorite-remove"
+                                :disabled="favoritesPending"
+                                :aria-label="`Retirer ${favorite.entityName ?? `Equipe ${favorite.entityId}`} des favoris`"
+                                :title="`Retirer ${favorite.entityName ?? `Equipe ${favorite.entityId}`} des favoris`"
+                                @click="removeDashboardFavorite(favorite.id)"
+                            >
+                                x
+                            </button>
+                        </article>
                     </div>
                 </section>
 
@@ -465,7 +497,6 @@ useHead({
                             <p class="dashboard-eyebrow">Classements</p>
                             <h2 id="dashboard-standings-title">Mini-classements favoris</h2>
                         </div>
-                        <NuxtLink to="/favoris">Voir favoris</NuxtLink>
                     </div>
 
                     <div v-if="displayedOverviews.length === 0" class="dashboard-state compact">

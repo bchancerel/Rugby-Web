@@ -4,7 +4,7 @@ const open = ref(false)
 const { user } = useAuth()
 const logoPath = '/dashboard'
 
-type NavIcon = 'trophy' | 'calendar' | 'star' | 'user' | 'shield' | 'medal' | 'arrow' | 'menu' | 'close'
+type NavIcon = 'trophy' | 'calendar' | 'user' | 'shield' | 'medal' | 'arrow' | 'menu' | 'close'
 
 type NavLink = {
     to: string
@@ -16,13 +16,11 @@ const links: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '/match', icon: 'calendar' },
     { label: 'Supporter', to: '/supporter', icon: 'medal' },
-    { label: 'Favoris', to: '/favoris', icon: 'star' },
     { label: 'Mon compte', to: '/user', icon: 'user' },
 ]
 const desktopLinks: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '/match', icon: 'calendar' },
-    { label: 'Favoris', to: '/favoris', icon: 'star' },
     { label: 'Supporter', to: '/supporter', icon: 'medal' },
 ]
 const isAdmin = computed(() => user.value?.role === 'ADMIN')
@@ -43,9 +41,6 @@ const iconPaths: Record<NavIcon, string[]> = {
         'M8 12h3',
         'M13 12h3',
         'M8 16h3',
-    ],
-    star: [
-        'm12 3 2.75 5.58 6.16.9-4.46 4.35 1.05 6.14L12 17.78 6.5 20.97l1.05-6.14L3.09 10.48l6.16-.9L12 3Z',
     ],
     user: [
         'M20 21a8 8 0 0 0-16 0',
