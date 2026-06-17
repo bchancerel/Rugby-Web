@@ -30,7 +30,7 @@ onMounted(() => {
             </div>
 
             <div v-if="pending && !profile" class="supporter-state">
-                Chargement du profil supporter...
+                <AppLoader label="Chargement du profil supporter..." />
             </div>
 
             <div v-else-if="errorMessage" class="supporter-state error">

@@ -386,9 +386,9 @@ onBeforeUnmount(() => {
                 Retour aux competitions
             </NuxtLink>
 
-            <p v-if="pending" class="state">
-                Chargement de la competition...
-            </p>
+            <div v-if="pending" class="state">
+                <AppLoader label="Chargement de la competition..." />
+            </div>
 
             <div v-else-if="error" class="state error">
                 <p>

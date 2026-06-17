@@ -145,7 +145,7 @@
                 </p>
 
                 <div v-if="pending && !users.length" class="admin-empty">
-                    Chargement des utilisateurs...
+                    <AppLoader label="Chargement des utilisateurs..." />
                 </div>
 
                 <div v-else-if="!users.length" class="admin-empty">

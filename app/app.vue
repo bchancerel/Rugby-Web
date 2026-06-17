@@ -55,6 +55,7 @@ onUnmounted(() => {
 <template>
   <div :class="{ 'app-theme-shell': useAppBackground, 'has-app-navbar': showAppNavbar }">
     <NuxtRouteAnnouncer />
+    <NuxtLoadingIndicator color="#ff4655" :height="4" :throttle="80" />
     <div
       class="app-scroll-progress"
       :style="{ transform: `scaleX(${scrollProgress})` }"

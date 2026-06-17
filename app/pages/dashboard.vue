@@ -269,7 +269,7 @@ useHead({
             </section>
 
             <div v-if="favoritesPending && !hasFavorites" class="dashboard-state">
-                Chargement du dashboard...
+                <AppLoader label="Chargement du dashboard..." />
             </div>
 
             <div v-else-if="!hasFavorites" class="dashboard-empty">
@@ -398,7 +398,7 @@ useHead({
                     </div>
 
                     <div v-if="matchesPending" class="dashboard-state compact">
-                        Chargement des prochains matchs...
+                        <AppLoader label="Chargement des prochains matchs..." compact />
                     </div>
 
                     <div v-else-if="favoriteTeams.length === 0" class="dashboard-state compact">

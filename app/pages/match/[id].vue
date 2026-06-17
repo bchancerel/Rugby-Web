@@ -407,7 +407,7 @@ useHead(() => ({
             </NuxtLink>
 
             <div v-if="pending" class="match-page-state">
-                Chargement du match...
+                <AppLoader label="Chargement du match..." />
             </div>
 
             <div v-else-if="errorMessage" class="match-page-state error">

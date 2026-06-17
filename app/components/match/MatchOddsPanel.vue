@@ -54,7 +54,7 @@ const confidenceLabel = computed(() => {
         </div>
 
         <div v-if="pending" class="match-page-state">
-            Chargement des cotes...
+            <AppLoader label="Chargement des cotes..." compact />
         </div>
 
         <div v-else-if="errorMessage" class="match-page-state error">

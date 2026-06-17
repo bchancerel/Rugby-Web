@@ -16,6 +16,20 @@ Frontend Nuxt de RugbyJam.
 - Node.js 20+
 - API RugbyJam lancee, par defaut sur `http://localhost:3000`
 
+## Versions
+
+- Application frontend: non versionnee dans `package.json`
+- Source GitHub verifiee: `bchancerel/Rugby-Web`, `main` (`f4c23954f124a6487090b7859d538b503075abfa`)
+- Build GitHub Actions verifie: aucun run associe au dernier commit `main` via le connecteur GitHub
+- Tags/Releases GitHub: aucun tag de version detecte
+- Node.js: 20+ recommande
+- Nuxt: `^4.4.5`
+- Vue: `^3.5.34`
+- TypeScript: via `vue-tsc ^3.3.1`
+- Tailwind CSS: `^4.3.0`
+- Pinia Nuxt: `^0.11.3`
+- Vue Query: `^5.100.10`
+
 ## Installation
 
 ```bash
@@ -32,8 +46,13 @@ Variables principales:
 
 ```env
 NUXT_API_BASE=http://localhost:3000/api
-NUXT_PUBLIC_API_BASE=http://localhost:3000/api
+NUXT_PUBLIC_API_BASE=/api
+NUXT_API_PROXY_TARGET=http://localhost:3000/api
 ```
+
+En local, `NUXT_PUBLIC_API_BASE=/api` laisse le navigateur appeler le serveur Nuxt,
+qui proxifie ensuite vers l'API. Cela evite les problemes CORS/cookies pendant le
+developpement.
 
 ## Developpement
 

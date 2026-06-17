@@ -267,7 +267,7 @@ useHead(() => ({
                 </div>
 
                 <div v-if="contextsPending" class="team-context-state">
-                    Chargement des contextes...
+                    <AppLoader label="Chargement des contextes..." compact />
                 </div>
 
                 <div v-else-if="contextsErrorMessage" class="team-context-state error">
@@ -337,7 +337,7 @@ useHead(() => ({
             </div>
 
             <div v-else-if="pending" class="team-statistics-empty">
-                Chargement des statistiques...
+                <AppLoader label="Chargement des statistiques..." />
             </div>
 
             <div v-else-if="errorMessage" class="team-statistics-empty error">
@@ -460,7 +460,7 @@ useHead(() => ({
                     </div>
 
                     <div v-if="fixturesPending" class="team-fixtures-state">
-                        Chargement des matchs...
+                        <AppLoader label="Chargement des matchs..." compact />
                     </div>
 
                     <div v-else-if="fixturesErrorMessage" class="team-fixtures-state error">

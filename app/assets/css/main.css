@@ -5,6 +5,7 @@
 @import "./components/leagues.css";
 @import "./components/login.css";
 @import "./components/match.css";
+@import "./components/news.css";
 @import "./components/navbar.css";
 @import "./components/supporter.css";
 @import "./components/team-statistics.css";
@@ -183,6 +184,62 @@
     text-align: right;
   }
 
+  .app-loader {
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 42px;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    color: var(--rj-color-text-primary);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .app-loader.compact {
+    min-height: 28px;
+    gap: 9px;
+    font-size: 0.9rem;
+  }
+
+  .app-loader-spinner {
+    position: relative;
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    flex: 0 0 auto;
+    border: 3px solid rgba(255, 255, 255, 0.16);
+    border-top-color: var(--rj-color-red-accent);
+    border-right-color: rgba(255, 255, 255, 0.56);
+    border-radius: 999px;
+    box-shadow: 0 0 18px rgba(230, 57, 70, 0.22);
+    animation: app-loader-spin 820ms linear infinite;
+  }
+
+  .app-loader.compact .app-loader-spinner {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+  }
+
+  .app-loader-label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  @keyframes app-loader-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-loader-spinner {
+      animation-duration: 1600ms;
+    }
+  }
+
 }
 
 .home-page h1,
@@ -192,6 +249,7 @@
 .leagues-page h1,
 .league-detail-page h1,
 .match-page-header h1,
+.news-header h1,
 .supporter-heading h1,
 .team-statistics-header h1,
 .team-statistics-empty h1,
