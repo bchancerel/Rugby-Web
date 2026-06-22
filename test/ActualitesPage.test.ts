@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import ActualitesPage from '~/pages/actualites.vue'
 import type { NewsResponse } from '~/types/news'
 
@@ -63,9 +63,29 @@ const olderNewsResponse: NewsResponse = {
   ],
 }
 
+const emptyNewsResponse: NewsResponse = {
+  ...newsResponse,
+  total: 0,
+  hasMore: false,
+  sources: [
+    {
+      source: 'rugbyrama',
+      sourceLabel: 'Rugbyrama',
+      status: 'ok',
+      articlesCount: 0,
+      error: null,
+    },
+  ],
+  items: [],
+}
+
 beforeEach(() => {
   apiRequestMock.mockReset()
   apiRequestMock.mockResolvedValue(newsResponse)
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('ActualitesPage', () => {
@@ -107,6 +127,55 @@ describe('ActualitesPage', () => {
         source: 'rugbypass',
       },
     })
+  })
+
+  it('fetches transfer articles when the transfer switch is enabled', async () => {
+    const wrapper = mount(ActualitesPage)
+
+    await flushPromises()
+    await wrapper.find('.news-topic-switch input').setValue(true)
+    await flushPromises()
+
+    expect(apiRequestMock).toHaveBeenLastCalledWith('/news', {
+      query: {
+        limit: 24,
+        offset: 0,
+        topic: 'transfers',
+      },
+    })
+  })
+
+  it('combines the selected source with the transfer filter', async () => {
+    const wrapper = mount(ActualitesPage)
+
+    await flushPromises()
+    await wrapper.find('.news-topic-switch input').setValue(true)
+    await flushPromises()
+    await wrapper.findAll('.news-source-tabs button')[1].trigger('click')
+    await flushPromises()
+
+    expect(apiRequestMock).toHaveBeenLastCalledWith('/news', {
+      query: {
+        limit: 24,
+        offset: 0,
+        source: 'rugbyrama',
+        topic: 'transfers',
+      },
+    })
+  })
+
+  it('shows a specific empty state when transfer articles are filtered out', async () => {
+    apiRequestMock
+      .mockResolvedValueOnce(newsResponse)
+      .mockResolvedValueOnce(emptyNewsResponse)
+
+    const wrapper = mount(ActualitesPage)
+
+    await flushPromises()
+    await wrapper.find('.news-topic-switch input').setValue(true)
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Aucun article transfert disponible pour cette source.')
   })
 
   it('loads older articles when the load more button is clicked', async () => {

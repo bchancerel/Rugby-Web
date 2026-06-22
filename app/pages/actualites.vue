@@ -20,6 +20,7 @@ const sourceFilters: Array<{ key: SourceFilter, label: string }> = [
 
 const apiFetch = useApiRequest()
 const selectedSource = ref<SourceFilter>('all')
+const transfersOnly = ref(false)
 const news = ref<NewsResponse | null>(null)
 const pending = ref(false)
 const loadMorePending = ref(false)
@@ -39,6 +40,10 @@ const hasMoreArticles = computed(() => Boolean(news.value?.hasMore))
 const totalArticles = computed(() => news.value?.total ?? articles.value.length)
 const sourceErrors = computed(() => sources.value.filter((source) => source.status === 'error'))
 const availableSourcesCount = computed(() => sources.value.filter((source) => source.status === 'ok').length)
+const emptyArticlesMessage = computed(() => transfersOnly.value
+    ? 'Aucun article transfert disponible pour cette source.'
+    : 'Aucun article disponible pour cette source.'
+)
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
@@ -70,6 +75,7 @@ const fetchNews = async ({ append = false } = {}) => {
                 limit: NEWS_PAGE_SIZE,
                 offset,
                 ...(selectedSource.value !== 'all' ? { source: selectedSource.value } : {}),
+                ...(transfersOnly.value ? { topic: 'transfers' } : {}),
             },
         })
 
@@ -91,6 +97,12 @@ const selectSource = (source: SourceFilter) => {
     if (selectedSource.value === source) return
 
     selectedSource.value = source
+    imageErrors.value = new Set()
+    void fetchNews()
+}
+
+const toggleTransfersOnly = () => {
+    transfersOnly.value = !transfersOnly.value
     imageErrors.value = new Set()
     void fetchNews()
 }
@@ -195,6 +207,18 @@ onBeforeUnmount(() => {
                     </button>
                 </div>
 
+                <label class="news-topic-switch">
+                    <input
+                        type="checkbox"
+                        :checked="transfersOnly"
+                        @change="toggleTransfersOnly"
+                    >
+                    <span class="news-topic-switch-track" aria-hidden="true">
+                        <span class="news-topic-switch-thumb" />
+                    </span>
+                    <span>Transferts</span>
+                </label>
+
                 <p class="news-updated-at">
                     Mis a jour {{ formatUpdatedAt(news?.updatedAt) }}
                 </p>
@@ -259,7 +283,7 @@ onBeforeUnmount(() => {
 
                 <div v-if="!hasArticles" class="news-state empty">
                     <p>
-                        Aucun article disponible pour cette source.
+                        {{ emptyArticlesMessage }}
                         <span>Tu peux relancer une actualisation dans quelques instants.</span>
                     </p>
                     <button type="button" @click="refreshNews">
