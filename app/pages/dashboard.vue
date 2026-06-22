@@ -23,6 +23,7 @@ const { getFixtureMatchPath, getFixtureTeamPath } = useRugbyTeamLinks()
 const favoriteMatches = ref<RugbyFavoriteMatch[]>([])
 const competitionOverviews = ref<Record<string, RugbyLeagueOverview>>({})
 const matchesPending = ref(false)
+const competitionOverviewsPending = ref(false)
 const matchesError = ref('')
 
 const favoriteCompetitions = computed(() => favorites.value.competitions.data.slice(0, 6))
@@ -44,6 +45,15 @@ const displayedOverviews = computed(() =>
         .map((favorite) => competitionOverviews.value[favorite.entityId] ?? null)
         .filter((overview): overview is RugbyLeagueOverview => Boolean(overview))
 )
+const hasFavorites = computed(() =>
+    favorites.value.teams.total > 0 || favorites.value.competitions.total > 0
+)
+const dashboardDataPending = computed(() =>
+    matchesPending.value || competitionOverviewsPending.value
+)
+const alertsPending = computed(() =>
+    hasFavorites.value && dashboardDataPending.value
+)
 const alertItems = computed(() => {
     const alerts: Array<{ key: string, label: string, to: string | ReturnType<typeof getFixtureMatchPath> }> = []
 
@@ -57,7 +67,7 @@ const alertItems = computed(() => {
         })
     }
 
-    if (favorites.value.teams.total > 0 && teamUpcomingMatches.value.length === 0) {
+    if (!matchesPending.value && favorites.value.teams.total > 0 && teamUpcomingMatches.value.length === 0) {
         alerts.push({
             key: 'no-team-match',
             label: 'Aucun prochain match trouve pour tes equipes favorites.',
@@ -65,7 +75,7 @@ const alertItems = computed(() => {
         })
     }
 
-    if (favorites.value.competitions.total > 0 && displayedOverviews.value.length === 0) {
+    if (!competitionOverviewsPending.value && favorites.value.competitions.total > 0 && displayedOverviews.value.length === 0) {
         alerts.push({
             key: 'no-standings',
             label: 'Les classements de tes championnats favoris sont indisponibles.',
@@ -83,9 +93,6 @@ const alertItems = computed(() => {
 
     return alerts.slice(0, 4)
 })
-const hasFavorites = computed(() =>
-    favorites.value.teams.total > 0 || favorites.value.competitions.total > 0
-)
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
@@ -210,28 +217,45 @@ const fetchMatchesHome = async () => {
 }
 
 const fetchCompetitionOverviews = async () => {
-    const entries: Array<[string, RugbyLeagueOverview]> = []
-
-    for (const favorite of favoriteCompetitions.value) {
-        try {
-            const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
-            entries.push([favorite.entityId, overview])
-        } catch {
-            continue
-        }
+    if (favoriteCompetitions.value.length === 0) {
+        competitionOverviews.value = {}
+        return
     }
 
-    competitionOverviews.value = Object.fromEntries(entries)
+    competitionOverviewsPending.value = true
+
+    try {
+        const entries = await Promise.all(
+            favoriteCompetitions.value.map(async (favorite): Promise<[string, RugbyLeagueOverview] | null> => {
+                try {
+                    const overview = await apiFetch<RugbyLeagueOverview>(`/rugby/leagues/${favorite.entityId}/overview`)
+                    return [favorite.entityId, overview]
+                } catch {
+                    return null
+                }
+            })
+        )
+
+        competitionOverviews.value = Object.fromEntries(
+            entries.filter((entry): entry is [string, RugbyLeagueOverview] => Boolean(entry))
+        )
+    } finally {
+        competitionOverviewsPending.value = false
+    }
+}
+
+const refreshDashboardData = async () => {
+    await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
 }
 
 const removeDashboardFavorite = async (favoriteId: string) => {
     await removeFavorite(favoriteId)
-    await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
+    await refreshDashboardData()
 }
 
 onMounted(async () => {
     await ensureFavorites().catch(() => undefined)
-    await Promise.all([fetchMatchesHome(), fetchCompetitionOverviews()])
+    await refreshDashboardData()
 })
 
 useHead({
@@ -279,7 +303,7 @@ useHead({
             </div>
 
             <template v-else>
-                <section v-if="alertItems.length" class="dashboard-alert-panel" aria-labelledby="dashboard-alerts-title">
+                <section v-if="alertsPending || alertItems.length" class="dashboard-alert-panel" aria-labelledby="dashboard-alerts-title">
                     <div class="dashboard-section-heading">
                         <div>
                             <p class="dashboard-eyebrow">Alertes</p>
@@ -287,7 +311,11 @@ useHead({
                         </div>
                     </div>
 
-                    <div class="dashboard-alert-list">
+                    <div v-if="alertsPending" class="dashboard-state compact">
+                        <AppLoader label="Chargement des informations favorites..." compact />
+                    </div>
+
+                    <div v-else class="dashboard-alert-list">
                         <NuxtLink
                             v-for="alert in alertItems"
                             :key="alert.key"
@@ -305,6 +333,10 @@ useHead({
                             <p class="dashboard-eyebrow">Acces rapide</p>
                             <h2 id="dashboard-competitions-title">Championnats favoris</h2>
                         </div>
+                    </div>
+
+                    <div v-if="competitionOverviewsPending && favoriteCompetitions.length > 0" class="dashboard-state compact">
+                        <AppLoader label="Chargement des championnats favoris..." compact />
                     </div>
 
                     <div v-if="favoriteCompetitions.length === 0" class="dashboard-state compact">
@@ -348,6 +380,10 @@ useHead({
                             <p class="dashboard-eyebrow">Acces rapide</p>
                             <h2 id="dashboard-teams-title">Equipes favorites</h2>
                         </div>
+                    </div>
+
+                    <div v-if="favoriteTeams.length > 0 && (competitionOverviewsPending || matchesPending)" class="dashboard-state compact">
+                        <AppLoader label="Chargement des informations equipes..." compact />
                     </div>
 
                     <div v-if="favoriteTeams.length === 0" class="dashboard-state compact">
@@ -496,7 +532,11 @@ useHead({
                         </div>
                     </div>
 
-                    <div v-if="displayedOverviews.length === 0" class="dashboard-state compact">
+                    <div v-if="competitionOverviewsPending && favoriteCompetitions.length > 0" class="dashboard-state compact">
+                        <AppLoader label="Chargement des classements..." compact />
+                    </div>
+
+                    <div v-else-if="displayedOverviews.length === 0" class="dashboard-state compact">
                         Aucun classement disponible pour tes championnats favoris.
                     </div>
 
