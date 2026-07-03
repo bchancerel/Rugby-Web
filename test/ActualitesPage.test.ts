@@ -106,7 +106,7 @@ describe('ActualitesPage', () => {
         offset: 0,
       },
     })
-    expect(wrapper.text()).toContain('Actualites')
+    expect(wrapper.text()).toContain('Actualités')
     expect(wrapper.text()).toContain('Toulouse prepare sa finale')
     expect(wrapper.text()).toContain('Le Stade Toulousain affine ses derniers reglages.')
     expect(wrapper.text()).toContain('Rugbyrama')

@@ -17,7 +17,7 @@ describe('SupporterBadgeToast', () => {
     const toast = document.body.querySelector('.supporter-badge-toast')
     const image = document.body.querySelector<HTMLImageElement>('.supporter-badge-toast-mark img')
 
-    expect(toast?.textContent).toContain('Badge debloque')
+    expect(toast?.textContent).toContain('Badge débloqué')
     expect(toast?.textContent).toContain('Jour de match')
     expect(image?.getAttribute('src')).toBe('/images/badges/badge_3.png')
   })
