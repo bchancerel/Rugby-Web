@@ -1,4 +1,4 @@
-import type { CreateSupporterEventPayload, PublicSupporterEventType } from '~/types/supporter'
+﻿import type { CreateSupporterEventPayload, PublicSupporterEventType } from '~/types/supporter'
 
 const trackedKeys = new Set<string>()
 

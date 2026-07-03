@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { RugbyFixture, RugbyMatchOdds } from '~/types/rugby'
 import {
     RUGBY_PLACEHOLDER_LOGO,
@@ -49,7 +49,7 @@ const hasScore = computed(() =>
     fixture.value?.score.home !== null && fixture.value?.score.away !== null
 )
 const statusLabel = computed(() =>
-    fixture.value?.status.long ?? fixture.value?.status.short ?? (hasScore.value ? 'Termine' : 'A venir')
+    fixture.value?.status.long ?? fixture.value?.status.short ?? (hasScore.value ? 'Terminé' : 'A venir')
 )
 const isFixtureFinal = computed(() => {
     const shortStatus = fixture.value?.status.short?.toUpperCase()
@@ -454,20 +454,20 @@ useHead(() => ({
                             >
                                 <img
                                     :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                    :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                    :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                     :class="{ 'is-score-celebrating': scoringSides.includes('home') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
-                                <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                             </NuxtLink>
                             <template v-else>
                                 <img
                                     :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                    :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                    :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                     :class="{ 'is-score-celebrating': scoringSides.includes('home') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
-                                <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                             </template>
                             <small>Domicile</small>
                         </div>
@@ -505,17 +505,17 @@ useHead(() => ({
                             >
                                 <img
                                     :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                    :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                    :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                     :class="{ 'is-score-celebrating': scoringSides.includes('away') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
-                                <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                             </NuxtLink>
                             <template v-else>
-                                <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                 <img
                                     :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                    :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                    :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                     :class="{ 'is-score-celebrating': scoringSides.includes('away') }"
                                     @error="setRugbyPlaceholderLogo"
                                 >
@@ -617,7 +617,7 @@ useHead(() => ({
                             <dd>{{ fixture.league.season ?? 'Non renseignee' }}</dd>
                         </div>
                         <div>
-                            <dt>Journee</dt>
+                            <dt>Journée</dt>
                             <dd>{{ fixture.league.round ?? 'Non renseignee' }}</dd>
                         </div>
                         <div>

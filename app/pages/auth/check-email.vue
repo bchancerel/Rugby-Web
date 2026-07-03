@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     const { user, pending, isAuthenticated, resendVerification } = useAuth()
 
     const errorMessage = ref('')
@@ -14,7 +14,7 @@
 
     const primaryLabel = computed(() => {
         if (!isAuthenticated.value) {
-            return 'Retour a la connexion'
+            return 'Retour à la connexion'
         }
 
         return user.value?.emailVerified ? 'Aller au dashboard' : 'Se reconnecter plus tard'
@@ -53,7 +53,7 @@
             </div>
 
             <p class="auth-support-text">
-                Ton compte est cree. On t'a envoye un lien de validation par email pour activer ton acces.
+                Ton compte est cree. On t'a envoyé un lien de validation par email pour activer ton acces.
             </p>
 
             <div class="auth-form">

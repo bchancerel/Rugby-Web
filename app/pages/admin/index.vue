@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     import type { AdminUser } from '~/types/admin'
     import type { AuthRole } from '~/types/auth'
 
@@ -120,7 +120,7 @@
                 <p class="admin-eyebrow">Administration</p>
                 <h1 id="admin-title">Gestion des utilisateurs</h1>
                 <p>
-                    Liste des comptes RugbyJam, avec gestion des roles et suppression des utilisateurs.
+                    Liste des comptes RugbyJam, avec gestion des rôles et suppression des utilisateurs.
                 </p>
             </div>
 
@@ -141,7 +141,7 @@
                 </p>
 
                 <p v-if="hasCurrentUserInPage" class="admin-info">
-                    Votre propre compte est protege : vous ne pouvez pas vous supprimer ni retirer votre role admin ici.
+                    Votre propre compte est protégé : vous ne pouvez pas vous supprimer ni retirer votre rôle admin ici.
                 </p>
 
                 <div v-if="pending && !users.length" class="admin-empty">
@@ -149,7 +149,7 @@
                 </div>
 
                 <div v-else-if="!users.length" class="admin-empty">
-                    Aucun utilisateur trouve.
+                    Aucun utilisateur trouvé.
                 </div>
 
                 <div v-else class="admin-table-wrapper">
@@ -184,7 +184,7 @@
                                         class="admin-select"
                                         :value="adminUser.role"
                                         :disabled="isUserProtected(adminUser) || isUserActionPending(adminUser)"
-                                        :title="isUserProtected(adminUser) ? 'Votre role admin est protege' : 'Modifier le role'"
+                                        :title="isUserProtected(adminUser) ? 'Votre rôle admin est protégé' : 'Modifier le rôle'"
                                         @change="handleRoleChange(adminUser, $event)"
                                     >
                                         <option v-for="role in roleOptions" :key="role" :value="role">
@@ -218,7 +218,7 @@
                                         </button>
 
                                         <span v-if="isUserProtected(adminUser)" class="admin-action-note">
-                                            Compte protege
+                                            Compte protégé
                                         </span>
                                     </div>
                                 </td>

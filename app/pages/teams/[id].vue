@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import {
@@ -251,7 +251,7 @@ watch(
 useHead(() => ({
     title: statistics.value?.team.name
         ? `RugbyJam | ${statistics.value.team.name}`
-        : 'RugbyJam | Equipe',
+        : 'RugbyJam | Équipe',
 }))
 </script>
 
@@ -275,7 +275,7 @@ useHead(() => ({
                 </div>
 
                 <div v-else-if="contexts.length === 0" class="team-context-state">
-                    Aucun championnat trouve pour cette equipe.
+                    Aucun championnat trouvé pour cette équipe.
                 </div>
 
                 <div v-else class="team-context-selector">
@@ -329,10 +329,10 @@ useHead(() => ({
             </section>
 
             <div v-if="!hasStatisticsContext" class="team-statistics-empty">
-                <p class="team-statistics-eyebrow">Equipe {{ teamId }}</p>
+                <p class="team-statistics-eyebrow">Équipe {{ teamId }}</p>
                 <h1 id="team-statistics-title">Choisis un championnat</h1>
                 <p>
-                    Selectionne un championnat et une saison pour afficher les statistiques de cette equipe.
+                    Sélectionne un championnat et une saison pour afficher les statistiques de cette équipe.
                 </p>
             </div>
 
@@ -348,14 +348,14 @@ useHead(() => ({
                 <header class="team-statistics-header">
                     <img
                         :src="statistics.team.logo || RUGBY_PLACEHOLDER_LOGO"
-                        :alt="statistics.team.name ?? 'Equipe'"
+                        :alt="statistics.team.name ?? 'Équipe'"
                         @error="setRugbyPlaceholderLogo"
                     >
                     <div>
                         <p class="team-statistics-eyebrow">
                             {{ selectedContext?.league.name ?? statistics.league.name ?? 'Competition' }} / Saison {{ statistics.league.season ?? season }}
                         </p>
-                        <h1 id="team-statistics-title">{{ statistics.team.name ?? `Equipe ${teamId}` }}</h1>
+                        <h1 id="team-statistics-title">{{ statistics.team.name ?? `Équipe ${teamId}` }}</h1>
                         <NuxtLink
                             v-if="statistics.league.id"
                             :to="{ path: `/leagues/${statistics.league.id}`, query: { season: String(statistics.league.season ?? season) } }"
@@ -371,7 +371,7 @@ useHead(() => ({
                     />
                 </header>
 
-                <section class="team-statistics-cards" aria-label="Resume">
+                <section class="team-statistics-cards" aria-label="Résumé">
                     <article>
                         <span>Matchs</span>
                         <strong>{{ formatValue(statistics.all.played) }}</strong>
@@ -445,7 +445,7 @@ useHead(() => ({
                         </table>
 
                         <p v-else class="team-statistics-table-empty">
-                            Les statistiques detaillees de cette equipe ne sont pas encore disponibles pour cette saison.
+                            Les statistiques détaillées de cette équipe ne sont pas encore disponibles pour cette saison.
                         </p>
                     </div>
                 </section>
@@ -468,7 +468,7 @@ useHead(() => ({
                     </div>
 
                     <div v-else-if="teamFixtures.length === 0" class="team-fixtures-state">
-                        Aucun match trouve pour cette equipe sur ce championnat et cette saison.
+                        Aucun match trouvé pour cette équipe sur ce championnat et cette saison.
                     </div>
 
                     <div v-else class="team-fixtures-list">
@@ -480,7 +480,7 @@ useHead(() => ({
                             <div class="team-fixture-meta">
                                 <span>
                                     <MatchLiveIndicator :fixture="fixture" />
-                                    {{ fixture.league.round ? `Journee ${fixture.league.round}` : 'Match' }}
+                                    {{ fixture.league.round ? `Journée ${fixture.league.round}` : 'Match' }}
                                 </span>
                                 <time>{{ formatFixtureKickoff(fixture.date) }}</time>
                             </div>
@@ -494,18 +494,18 @@ useHead(() => ({
                                     >
                                         <img
                                             :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                            :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                            :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                             @error="setRugbyPlaceholderLogo"
                                         >
-                                        <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                        <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                                     </NuxtLink>
                                     <template v-else>
                                         <img
                                             :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                            :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                            :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                             @error="setRugbyPlaceholderLogo"
                                         >
-                                        <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                        <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                                     </template>
                                 </div>
 
@@ -524,18 +524,18 @@ useHead(() => ({
                                         :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
                                         class="team-fixture-team-link"
                                     >
-                                        <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                        <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                         <img
                                             :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                            :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                            :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                             @error="setRugbyPlaceholderLogo"
                                         >
                                     </NuxtLink>
                                     <template v-else>
-                                        <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                        <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                         <img
                                             :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                            :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                            :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                             @error="setRugbyPlaceholderLogo"
                                         >
                                     </template>

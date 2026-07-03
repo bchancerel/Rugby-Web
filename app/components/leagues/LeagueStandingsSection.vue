@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import type { RugbyStandingGroup } from '~/types/rugby'
 import {
@@ -51,7 +51,7 @@ const getTeamStatisticsPath = (teamId: string | number | null) => {
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Equipe</th>
+                                <th scope="col">Équipe</th>
                                 <th scope="col">J</th>
                                 <th scope="col">G</th>
                                 <th scope="col">N</th>
@@ -77,20 +77,20 @@ const getTeamStatisticsPath = (teamId: string | number | null) => {
                                         >
                                             <img
                                                 :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
-                                                :alt="row.team.name ?? 'Equipe'"
+                                                :alt="row.team.name ?? 'Équipe'"
                                                 class="standing-team-logo"
                                                 @error="setRugbyPlaceholderLogo"
                                             >
-                                            <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                            <span>{{ row.team.name ?? 'Équipe inconnue' }}</span>
                                         </NuxtLink>
                                         <span v-else class="standing-team-link disabled">
                                             <img
                                                 :src="row.team.logo || RUGBY_PLACEHOLDER_LOGO"
-                                                :alt="row.team.name ?? 'Equipe'"
+                                                :alt="row.team.name ?? 'Équipe'"
                                                 class="standing-team-logo"
                                                 @error="setRugbyPlaceholderLogo"
                                             >
-                                            <span>{{ row.team.name ?? 'Equipe inconnue' }}</span>
+                                            <span>{{ row.team.name ?? 'Équipe inconnue' }}</span>
                                         </span>
                                         <FavoriteButton
                                             entity-type="team"

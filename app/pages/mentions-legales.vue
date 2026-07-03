@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const updatedAt = '25 mai 2026'
 
 const legalSections = [

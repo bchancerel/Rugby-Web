@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import type { RugbyFixture, RugbyMatchesHome } from '~/types/rugby'
 import {
@@ -121,7 +121,7 @@ useHead({
                 <div>
                     <p class="match-page-eyebrow">Calendrier</p>
                     <h1 id="match-page-title">Matchs</h1>
-                    <p>Les affiches a suivre selon tes favoris et les coups d'envoi proches.</p>
+                    <p>Les affichés a suivre selon tes favoris et les coups d'envoi proches.</p>
                 </div>
             </header>
 
@@ -166,20 +166,20 @@ useHead({
                                 >
                                     <img
                                         :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                        :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
-                                    <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                    <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                                 </NuxtLink>
                                 <template v-else>
                                     <img
                                         :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                        :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
-                                    <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                    <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                                 </template>
                             </div>
 
@@ -200,19 +200,19 @@ useHead({
                                     :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
                                     class="match-team-link"
                                 >
-                                    <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                    <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                     <img
                                         :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                        :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
                                 </NuxtLink>
                                 <template v-else>
-                                    <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                    <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                     <img
                                         :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                        :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
@@ -264,20 +264,20 @@ useHead({
                                 >
                                     <img
                                         :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                        :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
-                                    <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                    <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                                 </NuxtLink>
                                 <template v-else>
                                     <img
                                         :src="fixture.teams.home.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.home.name ?? 'Equipe domicile'"
+                                        :alt="fixture.teams.home.name ?? 'Équipe domicile'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
-                                    <span>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                                    <span>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                                 </template>
                             </div>
 
@@ -298,19 +298,19 @@ useHead({
                                     :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
                                     class="match-team-link"
                                 >
-                                    <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                    <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                     <img
                                         :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                        :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >
                                 </NuxtLink>
                                 <template v-else>
-                                    <span>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                                    <span>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                                     <img
                                         :src="fixture.teams.away.logo || RUGBY_PLACEHOLDER_LOGO"
-                                        :alt="fixture.teams.away.name ?? 'Equipe exterieure'"
+                                        :alt="fixture.teams.away.name ?? 'Équipe extérieure'"
                                         class="match-team-logo"
                                         @error="setRugbyPlaceholderLogo"
                                     >

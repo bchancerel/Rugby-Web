@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     definePageMeta({
         middleware: 'guest',
     })
@@ -20,7 +20,7 @@
         successMessage.value = ''
 
         if (!token.value) {
-            errorMessage.value = 'Le lien de reinitialisation est invalide.'
+            errorMessage.value = 'Le lien de réinitialisation est invalide.'
             return
         }
 
@@ -60,7 +60,7 @@
             </div>
 
             <p class="auth-support-text">
-                Choisis un nouveau mot de passe pour recuperer l'acces a ton compte.
+                Choisis un nouveau mot de passe pour récupérer l'acces à ton compte.
             </p>
 
             <form class="auth-form" @submit.prevent="submit">
@@ -70,7 +70,7 @@
                         v-model="password"
                         type="password"
                         name="password"
-                        autocomplete="new-password"
+                        autocomplété="new-password"
                         placeholder="Minimum 8 caracteres"
                         minlength="8"
                         required
@@ -83,8 +83,8 @@
                         v-model="passwordConfirmation"
                         type="password"
                         name="passwordConfirmation"
-                        autocomplete="new-password"
-                        placeholder="Repete ton mot de passe"
+                        autocomplété="new-password"
+                        placeholder="Repété ton mot de passe"
                         minlength="8"
                         required
                     >
@@ -98,7 +98,7 @@
                 </button>
 
                 <NuxtLink to="/auth/login" class="secondary-auth-link">
-                    Retour a la connexion
+                    Retour à la connexion
                 </NuxtLink>
             </form>
         </section>

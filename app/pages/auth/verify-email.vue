@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     const route = useRoute()
     const { verifyEmail, fetchMe, pending, isAuthenticated } = useAuth()
 
@@ -15,7 +15,7 @@
     })
 
     const primaryLabel = computed(() => {
-        return isAuthenticated.value ? 'Entre les perches !' : 'Retour a la connexion'
+        return isAuthenticated.value ? 'Entre les perches !' : 'Retour à la connexion'
     })
 
     const submit = async () => {
@@ -24,7 +24,7 @@
         hasTriedVerification.value = true
 
         if (!token.value) {
-            errorMessage.value = 'Le lien de verification est invalide.'
+            errorMessage.value = 'Le lien de vérification est invalide.'
             return
         }
 
@@ -64,7 +64,7 @@
             </div>
 
             <p class="auth-support-text">
-                On verifie ton adresse email pour finaliser la securite de ton compte.
+                On vérifie ton adresse email pour finaliser la sécurité de ton compte.
             </p>
 
             <div class="auth-form">
@@ -82,7 +82,7 @@
                     :disabled="pending"
                     @click="submit"
                 >
-                    {{ pending ? 'Verification...' : 'Reessayer' }}
+                    {{ pending ? 'Verification...' : 'Réessayer' }}
                 </button>
 
                 <NuxtLink

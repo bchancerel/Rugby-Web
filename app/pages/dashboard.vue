@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import {
     RUGBY_PLACEHOLDER_LOGO,
@@ -70,7 +70,7 @@ const alertItems = computed(() => {
     if (!matchesPending.value && favorites.value.teams.total > 0 && teamUpcomingMatches.value.length === 0) {
         alerts.push({
             key: 'no-team-match',
-            label: 'Aucun prochain match trouve pour tes equipes favorites.',
+            label: 'Aucun prochain match trouvé pour tes équipes favorites.',
             to: '/match',
         })
     }
@@ -96,7 +96,7 @@ const alertItems = computed(() => {
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
-    return apiError.data?.message || apiError.message || 'Donnees indisponibles.'
+    return apiError.data?.message || apiError.message || 'Données indisponibles.'
 }
 
 const formatFixtureScore = (fixture: RugbyFixture) => {
@@ -277,9 +277,9 @@ useHead({
             <p v-if="favoritesError" class="dashboard-alert">{{ favoritesError }}</p>
             <p v-if="matchesError" class="dashboard-alert">{{ matchesError }}</p>
 
-            <section class="dashboard-summary" aria-label="Resume">
+            <section class="dashboard-summary" aria-label="Résumé">
                 <div class="dashboard-stat">
-                    <span>Equipes favorites</span>
+                    <span>Équipes favorites</span>
                     <strong>{{ favorites.teams.total }}</strong>
                 </div>
                 <div class="dashboard-stat">
@@ -298,7 +298,7 @@ useHead({
 
             <div v-else-if="!hasFavorites" class="dashboard-empty">
                 <h2>Prepare ton dashboard</h2>
-                <p>Ajoute des championnats et des equipes en favoris pour remplir cette page automatiquement.</p>
+                <p>Ajoute des championnats et des équipes en favoris pour remplir cette page automatiquement.</p>
                 <NuxtLink to="/leagues" class="dashboard-primary-link">Parcourir les championnats</NuxtLink>
             </div>
 
@@ -378,16 +378,16 @@ useHead({
                     <div class="dashboard-section-heading">
                         <div>
                             <p class="dashboard-eyebrow">Acces rapide</p>
-                            <h2 id="dashboard-teams-title">Equipes favorites</h2>
+                            <h2 id="dashboard-teams-title">Équipes favorites</h2>
                         </div>
                     </div>
 
                     <div v-if="favoriteTeams.length > 0 && (competitionOverviewsPending || matchesPending)" class="dashboard-state compact">
-                        <AppLoader label="Chargement des informations equipes..." compact />
+                        <AppLoader label="Chargement des informations équipes..." compact />
                     </div>
 
                     <div v-if="favoriteTeams.length === 0" class="dashboard-state compact">
-                        Aucune equipe favorite.
+                        Aucune équipe favorite.
                     </div>
 
                     <div v-else class="dashboard-competition-grid">
@@ -402,11 +402,11 @@ useHead({
                             >
                                 <img
                                     :src="getTeamFavoriteLogo(favorite.entityId)"
-                                    :alt="favorite.entityName ?? `Equipe ${favorite.entityId}`"
+                                    :alt="favorite.entityName ?? `Équipe ${favorite.entityId}`"
                                     @error="setRugbyPlaceholderLogo"
                                 >
                                 <span>
-                                    <strong>{{ favorite.entityName ?? `Equipe ${favorite.entityId}` }}</strong>
+                                    <strong>{{ favorite.entityName ?? `Équipe ${favorite.entityId}` }}</strong>
                                     <small>{{ formatTeamFavoriteStanding(favorite.entityId) }}</small>
                                 </span>
                             </NuxtLink>
@@ -414,8 +414,8 @@ useHead({
                                 type="button"
                                 class="dashboard-favorite-remove"
                                 :disabled="favoritesPending"
-                                :aria-label="`Retirer ${favorite.entityName ?? `Equipe ${favorite.entityId}`} des favoris`"
-                                :title="`Retirer ${favorite.entityName ?? `Equipe ${favorite.entityId}`} des favoris`"
+                                :aria-label="`Retirer ${favorite.entityName ?? `Équipe ${favorite.entityId}`} des favoris`"
+                                :title="`Retirer ${favorite.entityName ?? `Équipe ${favorite.entityId}`} des favoris`"
                                 @click="removeDashboardFavorite(favorite.id)"
                             >
                                 x
@@ -428,7 +428,7 @@ useHead({
                     <div class="dashboard-section-heading">
                         <div>
                             <p class="dashboard-eyebrow">A suivre</p>
-                            <h2 id="dashboard-matches-title">Prochains matchs des equipes favorites</h2>
+                            <h2 id="dashboard-matches-title">Prochains matchs des équipes favorites</h2>
                         </div>
                         <NuxtLink to="/match">Tous les matchs</NuxtLink>
                     </div>
@@ -438,11 +438,11 @@ useHead({
                     </div>
 
                     <div v-else-if="favoriteTeams.length === 0" class="dashboard-state compact">
-                        Aucune equipe favorite.
+                        Aucune équipe favorite.
                     </div>
 
                     <div v-else-if="teamUpcomingMatches.length === 0" class="dashboard-state compact">
-                        Aucun prochain match disponible pour tes equipes favorites.
+                        Aucun prochain match disponible pour tes équipes favorites.
                     </div>
 
                     <div v-else class="dashboard-match-list">
@@ -458,7 +458,7 @@ useHead({
                                     @error="setRugbyPlaceholderLogo"
                                 >
                                 <div>
-                                    <span>Equipe favorite</span>
+                                    <span>Équipe favorite</span>
                                     <h3>{{ item.label }}</h3>
                                 </div>
                             </header>
@@ -566,7 +566,7 @@ useHead({
                                     :class="{ favorite: isFavoriteStandingTeam(row) }"
                                 >
                                     <span>{{ row.rank ?? '-' }}</span>
-                                    <strong>{{ row.team.name ?? 'Equipe' }}</strong>
+                                    <strong>{{ row.team.name ?? 'Équipe' }}</strong>
                                     <em>{{ row.points ?? '-' }} pts</em>
                                 </li>
                             </ol>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { getSupporterBadgeImageSrc } from '~/utils/supporterBadges'
 
 const { toasts, dismissToast } = useSupporterRewards()
@@ -33,7 +33,7 @@ const { toasts, dismissToast } = useSupporterRewards()
                 </span>
                 <div>
                     <template v-if="toast.type === 'badge'">
-                        <p>Badge debloque</p>
+                        <p>Badge débloqué</p>
                         <h2>{{ toast.badge.label }}</h2>
                         <span>+{{ toast.badge.xp }} XP bonus</span>
                     </template>

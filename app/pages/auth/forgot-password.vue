@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     definePageMeta({
         middleware: 'guest',
     })
@@ -26,7 +26,7 @@
     }
 
     useHead({
-        title: 'RugbyJam | Mot de passe oublie',
+        title: 'RugbyJam | Mot de passe oublié',
     })
 </script>
 
@@ -37,7 +37,7 @@
                 <img src="/images/logo_app.svg" alt="RugbyJam" class="brand-logo">
                 <div>
                     <p class="eyebrow">RugbyJam</p>
-                    <h1 id="forgot-password-title">Mot de passe oublie</h1>
+                    <h1 id="forgot-password-title">Mot de passe oublié</h1>
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
                         v-model.trim="email"
                         type="email"
                         name="email"
-                        autocomplete="email"
+                        autocomplété="email"
                         placeholder="toi@exemple.com"
                         required
                     >
@@ -66,7 +66,7 @@
                 </button>
 
                 <NuxtLink to="/auth/login" class="secondary-auth-link">
-                    Retour a la connexion
+                    Retour à la connexion
                 </NuxtLink>
             </form>
         </section>

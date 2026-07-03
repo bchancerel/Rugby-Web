@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import LeagueDetailHero from '~/components/leagues/LeagueDetailHero.vue'
 import LeagueKnockoutSection from '~/components/leagues/LeagueKnockoutSection.vue'
 import LeagueMatchesSection from '~/components/leagues/LeagueMatchesSection.vue'
@@ -101,9 +101,9 @@ const bracketRounds = computed<BracketRound[]>(() => {
 const formatRoundLabel = (round: string) => {
     const value = round.toLowerCase()
     const regularSeasonMatch = round.match(/regular season\s*-\s*(\d+)/i)
-        ?? round.match(/(?:round|journee|matchday)\s*[- ]\s*(\d+)/i)
+        ?? round.match(/(?:round|journée|matchday)\s*[- ]\s*(\d+)/i)
 
-    if (regularSeasonMatch?.[1]) return `Journee ${regularSeasonMatch[1]}`
+    if (regularSeasonMatch?.[1]) return `Journée ${regularSeasonMatch[1]}`
     if (value.includes('round of 16')) return 'Huitiemes de finale'
     if (value.includes('round of 8') || value.includes('quarter')) return 'Quarts de finale'
     if (value.includes('semi')) return 'Demi-finales'
@@ -218,7 +218,7 @@ const hasMatchRounds = computed(() => matchRounds.value.length > 0)
 const canGoToPreviousMatchRound = computed(() => selectedMatchRoundIndex.value > 0)
 const canGoToNextMatchRound = computed(() => selectedMatchRoundIndex.value < matchRounds.value.length - 1)
 const matchRoundControlLabel = computed(() =>
-    matchRounds.value.some((round) => isKnockoutRound(round.name)) ? 'Tour' : 'Journee'
+    matchRounds.value.some((round) => isKnockoutRound(round.name)) ? 'Tour' : 'Journée'
 )
 const isCupCompetition = computed(() => {
     const type = league.value?.type?.toLowerCase() ?? ''
@@ -252,7 +252,7 @@ const refreshLeagueLive = async () => {
             query: { t: String(Date.now()) },
         })
     } catch {
-        // On garde les donnees visibles si une actualisation live echoue.
+        // On garde les données visibles si une actualisation live échoue.
     }
 }
 
@@ -383,20 +383,20 @@ onBeforeUnmount(() => {
                         stroke-linejoin="round"
                     />
                 </svg>
-                Retour aux competitions
+                Retour aux compétitions
             </NuxtLink>
 
             <div v-if="pending" class="state">
-                <AppLoader label="Chargement de la competition..." />
+                <AppLoader label="Chargement de la compétition..." />
             </div>
 
             <div v-else-if="error" class="state error">
                 <p>
-                    Impossible de recuperer cette competition.
+                    Impossible de récupérer cette compétition.
                     <span>{{ error.message }}</span>
                 </p>
                 <button type="button" @click="refreshLeague">
-                    Reessayer
+                    Réessayer
                 </button>
             </div>
 
@@ -456,13 +456,13 @@ onBeforeUnmount(() => {
                 <section v-if="!hasVisibleContent" class="empty-state">
                     <p>
                         {{ showBracket ? 'Aucune phase finale disponible pour cette saison.' : 'Aucun classement disponible pour cette saison.' }}
-                        <span>Les donnees API peuvent varier selon la competition.</span>
+                        <span>Les données API peuvent varier selon la compétition.</span>
                     </p>
                 </section>
             </template>
 
             <div v-else class="state">
-                Competition introuvable.
+                Compétition introuvable.
             </div>
         </section>
     </main>

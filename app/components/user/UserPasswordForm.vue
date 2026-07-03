@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const props = defineProps<{
     pending: boolean
 }>()
@@ -36,7 +36,7 @@ const submitPassword = async () => {
         currentPassword.value = ''
         newPassword.value = ''
         confirmPassword.value = ''
-        passwordSuccessMessage.value = 'Mot de passe mis a jour.'
+        passwordSuccessMessage.value = 'Mot de passe mis à jour.'
     } catch (error) {
         passwordErrorMessage.value = error instanceof Error ? error.message : 'Impossible de modifier le mot de passe.'
     }
@@ -55,7 +55,7 @@ const submitPassword = async () => {
                     v-model="currentPassword"
                     :type="showCurrentPassword ? 'text' : 'password'"
                     name="current-password"
-                    autocomplete="current-password"
+                    autocomplété="current-password"
                     :disabled="props.pending"
                 >
                 <button
@@ -76,7 +76,7 @@ const submitPassword = async () => {
                     v-model="newPassword"
                     :type="showNewPassword ? 'text' : 'password'"
                     name="new-password"
-                    autocomplete="new-password"
+                    autocomplété="new-password"
                     minlength="8"
                     :disabled="props.pending"
                 >
@@ -98,7 +98,7 @@ const submitPassword = async () => {
                     v-model="confirmPassword"
                     :type="showConfirmPassword ? 'text' : 'password'"
                     name="confirm-password"
-                    autocomplete="new-password"
+                    autocomplété="new-password"
                     minlength="8"
                     :disabled="props.pending"
                 >

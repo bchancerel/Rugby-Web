@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     import { featuredCompetitions } from '~/constants/featuredCompetitions'
 
     useHead({
@@ -18,7 +18,7 @@
                     <p class="eyebrow">RugbyJam</p>
                     <h1 id="home-title" class="hero-title">Le rugby, partout, facilement</h1>
                     <p class="hero-copy">
-                        Retrouve tous les resultats, classements et statistiques de tes competitions de rugby preferees en un seul endroit.
+                        Retrouve tous les résultats, classements et statistiques de tes compétitions de rugby préférées en un seul endroit.
                     </p>
 
                     <div class="hero-actions">
@@ -30,30 +30,30 @@
             </div>
         </section>
 
-        <section id="overview" class="overview" aria-label="Apercu RugbyJam">
+        <section id="overview" class="overview" aria-label="Aperçu RugbyJam">
             <div class="overview-inner">
                 <div class="metric">
                     <span class="metric-value">Ligues</span>
-                    <span class="metric-label">Toutes les competitions de rugby a travers le monde</span>
+                    <span class="metric-label">Toutes les compétitions de rugby à travers le monde</span>
                 </div>
                 <div class="metric">
                     <span class="metric-value">Match</span>
-                    <span class="metric-label">Suivi en direct des resultats et statistiques.</span>
+                    <span class="metric-label">Suivi en direct des résultats et statistiques.</span>
                 </div>
                 <div class="metric">
                     <span class="metric-value">Mobile / Web</span>
-                    <span class="metric-label">Accede a RugbyJam sur ton telephone ou ton ordinateur.</span>
+                    <span class="metric-label">Accède à RugbyJam sur ton téléphone ou ton ordinateur.</span>
                 </div>
             </div>
         </section>
 
         <section class="competitions" aria-labelledby="competitions-title">
             <div class="competitions-heading">
-                <p class="eyebrow">Competitions</p>
+                <p class="eyebrow">Compétitions</p>
                 <h2 id="competitions-title">Les grands rendez-vous rugby</h2>
             </div>
 
-            <div class="competition-carousel" aria-label="Competitions majeures de rugby">
+            <div class="competition-carousel" aria-label="Compétitions majeures de rugby">
                 <div
                     v-for="track in 2"
                     :key="track"

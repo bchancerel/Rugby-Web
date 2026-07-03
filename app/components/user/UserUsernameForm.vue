@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { AuthUser } from '~/types/auth'
 
 const props = defineProps<{
@@ -30,13 +30,13 @@ const submitUsername = async () => {
     }
 
     if (nextUsername === props.user?.username) {
-        successMessage.value = 'Ton pseudo est deja a jour.'
+        successMessage.value = 'Ton pseudo est déjà à jour.'
         return
     }
 
     try {
         await updateMe({ username: nextUsername })
-        successMessage.value = 'Pseudo mis a jour.'
+        successMessage.value = 'Pseudo mis à jour.'
     } catch (error) {
         errorMessage.value = error instanceof Error ? error.message : 'Impossible de modifier le pseudo.'
     }
@@ -54,7 +54,7 @@ const submitUsername = async () => {
                 v-model.trim="username"
                 type="text"
                 name="username"
-                autocomplete="username"
+                autocomplété="username"
                 minlength="2"
                 maxlength="30"
                 placeholder="ton pseudo"

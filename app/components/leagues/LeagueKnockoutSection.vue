@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import MatchLiveIndicator from '~/components/match/MatchLiveIndicator.vue'
 import type { RugbyFixture } from '~/types/rugby'
 
@@ -68,9 +68,9 @@ const formatFixtureDate = (date: string | null) => {
                                 :to="getFixtureTeamPath(fixture, fixture.teams.home.id)"
                                 class="bracket-team-link"
                             >
-                                {{ fixture.teams.home.name ?? 'Equipe domicile' }}
+                                {{ fixture.teams.home.name ?? 'Équipe domicile' }}
                             </NuxtLink>
-                            <span v-else>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                            <span v-else>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.home) }}</strong>
                         </div>
                         <div class="bracket-team-row">
@@ -79,9 +79,9 @@ const formatFixtureDate = (date: string | null) => {
                                 :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
                                 class="bracket-team-link"
                             >
-                                {{ fixture.teams.away.name ?? 'Equipe exterieure' }}
+                                {{ fixture.teams.away.name ?? 'Équipe extérieure' }}
                             </NuxtLink>
-                            <span v-else>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                            <span v-else>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
                         </div>
                         <NuxtLink
@@ -142,9 +142,9 @@ const formatFixtureDate = (date: string | null) => {
                                 :to="getFixtureTeamPath(fixture, fixture.teams.home.id)"
                                 class="bracket-team-link"
                             >
-                                {{ fixture.teams.home.name ?? 'Equipe domicile' }}
+                                {{ fixture.teams.home.name ?? 'Équipe domicile' }}
                             </NuxtLink>
-                            <span v-else>{{ fixture.teams.home.name ?? 'Equipe domicile' }}</span>
+                            <span v-else>{{ fixture.teams.home.name ?? 'Équipe domicile' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.home) }}</strong>
                         </div>
                         <div class="bracket-team-row">
@@ -153,9 +153,9 @@ const formatFixtureDate = (date: string | null) => {
                                 :to="getFixtureTeamPath(fixture, fixture.teams.away.id)"
                                 class="bracket-team-link"
                             >
-                                {{ fixture.teams.away.name ?? 'Equipe exterieure' }}
+                                {{ fixture.teams.away.name ?? 'Équipe extérieure' }}
                             </NuxtLink>
-                            <span v-else>{{ fixture.teams.away.name ?? 'Equipe exterieure' }}</span>
+                            <span v-else>{{ fixture.teams.away.name ?? 'Équipe extérieure' }}</span>
                             <strong>{{ formatStandingValue(fixture.score.away) }}</strong>
                         </div>
                     </article>

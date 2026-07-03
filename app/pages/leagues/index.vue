@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import FavoriteButton from '~/components/favorites/FavoriteButton.vue'
 import type { RugbyLeague } from '~/types/rugby'
 import {
@@ -15,7 +15,7 @@ definePageMeta({
 })
 
 useHead({
-    title: 'RugbyJam | Competitions',
+    title: 'RugbyJam | Compétitions',
 })
 
 const { data: leagues, error, pending, refresh } = await useApiFetch<RugbyLeague[]>('/rugby/leagues', {
@@ -63,7 +63,7 @@ onMounted(() => {
             <div class="heading">
                 <div>
                     <p class="eyebrow">RugbyJam</p>
-                    <h1>Competitions</h1>
+                    <h1>Compétitions</h1>
                 </div>
 
                 <button type="button" :disabled="pending" @click="refreshLeagues">
@@ -71,7 +71,7 @@ onMounted(() => {
                 </button>
             </div>
 
-            <div v-if="isInitialLoading" class="content loading-content" aria-label="Chargement des competitions">
+            <div v-if="isInitialLoading" class="content loading-content" aria-label="Chargement des compétitions">
                 <div class="summary-grid">
                     <div v-for="item in 3" :key="item" class="skeleton-block" />
                 </div>
@@ -86,18 +86,18 @@ onMounted(() => {
 
             <div v-else-if="error && !leagues.length" class="state error">
                 <p>
-                    Impossible de recuperer les competitions.
+                    Impossible de récupérer les compétitions.
                     <span>{{ error.message }}</span>
                 </p>
                 <button type="button" @click="refreshLeagues">
-                    Reessayer
+                    Réessayer
                 </button>
             </div>
 
             <div v-else-if="hasNoLeagues" class="state empty-api-state">
                 <p>
-                    Aucune competition n'est disponible pour le moment.
-                    <span>Tu peux relancer une actualisation si l'API vient d'etre mise a jour.</span>
+                    Aucune compétition n’est disponible pour le moment.
+                    <span>Tu peux relancer une actualisation si l’API vient d'être mise à jour.</span>
                 </p>
                 <button type="button" @click="refreshLeagues">
                     Actualiser
@@ -107,21 +107,21 @@ onMounted(() => {
             <div v-else class="content">
                 <div v-if="error" class="state warning-state">
                     <p>
-                        Les dernieres competitions chargees restent affichees.
+                        Les dernières compétitions chargées restent affichées.
                         <span>{{ error.message }}</span>
                     </p>
                     <button type="button" @click="refreshLeagues">
-                        Reessayer
+                        Réessayer
                     </button>
                 </div>
 
                 <p v-if="isRefreshing" class="refresh-state" aria-live="polite">
-                    Actualisation des competitions...
+                    Actualisation des compétitions...
                 </p>
 
-                <div class="summary-grid" aria-label="Resume des competitions">
+                <div class="summary-grid" aria-label="Résumé des compétitions">
                     <div>
-                        <span class="summary-label">Competitions</span>
+                        <span class="summary-label">Compétitions</span>
                         <span class="summary-value">{{ totalLeagues }}</span>
                     </div>
                     <div>
@@ -134,13 +134,13 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <section class="filters" aria-label="Filtres des competitions">
+                <section class="filters" aria-label="Filtres des compétitions">
                     <label class="search-field">
                         <span>Recherche</span>
                         <input
                             v-model="searchQuery"
                             type="search"
-                            placeholder="Nom de competition ou pays"
+                            placeholder="Nom de compétition ou pays"
                         >
                     </label>
 
@@ -188,8 +188,8 @@ onMounted(() => {
 
                 <section class="featured-section" aria-labelledby="featured-title">
                     <div class="section-heading">
-                        <p class="eyebrow">Selection</p>
-                        <h2 id="featured-title">Competitions majeures</h2>
+                        <p class="eyebrow">Sélection</p>
+                        <h2 id="featured-title">Compétitions majeures</h2>
                     </div>
 
                     <div class="featured-grid">
@@ -205,9 +205,9 @@ onMounted(() => {
                                     class="featured-logo"
                                     @error="setRugbyPlaceholderLogo"
                                 >
-                                <span class="featured-name">{{ league.name ?? 'Competition sans nom' }}</span>
+                                <span class="featured-name">{{ league.name ?? 'Compétition sans nom' }}</span>
                                 <span class="featured-meta">
-                                    {{ [league.country.name, league.type].filter(Boolean).join(' / ') || 'Competition majeure' }}
+                                    {{ [league.country.name, league.type].filter(Boolean).join(' / ') || 'Compétition majeure' }}
                                 </span>
                             </NuxtLink>
 
@@ -225,12 +225,12 @@ onMounted(() => {
                 <section class="all-section" aria-labelledby="all-title">
                     <div class="section-heading">
                         <p class="eyebrow">Catalogue</p>
-                        <h2 id="all-title">Toutes les competitions</h2>
+                        <h2 id="all-title">Toutes les compétitions</h2>
                     </div>
 
                     <div v-if="filteredLeagues.length === 0" class="empty-state">
                         <p>
-                            Aucune competition ne correspond a ces filtres.
+                            Aucune compétition ne correspond à ces filtres.
                             <span>Essaie un autre pays, type ou terme de recherche.</span>
                         </p>
                         <button type="button" class="secondary-button" @click="resetFilters">
@@ -272,7 +272,7 @@ onMounted(() => {
                                             class="league-logo"
                                             @error="setRugbyPlaceholderLogo"
                                         >
-                                        <span class="league-name">{{ league.name ?? 'Competition sans nom' }}</span>
+                                        <span class="league-name">{{ league.name ?? 'Compétition sans nom' }}</span>
                                         <span class="league-meta">
                                             {{ [league.type, getRugbyLeagueSeasonLabel(league) ? `Saison ${getRugbyLeagueSeasonLabel(league)}` : null].filter(Boolean).join(' / ') || 'Competition' }}
                                         </span>

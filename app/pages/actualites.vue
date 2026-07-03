@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { NewsResponse, NewsSourceKey } from '~/types/news'
 
 definePageMeta({
@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 useHead({
-    title: 'RugbyJam | Actualites',
+    title: 'RugbyJam | Actualités',
 })
 
 type SourceFilter = NewsSourceKey | 'all'
@@ -47,7 +47,7 @@ const emptyArticlesMessage = computed(() => transfersOnly.value
 
 const getApiErrorMessage = (error: unknown) => {
     const apiError = error as { data?: { message?: string }, message?: string }
-    return apiError.data?.message || apiError.message || 'Actualites indisponibles.'
+    return apiError.data?.message || apiError.message || 'Actualités indisponibles.'
 }
 
 const mergeArticles = (currentArticles: NewsResponse['items'], nextArticles: NewsResponse['items']) => {
@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
             <header class="news-header">
                 <div>
                     <p class="news-eyebrow">Fil info</p>
-                    <h1 id="news-page-title">Actualites</h1>
+                    <h1 id="news-page-title">Actualités</h1>
                     <p>Les derniers articles rugby agreges depuis Rugbyrama, RugbyPass et Planet Rugby.</p>
                 </div>
 
@@ -192,7 +192,7 @@ onBeforeUnmount(() => {
                 </button>
             </header>
 
-            <section class="news-toolbar" aria-label="Filtres actualites">
+            <section class="news-toolbar" aria-label="Filtres actualités">
                 <div class="news-source-tabs" role="tablist" aria-label="Sources">
                     <button
                         v-for="filter in sourceFilters"
@@ -220,11 +220,11 @@ onBeforeUnmount(() => {
                 </label>
 
                 <p class="news-updated-at">
-                    Mis a jour {{ formatUpdatedAt(news?.updatedAt) }}
+                    Mis à jour {{ formatUpdatedAt(news?.updatedAt) }}
                 </p>
             </section>
 
-            <div v-if="isInitialLoading" class="news-content loading-content" aria-label="Chargement des actualites">
+            <div v-if="isInitialLoading" class="news-content loading-content" aria-label="Chargement des actualités">
                 <div class="news-loader-wrap">
                     <AppLoader label="Chargement du fil d'articles..." />
                 </div>
@@ -238,22 +238,22 @@ onBeforeUnmount(() => {
 
             <div v-else-if="errorMessage && !hasArticles" class="news-state error">
                 <p>
-                    Impossible de recuperer les actualites.
+                    Impossible de récupérer les actualités.
                     <span>{{ errorMessage }}</span>
                 </p>
                 <button type="button" @click="refreshNews">
-                    Reessayer
+                    Réessayer
                 </button>
             </div>
 
             <div v-else class="news-content">
                 <div v-if="errorMessage" class="news-state warning">
                     <p>
-                        Les dernieres actualites chargees restent affichees.
+                        Les dernières actualités chargées restent affichées.
                         <span>{{ errorMessage }}</span>
                     </p>
                     <button type="button" @click="refreshNews">
-                        Reessayer
+                        Réessayer
                     </button>
                 </div>
 

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { SupporterEvent, SupporterEventType } from '~/types/supporter'
 
 defineProps<{
@@ -6,17 +6,17 @@ defineProps<{
 }>()
 
 const eventLabels: Record<SupporterEventType, string> = {
-    FAVORITE_TEAM_ADDED: 'Equipe favorite ajoutee',
+    FAVORITE_TEAM_ADDED: 'Équipe favorite ajoutée',
     FAVORITE_CLUB_ADDED: 'Club favori ajoute',
-    FAVORITE_COMPETITION_ADDED: 'Competition favorite ajoutee',
-    MATCH_VIEWED: 'Fiche match consultee',
+    FAVORITE_COMPETITION_ADDED: 'Compétition favorite ajoutée',
+    MATCH_VIEWED: 'Fiche match consultée',
     LIVE_MATCH_FOLLOWED: 'Match live suivi',
-    FINISHED_MATCH_VIEWED: 'Match termine consulte',
-    PROFILE_COMPLETED: 'Profil complete',
+    FINISHED_MATCH_VIEWED: 'Match terminé consulté',
+    PROFILE_COMPLETED: 'Profil complété',
     DAILY_ACTIVE: 'Jour actif',
-    TEAM_VIEWED: 'Equipe visitee',
+    TEAM_VIEWED: 'Équipe visitée',
     COMPETITION_VIEWED: 'Championnat visite',
-    BADGE_UNLOCKED: 'Badge debloque',
+    BADGE_UNLOCKED: 'Badge débloqué',
 }
 
 const formatEventDate = (date: string) => {
@@ -53,7 +53,7 @@ const formatEventDate = (date: string) => {
         </div>
 
         <p v-else class="supporter-progress-copy">
-            Les prochaines actions supporter apparaitront ici.
+            Les prochaines actions supporter apparaîtront ici.
         </p>
     </section>
 </template>

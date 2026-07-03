@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 defineProps<{
     open: boolean
     pending: boolean
@@ -22,7 +22,7 @@ const emit = defineEmits<{
             >
                 <h2 id="delete-account-title">Supprimer le compte ?</h2>
                 <p>
-                    Vous etes sur le point de supprimer votre compte RugbyJam. Cette action est definitive.
+                    Vous êtes sur le point de supprimer votre compte RugbyJam. Cette action est définitive.
                 </p>
 
                 <p v-if="errorMessage" class="user-alert">

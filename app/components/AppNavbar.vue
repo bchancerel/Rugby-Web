@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 const route = useRoute()
 const open = ref(false)
 const { user } = useAuth()
@@ -15,14 +15,14 @@ type NavLink = {
 const links: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '/match', icon: 'calendar' },
-    { label: 'Actualites', to: '/actualites', icon: 'news' },
+    { label: 'Actualités', to: '/actualites', icon: 'news' },
     { label: 'Supporter', to: '/supporter', icon: 'medal' },
     { label: 'Mon compte', to: '/user', icon: 'user' },
 ]
 const desktopLinks: NavLink[] = [
     { label: 'Leagues', to: '/leagues', icon: 'trophy' },
     { label: 'Matchs', to: '/match', icon: 'calendar' },
-    { label: 'Actualites', to: '/actualites', icon: 'news' },
+    { label: 'Actualités', to: '/actualites', icon: 'news' },
     { label: 'Supporter', to: '/supporter', icon: 'medal' },
 ]
 const isAdmin = computed(() => user.value?.role === 'ADMIN')

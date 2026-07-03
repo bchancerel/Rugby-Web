@@ -1,4 +1,4 @@
-import type {
+﻿import type {
     AddFavoritePayload,
     Favorite,
     FavoriteEntityType,
@@ -115,7 +115,7 @@ export const useFavorites = () => {
             })
 
             await fetchFavorites()
-            successMessage.value = 'Favori ajoute.'
+            successMessage.value = 'Favori ajouté.'
             return favorite
         } catch (error) {
             errorMessage.value = getErrorMessage(error)
@@ -136,7 +136,7 @@ export const useFavorites = () => {
             })
 
             await fetchFavorites()
-            successMessage.value = 'Favori retire.'
+            successMessage.value = 'Favori retiré.'
         } catch (error) {
             errorMessage.value = getErrorMessage(error)
             throw new Error(errorMessage.value)

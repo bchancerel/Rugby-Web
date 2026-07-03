@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import UserDeleteAccountModal from './UserDeleteAccountModal.vue'
 
 const props = defineProps<{
@@ -50,7 +50,7 @@ const deleteAccount = async () => {
 
 <template>
     <button type="button" class="user-logout-button" :disabled="props.pending" @click="submitLogout">
-        Se deconnecter
+        Se déconnecter
     </button>
 
     <button

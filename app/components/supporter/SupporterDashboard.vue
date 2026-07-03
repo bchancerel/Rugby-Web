@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import SupporterBadgeGrid from '~/components/supporter/SupporterBadgeGrid.vue'
 import SupporterLevelGauge from '~/components/supporter/SupporterLevelGauge.vue'
 import SupporterRecentEvents from '~/components/supporter/SupporterRecentEvents.vue'
@@ -23,7 +23,7 @@ const nextGoals = computed(() => lockedBadges.value.slice(0, 3))
             :level="profile.level"
             :total-xp="profile.totalXp"
             :recently-unlocked="isLevelRecentlyUnlocked(profile.level.value)"
-            @animation-complete="clearRecentLevel"
+            @animation-complété="clearRecentLevel"
         />
 
         <SupporterBadgeGrid :badges="profile.badges" />

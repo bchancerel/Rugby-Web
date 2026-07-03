@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 type UserSession = {
     id: string
     userAgent: string | null
@@ -84,7 +84,7 @@ onMounted(() => {
         <div class="user-panel-heading">
             <div>
                 <h2 id="sessions-title">Sessions actives</h2>
-                <p>Appareils connectes a ton compte.</p>
+                <p>Appareils connectés à ton compte.</p>
             </div>
 
             <button
@@ -106,7 +106,7 @@ onMounted(() => {
         </div>
 
         <div v-else-if="!sessions.length" class="user-empty">
-            Aucune session active trouvee.
+            Aucune session active trouvée.
         </div>
 
         <div v-else class="user-session-list">
@@ -114,7 +114,7 @@ onMounted(() => {
                 <div>
                     <h3>{{ getSessionName(session) }}</h3>
                     <p>
-                        IP {{ session.ip || 'inconnue' }} - Creee le {{ formatDateTime(session.createdAt) }} - Expire le {{ formatDateTime(session.expiresAt) }}
+                        IP {{ session.ip || 'inconnue' }} - Créée le {{ formatDateTime(session.createdAt) }} - Expire le {{ formatDateTime(session.expiresAt) }}
                     </p>
                 </div>
 

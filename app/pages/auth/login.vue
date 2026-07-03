@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
     definePageMeta({
         middleware: 'guest',
     })
@@ -12,11 +12,11 @@
     const errorMessage = ref('')
 
     const isRegister = computed(() => mode.value === 'register')
-    const title = computed(() => (isRegister.value ? 'Creer un compte' : 'Connexion'))
+    const title = computed(() => (isRegister.value ? 'Créer un compte' : 'Connexion'))
     const submitLabel = computed(() => {
         if (pending.value) return isRegister.value ? 'Creation...' : 'Connexion...'
 
-        return isRegister.value ? 'Creer mon compte' : 'Se connecter'
+        return isRegister.value ? 'Créer mon compte' : 'Se connecter'
     })
 
     watch(mode, () => {
@@ -102,7 +102,7 @@
                             v-model.trim="username"
                             type="text"
                             name="username"
-                            autocomplete="username"
+                            autocomplété="username"
                             minlength="2"
                             maxlength="30"
                             placeholder="ton pseudo"
@@ -116,7 +116,7 @@
                         v-model.trim="email"
                         type="email"
                         name="email"
-                        autocomplete="email"
+                        autocomplété="email"
                         placeholder="toi@exemple.com"
                         required
                     >
@@ -128,7 +128,7 @@
                         v-model="password"
                         type="password"
                         name="password"
-                        :autocomplete="isRegister ? 'new-password' : 'current-password'"
+                        :autocomplété="isRegister ? 'new-password' : 'current-password'"
                         placeholder="Minimum 8 caracteres"
                         minlength="8"
                         required
@@ -140,7 +140,7 @@
                 </p>
 
                 <NuxtLink v-if="!isRegister" to="/auth/forgot-password" class="forgot-password-link">
-                    Mot de passe oublie ?
+                    Mot de passe oublié ?
                 </NuxtLink>
 
                 <p v-if="errorMessage" class="form-error" role="alert">{{ errorMessage }}</p>

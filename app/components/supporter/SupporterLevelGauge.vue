@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { SupporterLevel } from '~/types/supporter'
 
 const props = defineProps<{

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { AuthUser } from '~/types/auth'
 
 const props = defineProps<{
@@ -6,7 +6,7 @@ const props = defineProps<{
 }>()
 
 const emailStatus = computed(() => {
-    return props.user?.emailVerified ? 'Email verifie' : 'Email non verifie'
+    return props.user?.emailVerified ? 'Email vérifié' : 'Email non vérifié'
 })
 
 const formatDate = (value?: string) => {
